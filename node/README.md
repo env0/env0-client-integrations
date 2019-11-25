@@ -17,7 +17,7 @@ This is a Nodejs client that we are using to deploy env0 on each PR.
 
 ## env0 cli example
 
-  `$ node env0-deploy-cli.js -a Deploy -e dev -k apiKey -s apiSecret -b blueprintId -o organizationId -p projectId -r master`
+  `$ node env0-deploy-cli.js -k apiKey -s apiSecret -a Deploy -o organizationId -p projectId -b blueprintId -e environmentName -r master -v stage=dev`
   
   `$ node env0-deploy-cli.js --help`
 
@@ -37,6 +37,8 @@ This is a Nodejs client that we are using to deploy env0 on each PR.
 
   **-e --environmentName** - The environment name you would like to create, if it exists it will deploy to that environment
 
+  **-v --environmentVariables** - The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value" 
+  
   **-r --revision** - You git revision, can be a branch tag or a commit hash. Default value `master`
 
   **-h --help** - Get help

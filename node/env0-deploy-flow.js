@@ -45,14 +45,14 @@ const destroy = async (options) => {
 };
 
 const setConfigurationFromOptions = async (options, environment) => {
-    const configurations = options.configurations;
-    if (configurations && configurations.length > 0) {
-        await configurations.forEach(async(config) => {
+    const environmentVariables = options.environmentVariables;
+    if (environmentVariables && environmentVariables.length > 0) {
+        await environmentVariables.forEach(async(config) => {
             const configArray = config.split(/=(.+)/);
             if (configArray.length === 3) {
                 const name = configArray[0];
                 const value = configArray[1];
-                console.log(`Setting configuration ${name} to be ${value} in environmentId: ${environment.id}`);
+                console.log(`Setting Environment Variable ${name} to be ${value} in environmentId: ${environment.id}`);
                 await deployUtils.setConfiguration(environment, options.blueprintId, name, value);
             }
         })

@@ -10,7 +10,7 @@ const optionDefinitions = [
   { name: 'projectId', alias: 'p', type: String, description: 'Your env0 Project id' },
   { name: 'blueprintId', alias: 'b', type: String, description: 'The Blueprint id you would like to deploy with' },
   { name: 'environmentName', alias: 'e', type: String, description: 'The environment name you would like to create, if it exists it will deploy to that environment' },
-  { name: 'environmentVariables', alias: 'v', type: String, multiple: true, description: 'The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is \"environmentVariableName1=value\"' },
+  { name: 'environmentVariables', alias: 'v', type: String, multiple: true, defaultValue: [], description: 'The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is \"environmentVariableName1=value\"' },
   { name: 'revision', alias: 'r', type: String, defaultValue: 'master', description: 'You git revision, can be a branch tag or a commit hash. Default value \"master\" ' },
   { name: 'help', alias: 'h', type: Boolean, defaultValue: false, description: 'Get help' }
 ];
@@ -37,7 +37,7 @@ const sections = [{
   {
     header: 'env0 cli example',
     content: [
-      '$ node env0-deploy-cli.js -a Deploy -e dev -k apiKey -s apiSecret -b blueprintId -o organizationId -p projectId -r master',
+      `$ node env0-deploy-cli.js -k apiKey -s apiSecret -a Deploy -o organizationId -p projectId -b blueprintId -e environmentName -r master -v stage=dev`,
       '$ node env0-deploy-cli.js --help'
     ]
   },

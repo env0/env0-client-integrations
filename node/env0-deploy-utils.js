@@ -40,7 +40,8 @@ class DeployUtils {
     };
 
     console.log(`getting configuration for environmentId: ${environment.id}`);
-    const configurations = await apiClient.callApi('get', `configuration?organizationId=${environment.organizationId}&blueprintId=${blueprintId}&environmentId=${environment.id}`);
+    const params = { organizationId: environment.organizationId, blueprintId, environmentId: environment.id };
+    const configurations = await apiClient.callApi('get', 'configuration', { params });
     const existingConfiguration = configurations.find(config => config.name === configurationName);
 
     if (existingConfiguration) {

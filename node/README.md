@@ -17,7 +17,7 @@ This is a Nodejs client that we are using to deploy env0 on each PR.
 
 ## env0 cli example
 
-  `$ node env0-deploy-cli.js -k apiKey -s apiSecret -a Deploy -o organizationId -p projectId -b blueprintId -e environmentName -r master -v stage=dev`
+  `$ node env0-deploy-cli.js -k <apiKey> -s <apiSecret> -a <Deploy> -o <organizationId> -p <projectId> -b <blueprintId> -e <environmentName> -r [master] -v [stage=dev]`
   
   `$ node env0-deploy-cli.js --help`
 

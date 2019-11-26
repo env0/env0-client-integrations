@@ -8,9 +8,19 @@ At [env0](https://env0.com) we believe in eating your own dog food so we are usi
 
 This is a Nodejs client that we are using to deploy env0 on each PR.
 
+## API Referece
+
+https://app.swaggerhub.com/apis-docs/env0/env0-api
+
 ## Install
 
-``$ npm install``
+```
+$ git clone https://github.com/env0/env0-client-integrations.git
+$ cd env0-client-integrations
+$ npm install
+```
+
+For yarn please run:
 
 ``$ yarn install``
 
@@ -27,7 +37,7 @@ This is a Nodejs client that we are using to deploy env0 on each PR.
 
   **-s --apiSecret** - Your env0 API Secret
 
-  **-a --action** - The action you would like to perform - can be Deploy/Destroy
+  **-a --action** - The action you would like to perform - can be deploy/destroy
 
   **-o --organizationId** - Your env0 Organization id
 

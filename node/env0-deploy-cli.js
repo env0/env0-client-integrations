@@ -5,7 +5,7 @@ const runDeployment = require('./env0-deploy-flow');
 const optionDefinitions = [
   { name: 'apiKey', alias: 'k', type: String, description: 'Your env0 API Key' },
   { name: 'apiSecret', alias: 's', type: String, description: 'Your env0 API Secret' },
-  { name: 'action', alias: 'a', type: String, description: 'The action you would like to perform - can be Deploy/Destroy' },
+  { name: 'action', alias: 'a', type: String, description: 'The action you would like to perform - can be deploy/destroy' },
   { name: 'organizationId', alias: 'o', type: String, description: 'Your env0 Organization id' },
   { name: 'projectId', alias: 'p', type: String, description: 'Your env0 Project id' },
   { name: 'blueprintId', alias: 'b', type: String, description: 'The Blueprint id you would like to deploy' },
@@ -37,7 +37,7 @@ const sections = [{
   {
     header: 'env0 cli example',
     content: [
-      `$ node env0-deploy-cli.js -k apiKey -s apiSecret -a Deploy -o organizationId -p projectId -b blueprintId -e environmentName -r master -v stage=dev`,
+      `$ node env0-deploy-cli.js -k <apiKey> -s <apiSecret> -a <deploy> -o <organizationId> -p <projectId> -b <blueprintId> -e <environmentName> -r [master] -v [stage=dev]`,
       '$ node env0-deploy-cli.js --help'
     ]
   },
@@ -61,14 +61,34 @@ const run = async () => {
       console.log(usage);
     }
     else {
-      console.log(`running deployment with the following arguments`);
-      console.log(options);
-      await runDeployment(options);
+      const environmentVariables = getEnvironmentVariablesOptions(options.environmentVariables);
+      console.log('running deployment with the following arguments:', options);
+      await runDeployment(options, environmentVariables);
     }
   } catch (error) {
     console.log(error);
     process.exit(1);
   }
+};
+
+const getEnvironmentVariablesOptions = (environmentVariables) => {
+  const result = [];
+  if (environmentVariables && environmentVariables.length > 0) {
+    console.log('getting Environment Variables from options:', environmentVariables);
+    environmentVariables.forEach(config => {
+      const configArray = config.split(/=(.+)/);
+      if (configArray.length === 3) {
+        result.push({
+          name: configArray[0],
+          value: configArray[1]
+        })
+      }
+      else {
+        throw new Error(`environmentVariables options are invalid`);
+      }
+    });
+  }
+  return result;
 };
 
 run();

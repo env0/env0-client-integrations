@@ -22,7 +22,7 @@ const createAndDeploy = async (options, environmentVariables) => {
     console.log('did not find an environment');
     environment = await deployUtils.createEnvironment(options.environmentName, options.organizationId, options.projectId);
   }
-  await setConfigurationFromOptions(environmentVariables, environment);
+  await setConfigurationFromOptions(environmentVariables, environment, options.blueprintId);
   await deployUtils.pollEnvironmentStatus(environment.id);
   await deployUtils.deployEnvironment(environment, options.revision, options.blueprintId);
   await deployUtils.pollEnvironmentStatus(environment.id);
@@ -42,11 +42,11 @@ const destroy = async (options) => {
   }
 };
 
-const setConfigurationFromOptions = async (environmentVariables, environment) => {
+const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {
   if (environmentVariables && environmentVariables.length > 0) {
     await environmentVariables.forEach(async(config) => {
       console.log(`Setting Environment Variable ${config.name} to be ${config.value} in environmentId: ${environment.id}`);
-      await deployUtils.setConfiguration(environment, options.blueprintId, config.name, config.value);
+      await deployUtils.setConfiguration(environment, blueprintId, config.name, config.value);
     });
   }
 };

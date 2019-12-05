@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const apiBaseUrl = 'https://api.env0.com';
+const apiBaseUrl = process.env.ENV0_API_URL || 'https://api.env0.com';
 
 class Env0ApiClient {
   async init(apiKey, apiSecret) {

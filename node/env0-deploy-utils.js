@@ -84,5 +84,13 @@ class DeployUtils {
     }
     console.log(`poll environment done, retryCount: ${retryCount}`);
   }
+
+  async archiveIfInactive(environmentId) {
+    const envRoute = `environments/${environmentId}`;
+    const environment = await apiClient.callApi('get', envRoute);
+    if (environment.status !== 'INACTIVE') throw new Error('Environment did not reach INACTIVE status');
+    await apiClient.callApi('put', envRoute, { data: { isArchived: true }});
+    console.log(`Environment ${environment.name} has been archived`);
+  }
 }
 module.exports = DeployUtils;

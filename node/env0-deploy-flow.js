@@ -36,6 +36,10 @@ const destroy = async (options) => {
     await deployUtils.pollEnvironmentStatus(environment.id);
     await deployUtils.destroyEnvironment(environment);
     await deployUtils.pollEnvironmentStatus(environment.id);
+    
+    if (options.archiveAfterDestroy) {
+      await deployUtils.archiveIfInactive(environment.id);
+    }
   }
   else {
     throw new Error(`Could not find an environment with the name ${options.environmentName}`);

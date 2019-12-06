@@ -51,4 +51,6 @@ For yarn please run:
   
   **-r --revision** - You git revision, can be a branch tag or a commit hash. Default value `master`
 
+  **--archiveAfterDestroy** - Archive the environment after a successful destroy
+
   **-h --help** - Get help

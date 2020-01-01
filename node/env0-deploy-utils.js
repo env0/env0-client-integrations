@@ -7,9 +7,9 @@ class DeployUtils {
     await apiClient.init(options.apiKey, options.apiSecret);
   }
 
-  async getEnvironment(environmentName, organizationId) {
-    console.log(`getting all environments organizationId: ${organizationId}`);
-    const environments = await apiClient.callApi('get', `environments?organization=${organizationId}`);
+  async getEnvironment(environmentName, projectId) {
+    console.log(`getting all environments projectId: ${projectId}`);
+    const environments = await apiClient.callApi('get', `environments?projectId=${projectId}`);
     const environment = environments.find(env => env.name === environmentName);
     console.log(`returning this environment: ${JSON.stringify(environment)}`);
     return environment;

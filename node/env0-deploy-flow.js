@@ -17,7 +17,7 @@ const runDeployment = async (options, environmentVariables) => {
 const createAndDeploy = async (options, environmentVariables) => {
   console.log('Starting deployment');
 
-  let environment = await deployUtils.getEnvironment(options.environmentName, options.organizationId);
+  let environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
   if (!environment) {
     console.log('did not find an environment');
     environment = await deployUtils.createEnvironment(options.environmentName, options.organizationId, options.projectId);
@@ -30,7 +30,7 @@ const createAndDeploy = async (options, environmentVariables) => {
 
 const destroy = async (options) => {
   console.log('Starting destroying an environment');
-  const environment = await deployUtils.getEnvironment(options.environmentName, options.organizationId);
+  const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
 
   if (environment) {
     await deployUtils.pollEnvironmentStatus(environment.id);

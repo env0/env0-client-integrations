@@ -10,7 +10,7 @@ This is a Nodejs client that we are using to deploy env0 on each PR.
 
 ## API Referece
 
-https://app.swaggerhub.com/apis-docs/env0/env0-api
+https://docs.env0.com/reference
 
 ## Install
 

@@ -1,6 +1,6 @@
 {
   "name": "env0-deploy-scripts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Deploy env0 using env0 system",
   "main": "env0-deploy-cli.js",
   "scripts": {

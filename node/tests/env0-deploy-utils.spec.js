@@ -54,7 +54,7 @@ describe("env0-deploy-utils", () => {
               name: 'variable-name',
               organizationId: 'organization-1',
               projectId: undefined,
-              scope: 2,
+              scope: "ENVIRONMENT",
               scopeId: 'environment-1',
               type: 0,
               value: "variable-value",

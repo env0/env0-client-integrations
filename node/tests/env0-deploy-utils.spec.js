@@ -14,4 +14,53 @@ describe("env0-deploy-utils", () => {
       expect(returnedStatus).toEqual(mockStatus);
     });
   });
+
+  describe('Setting Configuration', () => {
+    it('should query existing configurations for update', async () => {
+      const callApiMock = Env0ApiClient.mock.instances[0].callApi;
+      callApiMock.mockResolvedValue([]);
+
+      await deployUtils.setConfiguration(
+          {id:'environment-1', organizationId: 'organization-1'},
+          'blueprint-1',
+          'variable-name',
+          'variable-value'
+      );
+
+      expect(callApiMock).toHaveBeenCalledWith(
+          'get',
+          'configuration',
+          {params: {blueprintId: 'blueprint-1', environmentId: 'environment-1', organizationId: 'organization-1'}}
+      );
+    });
+
+    it('should post configuration property without id when new', async () => {
+      const callApiMock = Env0ApiClient.mock.instances[0].callApi;
+      callApiMock.mockResolvedValue([]);
+
+      await deployUtils.setConfiguration(
+          {id:'environment-1', organizationId: 'organization-1'},
+          'blueprint-1',
+          'variable-name',
+          'variable-value'
+      );
+
+      expect(callApiMock).toHaveBeenCalledWith(
+          'post',
+          'configuration',
+          {
+            data: expect.objectContaining({
+              isSensitive: false,
+              name: 'variable-name',
+              organizationId: 'organization-1',
+              projectId: undefined,
+              scope: 2,
+              scopeId: 'environment-1',
+              type: 0,
+              value: "variable-value",
+            })
+          }
+      );
+    });
+  });
 });

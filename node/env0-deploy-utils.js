@@ -50,7 +50,7 @@ class DeployUtils {
     }
 
     console.log(`setting the following configuration: ${JSON.stringify(configuration)}`);
-    await apiClient.callApi('post', 'configuration', {data: configuration});
+    await apiClient.callApi('post', 'configuration', {data: {...configuration, projectId: undefined}});
   }
 
   async deployEnvironment(environment, blueprintRevision, blueprintId) {

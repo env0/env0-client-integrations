@@ -1,0 +1,27 @@
+name: CI
+
+on: [push]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - node
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 10.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - name: install dependencies
+      working-directory: ${{ matrix.package }}
+      run: yarn
+    - name: run test
+      working-directory: ${{ matrix.package }}
+      run: yarn test --colors
+      env:
+        CI: true

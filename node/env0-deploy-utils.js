@@ -50,7 +50,7 @@ class DeployUtils {
     }
 
     console.log(`setting the following configuration: ${JSON.stringify(configuration)}`);
-    await apiClient.callApi('post', 'configuration', {data: configuration});
+    await apiClient.callApi('post', 'configuration', {data: {...configuration, projectId: undefined}});
   }
 
   async deployEnvironment(environment, blueprintRevision, blueprintId) {
@@ -72,17 +72,20 @@ class DeployUtils {
     const deployEndStatuses = ['CREATED', 'ACTIVE', 'INACTIVE', 'FAILED', 'TIMEOUT'];
     const maxRetryNumber = 90; //waiting for 15 minutes (90 * 10 seconds)
     let retryCount = 0;
-    let isDeployingInProgress = true;
 
     console.log(`Starting status polling for environment status for ${environmentId}, maxRetryNumber: ${maxRetryNumber}`);
-    while (isDeployingInProgress) {
-      await apiClient.sleep(10000);
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
       const environment = await apiClient.callApi('get', `environments/${environmentId}`);
-      isDeployingInProgress = (!deployEndStatuses.includes(environment.status) && (retryCount < maxRetryNumber));
+      if (deployEndStatuses.includes(environment.status)) {
+        return environment.status;
+      } else if (retryCount >= maxRetryNumber) {
+        throw new Error('Polling environment reached max retries');
+      }
+      console.log(`Polling environment status, retryCount: ${retryCount}, environmentStatus: ${environment.status}`);
       retryCount++;
-      console.log(`isDeployingInProgress: ${isDeployingInProgress}, retryCount: ${retryCount}, environmentStatus: ${environment.status}`);
+      await apiClient.sleep(10000);
     }
-    console.log(`poll environment done, retryCount: ${retryCount}`);
   }
 
   async archiveIfInactive(environmentId) {

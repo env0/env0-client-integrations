@@ -25,7 +25,10 @@ const createAndDeploy = async (options, environmentVariables) => {
   await setConfigurationFromOptions(environmentVariables, environment, options.blueprintId);
   await deployUtils.pollEnvironmentStatus(environment.id);
   await deployUtils.deployEnvironment(environment, options.revision, options.blueprintId);
-  await deployUtils.pollEnvironmentStatus(environment.id);
+  const lastStatus = await deployUtils.pollEnvironmentStatus(environment.id);
+  if (lastStatus != 'ACTIVE') {
+    throw new Error(`Environment ${environment.id} did not reach ACTIVE status`);
+  }
 };
 
 const destroy = async (options) => {
@@ -36,7 +39,7 @@ const destroy = async (options) => {
     await deployUtils.pollEnvironmentStatus(environment.id);
     await deployUtils.destroyEnvironment(environment);
     await deployUtils.pollEnvironmentStatus(environment.id);
-    
+
     if (options.archiveAfterDestroy) {
       await deployUtils.archiveIfInactive(environment.id);
     }

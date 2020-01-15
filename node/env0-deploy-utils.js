@@ -33,7 +33,7 @@ class DeployUtils {
       isSensitive: false,
       name: configurationName,
       organizationId: environment.organizationId,
-      scope: 2,
+      scope: "ENVIRONMENT",
       scopeId: environment.id,
       type: 0,
       value: configurationValue

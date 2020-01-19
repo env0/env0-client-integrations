@@ -51,10 +51,10 @@ const destroy = async (options) => {
 
 const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {
   if (environmentVariables && environmentVariables.length > 0) {
-    await environmentVariables.forEach(async(config) => {
+    for (const config of environmentVariables) {
       console.log(`Setting Environment Variable ${config.name} to be ${config.value} in environmentId: ${environment.id}`);
       await deployUtils.setConfiguration(environment, blueprintId, config.name, config.value);
-    });
+    }
   }
 };
 

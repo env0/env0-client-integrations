@@ -78,16 +78,9 @@ const getEnvironmentVariablesOptions = (environmentVariables) => {
   if (environmentVariables && environmentVariables.length > 0) {
     console.log('getting Environment Variables from options:', environmentVariables);
     environmentVariables.forEach(config => {
-      const configArray = config.split('=');
-      if (configArray.length === 2) {
-        result.push({
-          name: configArray[0],
-          value: configArray[1]
-        })
-      }
-      else {
-        throw new Error(`environmentVariables options are invalid`);
-      }
+      let [name, ...value] = config.split('=');
+      value = value.join("=");
+      result.push({ name, value });
     });
   }
   return result;

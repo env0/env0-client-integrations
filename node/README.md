@@ -1,3 +1,5 @@
+![CI](https://github.com/env0/env0-client-integrations/workflows/CI/badge.svg?branch=master)
+
 #### 🚧 ⚠️ WIP, the API may change 
 
 # Nodejs client

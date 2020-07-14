@@ -4,7 +4,13 @@ const Env0ApiClient = require("../api-client");
 jest.mock("../api-client");
 
 describe("env0-deploy-utils", () => {
+  let callApiMock;
   const deployUtils = new DeployUtils();
+
+  beforeEach(() => {
+    callApiMock = Env0ApiClient.mock.instances[0].callApi;
+    callApiMock.mockResolvedValue([]);
+  })
 
   describe("pollEnvironmentStatus", () => {
     it("should return last environment status", async () => {
@@ -17,14 +23,12 @@ describe("env0-deploy-utils", () => {
 
   describe('Setting Configuration', () => {
     it('should query existing configurations for update', async () => {
-      const callApiMock = Env0ApiClient.mock.instances[0].callApi;
-      callApiMock.mockResolvedValue([]);
-
       await deployUtils.setConfiguration(
           {id:'environment-1', organizationId: 'organization-1'},
           'blueprint-1',
           'variable-name',
-          'variable-value'
+          'variable-value',
+          false
       );
 
       expect(callApiMock).toHaveBeenCalledWith(
@@ -35,14 +39,12 @@ describe("env0-deploy-utils", () => {
     });
 
     it('should post configuration property without id when new', async () => {
-      const callApiMock = Env0ApiClient.mock.instances[0].callApi;
-      callApiMock.mockResolvedValue([]);
-
       await deployUtils.setConfiguration(
           {id:'environment-1', organizationId: 'organization-1'},
           'blueprint-1',
           'variable-name',
-          'variable-value'
+          'variable-value',
+          false
       );
 
       expect(callApiMock).toHaveBeenCalledWith(
@@ -62,5 +64,25 @@ describe("env0-deploy-utils", () => {
           }
       );
     });
+
+    it.each`
+    isSensitive
+    ${true}
+    ${false}
+    `('should post configuration property with isSensitive: $isSensitive', async ({ isSensitive }) => {
+      await deployUtils.setConfiguration(
+          {id:'environment-1', organizationId: 'organization-1'},
+          'blueprint-1',
+          'variable-name',
+          'variable-value',
+          isSensitive
+      );
+
+      expect(callApiMock).toHaveBeenCalledWith(
+          'post',
+          'configuration',
+          { data: expect.objectContaining({ isSensitive } ) }
+      );
+    })
   });
 });

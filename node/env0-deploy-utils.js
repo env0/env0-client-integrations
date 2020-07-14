@@ -28,9 +28,9 @@ class DeployUtils {
     return environment;
   }
 
-  async setConfiguration(environment, blueprintId, configurationName, configurationValue) {
+  async setConfiguration(environment, blueprintId, configurationName, configurationValue, isSensitive) {
     const configuration = {
-      isSensitive: false,
+      isSensitive,
       name: configurationName,
       organizationId: environment.organizationId,
       scope: "ENVIRONMENT",

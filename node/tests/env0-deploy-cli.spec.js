@@ -22,7 +22,7 @@ describe("env0-deploy-cli", () => {
             { name: 'key2', value: 'value2', sensitive: false},
             { name: 'sensitiveKey1', value: 'sensitiveValue1', sensitive: true},
             { name: 'sensitiveKey2', value: 'sensitiveValue2', sensitive: true}
-        ]
+        ];
 
         expect(runDeployment).toBeCalledWith(mockOptions, expect.arrayContaining(expected));
     })

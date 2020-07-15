@@ -53,7 +53,7 @@ const setConfigurationFromOptions = async (environmentVariables, environment, bl
   if (environmentVariables && environmentVariables.length > 0) {
     for (const config of environmentVariables) {
       console.log(`Setting Environment Variable ${config.name} to be ${config.value} in environmentId: ${environment.id}`);
-      await deployUtils.setConfiguration(environment, blueprintId, config.name, config.value);
+      await deployUtils.setConfiguration(environment, blueprintId, config.name, config.value, config.sensitive);
     }
   }
 };

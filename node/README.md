@@ -48,7 +48,9 @@ For yarn please run:
   **-b --blueprintId** - The Blueprint id you would like to deploy with
 
   **-e --environmentName** - The environment name you would like to create, if it exists it will deploy to that environment
-
+  
+  **-q --sensitiveEnvironmentName** - The sensitive environment name you would like to create, if it exists it will deploy to that environment
+    
   **-v --environmentVariables** - The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value" 
   
   **-r --revision** - You git revision, can be a branch tag or a commit hash. Default value `master`

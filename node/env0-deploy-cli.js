@@ -11,7 +11,7 @@ const optionDefinitions = [
   { name: 'blueprintId', alias: 'b', type: String, description: 'The Blueprint id you would like to deploy' },
   { name: 'environmentName', alias: 'e', type: String, description: 'The environment name you would like to create, if it exists it will deploy to that environment' },
   { name: 'environmentVariables', alias: 'v', type: String, multiple: true, defaultValue: [], description: 'The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"' },
-  { name: 'sensitiveEnvironmentVariables', alias: 'vs', type: String, multiple: true, defaultValue: [], description: 'The sensitive environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"' },
+  { name: 'sensitiveEnvironmentVariables', alias: 'q', type: String, multiple: true, defaultValue: [], description: 'The sensitive environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"' },
 
   { name: 'revision', alias: 'r', type: String, defaultValue: 'master', description: 'Your git revision, can be a branch tag or a commit hash. Default value "master" ' },
   { name: 'archiveAfterDestroy',  type: Boolean, defaultValue: false, description: 'Archive the environment after a successful destroy' },

@@ -63,7 +63,7 @@ class DeployUtils {
 
   async destroyEnvironment(environment) {
     console.log(`Starting to destroy environmentId: ${environment.id}`);
-    const deployment = await apiClient.callApi('delete', `environments/deployments/${environment.latestDeploymentLogId}`);
+    const deployment = await apiClient.callApi('post', `environments/${environment.id}/destroy`);
     console.log(`Started destroy ${deployment.id}`);
   }
 

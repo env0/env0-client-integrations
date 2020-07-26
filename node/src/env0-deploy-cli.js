@@ -114,7 +114,7 @@ const run = async () => {
       message += `: ${error.response.data.message}`
     }
 
-    console.log(message);
+    console.error(message);
     process.exit(1);
   }
 };

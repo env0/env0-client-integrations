@@ -12,7 +12,7 @@ class Env0ApiClient {
         Authorization: `Basic ${buff}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'User-Agent': `env0 ${version}`
+        'User-Agent': `env0-node-cli-${version}`
       }
     })
   }

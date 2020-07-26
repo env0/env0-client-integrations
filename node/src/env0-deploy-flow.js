@@ -2,15 +2,30 @@ const DeployUtils = require('./env0-deploy-utils');
 
 const deployUtils = new DeployUtils();
 
-const runDeployment = async (options, environmentVariables) => {
+const assertRequiredOptions = (options) => {
+  const requiredOptions = ['organizationId', 'projectId', 'apiKey', 'apiSecret']
+
+  let missingOptions = [];
+  requiredOptions.forEach(opt => !Object.keys(options).includes(opt) && missingOptions.push(opt));
+
+  if (missingOptions.length) {
+    throw new Error(`Missing required options: ${missingOptions}`)
+  }
+}
+
+const runDeployment = async (command, options, environmentVariables) => {
+  assertRequiredOptions(options);
+
+  console.log(`running ${command} with the following arguments:`, options);
+
   await DeployUtils.init(options);
-  switch(options.action.toLowerCase()) {
+  switch(command) {
     case 'deploy':
       return await createAndDeploy(options, environmentVariables);
     case 'destroy':
       return await destroy(options);
     default:
-      throw new Error(`Action ${options.action} is Invalid, Valid actions are Deploy and Destroy`);
+      throw new Error(`Action ${command} is Invalid, Valid actions are Deploy and Destroy`);
   }
 };
 
@@ -26,7 +41,7 @@ const createAndDeploy = async (options, environmentVariables) => {
   await deployUtils.pollEnvironmentStatus(environment.id);
   await deployUtils.deployEnvironment(environment, options.revision, options.blueprintId);
   const lastStatus = await deployUtils.pollEnvironmentStatus(environment.id);
-  if (lastStatus != 'ACTIVE') {
+  if (lastStatus !== 'ACTIVE') {
     throw new Error(`Environment ${environment.id} did not reach ACTIVE status`);
   }
 };

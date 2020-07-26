@@ -1,7 +1,7 @@
-const DeployUtils = require("../env0-deploy-utils");
-const runDeployment = require("../env0-deploy-flow");
+const DeployUtils = require("../src/env0-deploy-utils");
+const runDeployment = require("../src/env0-deploy-flow");
 
-jest.mock("../env0-deploy-utils");
+jest.mock("../src/env0-deploy-utils");
 
 const mockRequiredOptions = {
   projectId: 'proj0',

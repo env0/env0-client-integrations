@@ -1,9 +1,9 @@
-const runDeployment = require('../env0-deploy-flow');
-const run = require('../env0-deploy-cli');
+const runDeployment = require('../src/env0-deploy-flow');
+const run = require('../src/env0-deploy-cli');
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 
-jest.mock('../env0-deploy-flow');
+jest.mock('../src/env0-deploy-flow');
 jest.mock('command-line-usage');
 jest.mock('command-line-args');
 

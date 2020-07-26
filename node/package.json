@@ -2,7 +2,7 @@
   "name": "env0-deploy-scripts",
   "version": "1.0.1",
   "description": "Deploy env0 using env0 system",
-  "main": "env0-deploy-cli.js",
+  "main": "src/env0-deploy-cli.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint ."
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "bin": {
-    "env0": "index.js"
+    "env0": "bin/index.js"
   },
   "dependencies": {
     "axios": "^0.19.0",

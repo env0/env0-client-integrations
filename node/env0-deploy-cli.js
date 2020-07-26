@@ -94,8 +94,6 @@ const isCallingForHelp = (args) => {
 }
 
 const run = async () => {
-
-
   try {
     const { command } = mainOptions;
 

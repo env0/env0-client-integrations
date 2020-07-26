@@ -9,6 +9,9 @@
   },
   "author": "",
   "license": "ISC",
+  "bin": {
+    "env0": "index.js"
+  },
   "dependencies": {
     "axios": "^0.19.0",
     "command-line-args": "^5.1.1",

@@ -57,8 +57,8 @@ const sections = [
   {
     header: 'Example',
     content: [
-      `$ node env0-deploy-cli.js deploy -k <apiKey> -s <apiSecret> -o <organizationId> -p <projectId> -b <blueprintId> -e <environmentName> -r [master] -v [stage=dev]`,
-      '$ node env0-deploy-cli.js --help'
+      `$ env0 deploy -k <apiKey> -s <apiSecret> -o <organizationId> -p <projectId> -b <blueprintId> -e <environmentName> -r [master] -v [stage=dev]`,
+      '$ env0 --help'
     ]
   },
   {
@@ -83,10 +83,6 @@ const assertCommandExists = (command) => {
   }
 }
 
-const usage = commandLineUsage(sections);
-const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
-const argv = mainOptions._unknown || [];
-
 const isCallingForHelp = (args) => {
   const HELP_ARGS = ['-h', '--help', 'help'];
 
@@ -94,10 +90,14 @@ const isCallingForHelp = (args) => {
 }
 
 const run = async () => {
+  const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
+  const argv = mainOptions._unknown || [];
+
   try {
     const { command } = mainOptions;
 
     if (isCallingForHelp(argv)) {
+      const usage = commandLineUsage(sections);
       console.log(usage);
     } else {
       assertCommandExists(command);
@@ -139,7 +139,5 @@ const parseEnvironmentVariables = (environmentVariables, sensitive) => {
 const getEnvironmentVariablesOptions = (environmentVariables, sensitiveEnvironmentVariables) => {
   return [ ...parseEnvironmentVariables(environmentVariables, false), ...parseEnvironmentVariables(sensitiveEnvironmentVariables, true)]
 };
-
-run();
 
 module.exports = run;

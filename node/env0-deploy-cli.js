@@ -78,7 +78,7 @@ const sections = [
 
 const assertCommandExists = (command) => {
   if (!availableCommands[command]) {
-    const error = `${command ? `Unknown command: ${command}` : 'Command is missing'}. Available commands are: ${Object.keys(availableCommands)}`;
+    const error = `${command ? `Unknown command: "${command}"` : 'Command is missing'} \nRun "env0 --help" to see available commands`;
     throw new Error(error)
   }
 }

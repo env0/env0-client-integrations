@@ -83,10 +83,10 @@ const assertCommandExists = (command) => {
   }
 }
 
-const isCallingForHelp = (args) => {
-  const HELP_ARGS = ['-h', '--help', 'help'];
+const isCallingForHelp = (command, args) => {
+  const HELP_ARGS = ['-h', '--help'];
 
-  return HELP_ARGS.some(h => args.includes(h))
+  return HELP_ARGS.some(h => args.includes(h)) || command === 'help'
 }
 
 const run = async () => {
@@ -96,7 +96,7 @@ const run = async () => {
   try {
     const { command } = mainOptions;
 
-    if (isCallingForHelp(argv)) {
+    if (isCallingForHelp(command, argv)) {
       const usage = commandLineUsage(sections);
       console.log(usage);
     } else {

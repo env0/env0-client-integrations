@@ -49,7 +49,7 @@ describe("env0-deploy-cli", () => {
         ${'help'}
         `('when user asks for help with $command', ({ command }) => {
             beforeEach(async () => {
-                await mockOptionsAndRun({ rawArgs: [ command ]});
+                await mockOptionsAndRun({ command, rawArgs: [ command ]});
             })
 
             it('should present the help message', () => {

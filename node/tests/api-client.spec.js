@@ -12,12 +12,9 @@ describe('api-client', () => {
     })
 
     it('should set authorization header', () => {
-        const expected = Buffer.from(`${mockKey}:${mockSecret}`).toString('base64');
-
-        expect(axios.create).toBeCalledWith(expect.objectContaining({
-            headers: expect.objectContaining({ Authorization: `Basic ${expected}` })
-        }))
+        expect(axios.create).toBeCalledWith(expect.objectContaining({ auth: { username: mockKey, password: mockSecret }}))
     })
+
     it('should set user agent header', () => {
         expect(axios.create).toBeCalledWith(expect.objectContaining({
             headers: expect.objectContaining({ 'User-Agent': expect.stringContaining('env0-node-cli-') })

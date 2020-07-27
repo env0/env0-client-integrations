@@ -1,23 +1,26 @@
 const axios = require('axios');
-
-const apiBaseUrl = process.env.ENV0_API_URL || 'https://api.env0.com';
+const { version } = require('../package.json');
 
 class Env0ApiClient {
   async init(apiKey, apiSecret) {
-    const auth = `${apiKey}:${apiSecret}`;
-    const buff = Buffer.from(auth).toString('base64');
-    this.authHeader = { Authorization: `Basic ${buff}` };
+    this.apliClient = axios.create({
+      baseURL: process.env.ENV0_API_URL || 'https://api.env0.com',
+      auth: {
+        username: apiKey,
+        password: apiSecret
+      },
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'User-Agent': `env0-node-cli-${version}`
+      }
+    })
   }
 
   async callApi(method, route, config) {
-    const response = await axios({
+    const response = await this.apliClient({
       method,      
-      url: `${apiBaseUrl}/${route}`,
-      headers: {
-        ...this.authHeader,
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
+      url: route,
       ...config
     });
 

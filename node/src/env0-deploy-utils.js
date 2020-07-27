@@ -1,4 +1,4 @@
-const Env0ApiClient = require('./api-client');
+const Env0ApiClient = require('./commons/api-client');
 
 const apiClient = new Env0ApiClient();
 

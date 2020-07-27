@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const persistedOptions = require('../../src/commons/persisted-options');
+const persistentOptions = require('../../src/commons/persistent-options');
 const { OPTIONS } = require('../../src/commons/constants');
 
 jest.mock('fs-extra');
@@ -23,7 +23,7 @@ describe('persisted options', () => {
             })
 
             it('should try to read from disk', () => {
-                const options = persistedOptions.read();
+                const options = persistentOptions.read();
 
                 expect(fs.readFileSync).toBeCalled();
                 expect(options).toEqual(mockOptions);
@@ -31,14 +31,14 @@ describe('persisted options', () => {
 
             it('should throw when json is malformed', () => {
                 jest.spyOn(fs, 'readFileSync').mockReturnValue('not-a-json');
-                expect(() => persistedOptions.read()).toThrow();
+                expect(() => persistentOptions.read()).toThrow();
             })
 
             it('env vars should take precedence over config file', () => {
                 const anotherApiKey = 'key1';
                 process.env.ENV0_API_KEY = anotherApiKey;
 
-                const options = persistedOptions.read();
+                const options = persistentOptions.read();
 
                 expect(options).toEqual({ ...mockOptions, [OPTIONS.API_KEY]: anotherApiKey })
             })
@@ -57,7 +57,7 @@ describe('persisted options', () => {
 
     describe('write', () => {
         it('should write ONLY required options to disk', () => {
-            persistedOptions.write({ ...mockOptions, another: 'option', 'and-another': 'option' })
+            persistentOptions.write({ ...mockOptions, another: 'option', 'and-another': 'option' })
 
             expect(fs.writeJsonSync).toBeCalledWith(expect.any(String), mockOptions, { spaces: 2 });
         })

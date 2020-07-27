@@ -1,10 +1,10 @@
 const DeployUtils = require("../src/env0-deploy-utils");
 const runDeployment = require("../src/env0-deploy-flow");
-const persistedOptions = require('../src/commons/persisted-options');
+const persistentOptions = require('../src/commons/persistent-options');
 const { OPTIONS } = require('../src/commons/constants');
 
 jest.mock("../src/env0-deploy-utils");
-jest.mock('../src/commons/persisted-options');
+jest.mock('../src/commons/persistent-options');
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID } = OPTIONS;
 
@@ -21,7 +21,7 @@ describe("env0-deploy-flow", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    jest.spyOn(persistedOptions, 'read').mockReturnValue({});
+    jest.spyOn(persistentOptions, 'read').mockReturnValue({});
   });
 
   beforeEach(() => {
@@ -29,11 +29,11 @@ describe("env0-deploy-flow", () => {
     deployUtilsMock.pollEnvironmentStatus.mockResolvedValue("ACTIVE");
   })
 
-  it('should read and write persisted options', async () => {
+  it('should read and write persistent options', async () => {
     await runDeployment('deploy', mockRequiredOptions);
 
-    expect(persistedOptions.read).toBeCalled();
-    expect(persistedOptions.write).toBeCalled();
+    expect(persistentOptions.read).toBeCalled();
+    expect(persistentOptions.write).toBeCalled();
   })
 
   describe('when there are missing required options', () => {
@@ -59,7 +59,7 @@ describe("env0-deploy-flow", () => {
       });
 
       it('should use parameters with precedence over existing config', async () => {
-        jest.spyOn(persistedOptions, 'read').mockReturnValue({ [API_KEY]: 'key1', [API_SECRET]: 'secret1' });
+        jest.spyOn(persistentOptions, 'read').mockReturnValue({ [API_KEY]: 'key1', [API_SECRET]: 'secret1' });
 
         await runDeployment('deploy', mockRequiredOptions);
 

@@ -1,7 +1,7 @@
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 const runDeployment = require('./env0-deploy-flow');
-
+const boxen = require('boxen');
 
 const mainDefinitions = [
   { name: 'command', defaultOption: true },
@@ -35,23 +35,18 @@ const availableCommands = {
 };
 
 const header = `
-     ///(((///*****    ,,,,*                                                               ,%%%%%%%%%%%,
-     ///(((///*****    ,,,,*                                                              #%%*       /%%/
-                                                                                          %%%         #%%
-                                     .#%%%%%%(       .%%* (%%%%%#.     #%%         #%%    %%%         #%%
-        .                          #%%%*..../%%%,    .%%%%(,..,(%%%,    %%(       .%%*    %%%         #%%
-     ///((    //***    **,,,       %%/        %%%    .%%/        %%%    *%%       %%%     %%%  ****   #%%
-     ///((    //***    **,,,      .%%,        #%%    .%%,        %%%     #%%     /%%      %%%  ****   #%%
-     ///((                        .%%%%%%%%%%%%%%    .%%,        %%%      %%,    %%.      %%%         #%%
-     ///((                        .%%*               .%%,        %%%      *%%   #%%       %%%         #%%
-     ///((    **********,,,*      .%%*               .%%,        %%%       %%% /%%        %%%         %%%
-     ///((    **********,,,*       %%%               .%%,        %%%        %%.%%*        (%%#       %%%,
-     ///((    **********,,,*        .%%%%%%%%%%%%    .%%,        %%%        /%%%%           #%%%%%%%%%#
-                                                                                                             `;
+███████ ███    ██ ██    ██  ██████  
+██      ████   ██ ██    ██ ██  ████ 
+█████   ██ ██  ██ ██    ██ ██ ██ ██ 
+██      ██  ██ ██  ██  ██  ████  ██ 
+███████ ██   ████   ████    ██████  
+
+Self-Service Cloud Environments  
+`
 
 const sections = [
   {
-    content: header,
+    content: boxen(header, {padding: 1, borderStyle: 'bold', align: 'center'} ),
     raw: true
   },
   {

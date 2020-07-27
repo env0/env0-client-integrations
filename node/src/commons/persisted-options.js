@@ -18,7 +18,6 @@ const envVarToOptionMapper = {
 const reduceOptions = (config) => {
     const includedOptions = [ API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME ];
 
-    console.log('DEBUG: Reducing unwanted options...');
     const reducedOptions = {};
     Object.entries(config).forEach(([option, value]) => {
         if (includedOptions.includes(option)) {
@@ -33,10 +32,9 @@ const reduceOptions = (config) => {
 const getEnvVars = () => {
     const config = {};
 
-    console.log('DEBUG: Checking environment variables...');
     Object.entries(envVarToOptionMapper).forEach(([envVar, option]) => {
         if (process.env[envVar]) {
-            console.log(`DEBUG: Found environment variable ${envVar}`);
+            console.log(`Found environment variable ${envVar}`);
             config[option] = process.env[envVar];
         }
     });
@@ -47,9 +45,8 @@ const getEnvVars = () => {
 const read = () => {
     let config = {};
 
-    console.log('DEBUG: Checking if configuration exists...')
     if (fs.existsSync(CONFIG_FILE)) {
-        console.log('DEBUG: Reading from existing configuration...');
+        console.log('Reading from existing configuration...');
         const raw = fs.readFileSync(CONFIG_FILE);
 
         try {
@@ -68,7 +65,7 @@ const read = () => {
 const write = (options) => {
     const reduced = reduceOptions(options);
 
-    console.log('DEBUG: Writing configuration to disk...');
+    console.log('Writing configuration to disk...');
     fs.writeJsonSync(CONFIG_FILE, reduced, { spaces: 2 });
 }
 

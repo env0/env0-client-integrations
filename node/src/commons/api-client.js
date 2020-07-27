@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { version } = require('../package.json');
+const { version } = require('../../package.json');
 
 class Env0ApiClient {
   async init(apiKey, apiSecret) {

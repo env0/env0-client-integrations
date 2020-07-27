@@ -40,7 +40,7 @@ const header = `
  .ooooo.  ooo. .oo. oooo    ooo 888    888 
 d88' \`88b \`888P"Y88b \`88.  .8'  888    888 
 888ooo888  888   888  \`88..8'   888    888 
-888    .o  888   888   \`888'    \`88b  d88' 
+888        888   888   \`888'    \`88b  d88' 
 \`Y8bod8P' o888o o888o   \`8'      \`Y8bd8P'  
 
 Self-Service Cloud Environments

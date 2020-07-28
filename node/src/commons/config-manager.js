@@ -1,7 +1,8 @@
 const os = require('os');
 const fs = require('fs-extra');
 const path = require('path');
-const { OPTIONS } = require("./constants");
+const { OPTIONS } = require('./constants');
+const { pick } = require('lodash');
 
 const CONFIG_FILE = path.join(os.homedir(), '.env0', 'config.json');
 
@@ -17,20 +18,6 @@ const envVarToOptionMapper = {
     ENV0_BLUEPRINT_ID: BLUEPRINT_ID,
     ENV0_ENVIRONMENT_NAME: ENVIRONMENT_NAME
 }
-
-
-const reduceOptions = (config) => {
-
-    const reducedOptions = {};
-    Object.entries(config).forEach(([option, value]) => {
-        if (INCLUDED_OPTIONS.includes(option)) {
-            reducedOptions[option] = value;
-        }
-    })
-
-    return reducedOptions;
-}
-
 
 const getEnvVars = () => {
     const config = {};
@@ -66,7 +53,7 @@ const read = () => {
 };
 
 const write = (options) => {
-    const reduced = reduceOptions(options);
+    const reduced = pick(options, INCLUDED_OPTIONS);
 
     console.log('Writing configuration to disk...');
     fs.writeJsonSync(CONFIG_FILE, reduced, { spaces: 2 });

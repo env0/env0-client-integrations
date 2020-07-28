@@ -42,6 +42,16 @@ describe('config manager', () => {
 
                 expect(options).toEqual({ ...mockOptions, [OPTIONS.API_KEY]: anotherApiKey })
             })
+
+            it('cli parameters should take precedence over env vars + config file', async () => {
+                const expectedKey = 'key2';
+                process.env.ENV0_API_KEY = 'key1';
+
+                const options = configManager.read({ [OPTIONS.API_KEY]: expectedKey });
+
+                expect(options).toEqual({ ...mockOptions, [OPTIONS.API_KEY]: expectedKey })
+
+            })
         })
 
         describe('when config file does not exist', () => {

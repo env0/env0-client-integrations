@@ -32,23 +32,25 @@ const getEnvVars = () => {
     return config;
 }
 
-const read = () => {
-    let config = {};
+const read = (configFromParams) => {
+    let configFromDisk = {};
+    const configFromEnv = getEnvVars();
 
     if (fs.existsSync(CONFIG_FILE)) {
         console.log('Reading from existing configuration...');
         const raw = fs.readFileSync(CONFIG_FILE);
 
         try {
-            config = JSON.parse(raw);
+            configFromDisk = JSON.parse(raw);
         } catch (err) {
             throw new Error(`Malformed config file found at: ${CONFIG_FILE}`);
         }
     }
 
     return {
-        ...config,
-        ...getEnvVars()
+        ...configFromDisk,
+        ...configFromEnv,
+        ...configFromParams
     };
 };
 

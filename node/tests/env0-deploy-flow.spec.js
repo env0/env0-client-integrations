@@ -57,14 +57,6 @@ describe("env0-deploy-flow", () => {
 
         expect(runCommand('deploy')).rejects.toThrow(`Environment ${environmentId} did not reach ACTIVE status`);
       });
-
-      it('should use parameters with precedence over existing config', async () => {
-        jest.spyOn(configManager, 'read').mockReturnValue({ [API_KEY]: 'key1', [API_SECRET]: 'secret1' });
-
-        await runCommand('deploy', mockRequiredOptions);
-
-        expect(DeployUtils.init).toBeCalledWith(mockRequiredOptions);
-      })
     })
   });
 });

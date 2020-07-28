@@ -18,9 +18,7 @@ const assertRequiredOptions = (options) => {
 }
 
 const runCommand = async (command, options, environmentVariables) => {
-  const existingOptions = configManager.read();
-
-  options = { ...existingOptions, ...options, }
+  options = configManager.read(options);
   assertRequiredOptions(options);
 
   console.log(`running ${command} with the following arguments:`, options);

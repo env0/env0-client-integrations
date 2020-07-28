@@ -18,6 +18,7 @@ const mockRequiredOptions = {
 describe("env0-deploy-flow", () => {
   const deployUtilsMock = DeployUtils.mock.instances[0];
   const environmentId = 12345;
+  const deploymentLogId = 67890;
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -26,7 +27,9 @@ describe("env0-deploy-flow", () => {
 
   beforeEach(() => {
     deployUtilsMock.getEnvironment.mockResolvedValue({ id: environmentId });
-    deployUtilsMock.pollEnvironmentStatus.mockResolvedValue("ACTIVE");
+    deployUtilsMock.waitForEnvironment.mockResolvedValue({});
+    deployUtilsMock.deployEnvironment.mockResolvedValue({ id: deploymentLogId });
+    deployUtilsMock.destroyEnvironment.mockResolvedValue({ id: deploymentLogId });
   })
 
   it('should read and write persistent options', async () => {
@@ -43,19 +46,24 @@ describe("env0-deploy-flow", () => {
   });
 
   describe("when all required options exist", () => {
-    describe('deploy', () => {
+    describe.each`
+    command | mock
+    ${'deploy'} | ${deployUtilsMock.deployEnvironment}
+    ${'destroy'} | ${deployUtilsMock.destroyEnvironment}
+    `('$command', ({ command, mock }) => {
 
       it("should fail when it fails to set configuration", async () => {
         const configError = "Configuration error";
         deployUtilsMock.setConfiguration.mockRejectedValue(new Error(configError));
 
-        expect(runCommand('deploy', mockRequiredOptions, { name: "shoes", value: "socks " })).rejects.toThrow(configError);
+        expect(runCommand(command, mockRequiredOptions, { name: "shoes", value: "socks " })).rejects.toThrow(configError);
       });
 
-      it("should throw exception when environment status is FAILED", async () => {
-        deployUtilsMock.pollEnvironmentStatus.mockResolvedValue("FAILED");
+      it("should throw exception when deployment fails", async () => {
+        const errorMessage = 'Some Error Occured';
+        mock.mockRejectedValue(new Error(errorMessage));
 
-        expect(runCommand('deploy')).rejects.toThrow(`Environment ${environmentId} did not reach ACTIVE status`);
+        expect(runCommand(command)).rejects.toThrow(errorMessage);
       });
     })
   });

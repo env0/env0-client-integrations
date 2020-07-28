@@ -43,12 +43,9 @@ const createAndDeploy = async (options, environmentVariables) => {
     environment = await deployUtils.createEnvironment(options.environmentName, options.organizationId, options.projectId);
   }
   await setConfigurationFromOptions(environmentVariables, environment, options.blueprintId);
-  await deployUtils.pollEnvironmentStatus(environment.id);
-  await deployUtils.deployEnvironment(environment, options.revision, options.blueprintId);
-  const lastStatus = await deployUtils.pollEnvironmentStatus(environment.id);
-  if (lastStatus !== 'ACTIVE') {
-    throw new Error(`Environment ${environment.id} did not reach ACTIVE status`);
-  }
+
+  const deployment = await deployUtils.deployEnvironment(environment, options.revision, options.blueprintId);
+  await deployUtils.pollDeploymentStatus(deployment.id);
 };
 
 const destroy = async (options) => {
@@ -56,15 +53,13 @@ const destroy = async (options) => {
   const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
 
   if (environment) {
-    await deployUtils.pollEnvironmentStatus(environment.id);
-    await deployUtils.destroyEnvironment(environment);
-    await deployUtils.pollEnvironmentStatus(environment.id);
+    const deployment = await deployUtils.destroyEnvironment(environment);
+    await deployUtils.pollDeploymentStatus(deployment.id);
 
     if (options.archiveAfterDestroy) {
       await deployUtils.archiveIfInactive(environment.id);
     }
-  }
-  else {
+  } else {
     throw new Error(`Could not find an environment with the name ${options.environmentName}`);
   }
 };

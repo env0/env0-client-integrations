@@ -58,7 +58,7 @@ const write = (options) => {
     const reduced = pick(options, INCLUDED_OPTIONS);
 
     console.log('Writing configuration to disk...');
-    fs.writeJsonSync(CONFIG_FILE, reduced, { spaces: 2 });
+    fs.outputJsonSync(CONFIG_FILE, reduced, { spaces: 2 });
 }
 
 module.exports = {

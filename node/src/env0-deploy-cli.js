@@ -1,6 +1,6 @@
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
-const runDeployment = require('./env0-deploy-flow');
+const runCommand = require('./env0-deploy-flow');
 const boxen = require('boxen');
 const { OPTIONS } = require('./commons/constants');
 
@@ -117,7 +117,7 @@ const run = async () => {
       const commandOptions = commandLineArgs(commandDefinitions, { argv });
       const environmentVariables = getEnvironmentVariablesOptions(commandOptions[ENVIRONMENT_VARIABLES], commandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]);
 
-      await runDeployment(command, commandOptions, environmentVariables);
+      await runCommand(command, commandOptions, environmentVariables);
     }
   } catch (error) {
     let { message } = error;

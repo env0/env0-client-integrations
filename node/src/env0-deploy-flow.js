@@ -17,7 +17,7 @@ const assertRequiredOptions = (options) => {
   }
 }
 
-const runDeployment = async (command, options, environmentVariables) => {
+const runCommand = async (command, options, environmentVariables) => {
   const existingOptions = configManager.read();
 
   options = { ...existingOptions, ...options, }
@@ -80,4 +80,4 @@ const setConfigurationFromOptions = async (environmentVariables, environment, bl
   }
 };
 
-module.exports = runDeployment;
+module.exports = runCommand;

@@ -1,5 +1,5 @@
 const DeployUtils = require("../src/env0-deploy-utils");
-const runDeployment = require("../src/env0-deploy-flow");
+const runCommand = require("../src/env0-deploy-flow");
 const configManager = require('../src/commons/config-manager');
 const { OPTIONS } = require('../src/commons/constants');
 
@@ -30,7 +30,7 @@ describe("env0-deploy-flow", () => {
   })
 
   it('should read and write persistent options', async () => {
-    await runDeployment('deploy', mockRequiredOptions);
+    await runCommand('deploy', mockRequiredOptions);
 
     expect(configManager.read).toBeCalled();
     expect(configManager.write).toBeCalled();
@@ -38,7 +38,7 @@ describe("env0-deploy-flow", () => {
 
   describe('when there are missing required options', () => {
     it('should fail with proper error message', () => {
-      expect(runDeployment('deploy', {})).rejects.toThrow(expect.stringContaining('Missing required options'));
+      expect(runCommand('deploy', {})).rejects.toThrow(expect.stringContaining('Missing required options'));
     })
   });
 
@@ -49,19 +49,19 @@ describe("env0-deploy-flow", () => {
         const configError = "Configuration error";
         deployUtilsMock.setConfiguration.mockRejectedValue(new Error(configError));
 
-        expect(runDeployment('deploy', mockRequiredOptions, { name: "shoes", value: "socks " })).rejects.toThrow(configError);
+        expect(runCommand('deploy', mockRequiredOptions, { name: "shoes", value: "socks " })).rejects.toThrow(configError);
       });
 
       it("should throw exception when environment status is FAILED", async () => {
         deployUtilsMock.pollEnvironmentStatus.mockResolvedValue("FAILED");
 
-        expect(runDeployment('deploy')).rejects.toThrow(`Environment ${environmentId} did not reach ACTIVE status`);
+        expect(runCommand('deploy')).rejects.toThrow(`Environment ${environmentId} did not reach ACTIVE status`);
       });
 
       it('should use parameters with precedence over existing config', async () => {
         jest.spyOn(configManager, 'read').mockReturnValue({ [API_KEY]: 'key1', [API_SECRET]: 'secret1' });
 
-        await runDeployment('deploy', mockRequiredOptions);
+        await runCommand('deploy', mockRequiredOptions);
 
         expect(DeployUtils.init).toBeCalledWith(mockRequiredOptions);
       })

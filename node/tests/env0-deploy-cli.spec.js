@@ -1,4 +1,4 @@
-const runDeployment = require('../src/env0-deploy-flow');
+const runCommand = require('../src/env0-deploy-flow');
 const run = require('../src/env0-deploy-cli');
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
@@ -33,7 +33,7 @@ describe("env0-deploy-cli", () => {
         });
 
         it('should not call run deployment', () => {
-            expect(runDeployment).not.toBeCalled();
+            expect(runCommand).not.toBeCalled();
         })
 
         it('should exit with 1', () => {
@@ -57,7 +57,7 @@ describe("env0-deploy-cli", () => {
             })
 
             it('should not call run deployment', () => {
-                expect(runDeployment).not.toBeCalled();
+                expect(runCommand).not.toBeCalled();
             })
         })
 
@@ -78,7 +78,7 @@ describe("env0-deploy-cli", () => {
             ];
 
             it('should run deployment with proper params', () => {
-                expect(runDeployment).toBeCalledWith(command, expect.objectContaining(args), expectedEnvVars);
+                expect(runCommand).toBeCalledWith(command, expect.objectContaining(args), expectedEnvVars);
             })
         })
     })

@@ -3,8 +3,11 @@ const fs = require('fs-extra');
 const path = require('path');
 const { OPTIONS } = require("./constants");
 
-const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME } = OPTIONS;
 const CONFIG_FILE = path.join(os.homedir(), '.env0', 'config.json');
+
+const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME } = OPTIONS;
+
+const INCLUDED_OPTIONS = [ API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME ];
 
 const envVarToOptionMapper = {
     ENV0_API_KEY: API_KEY,
@@ -15,12 +18,12 @@ const envVarToOptionMapper = {
     ENV0_ENVIRONMENT_NAME: ENVIRONMENT_NAME
 }
 
+
 const reduceOptions = (config) => {
-    const includedOptions = [ API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME ];
 
     const reducedOptions = {};
     Object.entries(config).forEach(([option, value]) => {
-        if (includedOptions.includes(option)) {
+        if (INCLUDED_OPTIONS.includes(option)) {
             reducedOptions[option] = value;
         }
     })

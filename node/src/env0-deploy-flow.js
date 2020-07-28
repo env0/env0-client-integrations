@@ -21,7 +21,7 @@ const runCommand = async (command, options, environmentVariables) => {
   options = configManager.read(options);
   assertRequiredOptions(options);
 
-  console.log(`running ${command} with the following arguments:`, options);
+  console.log(`Running ${command} with the following arguments:`, options);
 
   const commands = {
     destroy: destroy,
@@ -35,8 +35,6 @@ const runCommand = async (command, options, environmentVariables) => {
 };
 
 const createAndDeploy = async (options, environmentVariables) => {
-  console.log('Starting deployment');
-
   let environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
   if (!environment) {
     console.log('did not find an environment');
@@ -49,7 +47,6 @@ const createAndDeploy = async (options, environmentVariables) => {
 };
 
 const destroy = async (options) => {
-  console.log('Starting destroying an environment');
   const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
 
   if (environment) {

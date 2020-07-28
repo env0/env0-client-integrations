@@ -21,7 +21,7 @@ describe("env0-deploy-flow", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    jest.spyOn(configManager, 'read').mockReturnValue({});
+    jest.spyOn(configManager, 'read').mockReturnValue(mockRequiredOptions);
   });
 
   beforeEach(() => {

@@ -1,11 +1,11 @@
 const fs = require('fs-extra');
-const persistentOptions = require('../../src/commons/persistent-options');
+const configManager = require('../../src/commons/config-manager');
 const { OPTIONS } = require('../../src/commons/constants');
 
 jest.mock('fs-extra');
 
 
-describe('persisted options', () => {
+describe('config manager', () => {
     const mockOptions = {
         [OPTIONS.API_KEY]: 'key0',
         [OPTIONS.API_SECRET]: 'secret0'
@@ -23,7 +23,7 @@ describe('persisted options', () => {
             })
 
             it('should try to read from disk', () => {
-                const options = persistentOptions.read();
+                const options = configManager.read();
 
                 expect(fs.readFileSync).toBeCalled();
                 expect(options).toEqual(mockOptions);
@@ -31,14 +31,14 @@ describe('persisted options', () => {
 
             it('should throw when json is malformed', () => {
                 jest.spyOn(fs, 'readFileSync').mockReturnValue('not-a-json');
-                expect(() => persistentOptions.read()).toThrow();
+                expect(() => configManager.read()).toThrow();
             })
 
             it('env vars should take precedence over config file', () => {
                 const anotherApiKey = 'key1';
                 process.env.ENV0_API_KEY = anotherApiKey;
 
-                const options = persistentOptions.read();
+                const options = configManager.read();
 
                 expect(options).toEqual({ ...mockOptions, [OPTIONS.API_KEY]: anotherApiKey })
             })
@@ -57,7 +57,7 @@ describe('persisted options', () => {
 
     describe('write', () => {
         it('should write ONLY required options to disk', () => {
-            persistentOptions.write({ ...mockOptions, another: 'option', 'and-another': 'option' })
+            configManager.write({ ...mockOptions, another: 'option', 'and-another': 'option' })
 
             expect(fs.writeJsonSync).toBeCalledWith(expect.any(String), mockOptions, { spaces: 2 });
         })

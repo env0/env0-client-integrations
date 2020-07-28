@@ -1,5 +1,5 @@
 const DeployUtils = require('./env0-deploy-utils');
-const persistentOptions = require("./commons/persistent-options");
+const configManager = require("./commons/config-manager");
 const { OPTIONS } = require('./commons/constants');
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID } = OPTIONS;
@@ -18,7 +18,7 @@ const assertRequiredOptions = (options) => {
 }
 
 const runDeployment = async (command, options, environmentVariables) => {
-  const existingOptions = persistentOptions.read();
+  const existingOptions = configManager.read();
 
   options = { ...existingOptions, ...options, }
   assertRequiredOptions(options);
@@ -33,7 +33,7 @@ const runDeployment = async (command, options, environmentVariables) => {
   await DeployUtils.init(options);
   await commands[command](options, environmentVariables);
 
-  persistentOptions.write(options);
+  configManager.write(options);
 };
 
 const createAndDeploy = async (options, environmentVariables) => {

@@ -1,7 +1,7 @@
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 const runDeployment = require('./env0-deploy-flow');
-
+const boxen = require('boxen');
 
 const mainDefinitions = [
   { name: 'command', defaultOption: true },
@@ -35,23 +35,20 @@ const availableCommands = {
 };
 
 const header = `
-     ///(((///*****    ,,,,*                                                               ,%%%%%%%%%%%,
-     ///(((///*****    ,,,,*                                                              #%%*       /%%/
-                                                                                          %%%         #%%
-                                     .#%%%%%%(       .%%* (%%%%%#.     #%%         #%%    %%%         #%%
-        .                          #%%%*..../%%%,    .%%%%(,..,(%%%,    %%(       .%%*    %%%         #%%
-     ///((    //***    **,,,       %%/        %%%    .%%/        %%%    *%%       %%%     %%%  ****   #%%
-     ///((    //***    **,,,      .%%,        #%%    .%%,        %%%     #%%     /%%      %%%  ****   #%%
-     ///((                        .%%%%%%%%%%%%%%    .%%,        %%%      %%,    %%.      %%%         #%%
-     ///((                        .%%*               .%%,        %%%      *%%   #%%       %%%         #%%
-     ///((    **********,,,*      .%%*               .%%,        %%%       %%% /%%        %%%         %%%
-     ///((    **********,,,*       %%%               .%%,        %%%        %%.%%*        (%%#       %%%,
-     ///((    **********,,,*        .%%%%%%%%%%%%    .%%,        %%%        /%%%%           #%%%%%%%%%#
-                                                                                                             `;
+                                  .oooo.   
+                                 d8P'\`Y8b  
+ .ooooo.  ooo. .oo. oooo    ooo 888    888 
+d88' \`88b \`888P"Y88b \`88.  .8'  888    888 
+888ooo888  888   888  \`88..8'   888    888 
+888        888   888   \`888'    \`88b  d88' 
+\`Y8bod8P' o888o o888o   \`8'      \`Y8bd8P'  
+
+Self-Service Cloud Environments
+`
 
 const sections = [
   {
-    content: header,
+    content: boxen(header, {padding: 1, margin: 1, borderStyle: 'bold', align: 'center'} ),
     raw: true
   },
   {

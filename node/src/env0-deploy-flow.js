@@ -1,9 +1,13 @@
 const DeployUtils = require('./env0-deploy-utils');
+const configManager = require("./commons/config-manager");
+const { OPTIONS } = require('./commons/constants');
+
+const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID } = OPTIONS;
 
 const deployUtils = new DeployUtils();
 
 const assertRequiredOptions = (options) => {
-  const requiredOptions = ['organizationId', 'projectId', 'apiKey', 'apiSecret']
+  const requiredOptions = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID];
 
   let missingOptions = [];
   requiredOptions.forEach(opt => !Object.keys(options).includes(opt) && missingOptions.push(opt));
@@ -13,20 +17,21 @@ const assertRequiredOptions = (options) => {
   }
 }
 
-const runDeployment = async (command, options, environmentVariables) => {
+const runCommand = async (command, options, environmentVariables) => {
+  options = configManager.read(options);
   assertRequiredOptions(options);
 
   console.log(`running ${command} with the following arguments:`, options);
 
-  await DeployUtils.init(options);
-  switch(command) {
-    case 'deploy':
-      return await createAndDeploy(options, environmentVariables);
-    case 'destroy':
-      return await destroy(options);
-    default:
-      throw new Error(`Action ${command} is Invalid, Valid actions are Deploy and Destroy`);
+  const commands = {
+    destroy: destroy,
+    deploy: createAndDeploy
   }
+
+  await DeployUtils.init(options);
+  await commands[command](options, environmentVariables);
+
+  configManager.write(options);
 };
 
 const createAndDeploy = async (options, environmentVariables) => {
@@ -73,4 +78,4 @@ const setConfigurationFromOptions = async (environmentVariables, environment, bl
   }
 };
 
-module.exports = runDeployment;
+module.exports = runCommand;

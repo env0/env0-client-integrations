@@ -1,7 +1,7 @@
 const DeployUtils = require("../src/env0-deploy-utils");
-const Env0ApiClient = require("../src/api-client");
+const Env0ApiClient = require("../src/commons/api-client");
 
-jest.mock("../src/api-client");
+jest.mock("../src/commons/api-client");
 
 describe("env0-deploy-utils", () => {
   let callApiMock;

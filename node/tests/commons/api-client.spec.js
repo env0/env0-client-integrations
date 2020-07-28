@@ -1,4 +1,4 @@
-const ApiClient = require('../src/api-client');
+const ApiClient = require('../../src/commons/api-client');
 const axios = require('axios');
 
 jest.mock('axios');

@@ -69,7 +69,7 @@ describe('config manager', () => {
         it('should write ONLY required options to disk', () => {
             configManager.write({ ...mockOptions, another: 'option', 'and-another': 'option' })
 
-            expect(fs.writeJsonSync).toBeCalledWith(expect.any(String), mockOptions, { spaces: 2 });
+            expect(fs.outputJsonSync).toBeCalledWith(expect.any(String), mockOptions, { spaces: 2 });
         })
 
     })

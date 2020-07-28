@@ -46,11 +46,11 @@ For yarn please run:
   **-b --blueprintId** - The Blueprint id you would like to deploy with (Optional for existing environments)
 
   **-e --environmentName** - The environment name you would like to create, if it exists it will deploy to that environment (Required for existing environments)
-  
-  **-q --sensitiveEnvironmentVariables** - The sensitive environment name you would like to create, if it exists it will deploy to that environment
-    
+      
   **-v --environmentVariables** - The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value" 
   
+  **-q --sensitiveEnvironmentVariables** - Same as environment variables (`-v`) but will be marked as sensitive and hidden on env0 platform. 
+
   **-r --revision** - You git revision, can be a branch tag or a commit hash. Default value `master`
 
   **--archiveAfterDestroy** - Archive the environment after a successful destroy

@@ -1,5 +1,5 @@
 const Env0ApiClient = require('./commons/api-client');
-
+const { range } = require('lodash');
 const apiClient = new Env0ApiClient();
 
 class DeployUtils {
@@ -8,11 +8,9 @@ class DeployUtils {
   }
 
   async getEnvironment(environmentName, projectId) {
-    console.log(`getting all environments projectId: ${projectId}`);
     const environments = await apiClient.callApi('get', `environments?projectId=${projectId}`);
-    const environment = environments.find(env => env.name === environmentName);
-    console.log(`returning this environment: ${JSON.stringify(environment)}`);
-    return environment;
+
+    return environments.find(env => env.name === environmentName);
   }
 
   async createEnvironment(environmentName, organizationId, projectId) {
@@ -56,66 +54,67 @@ class DeployUtils {
   async deployEnvironment(environment, blueprintRevision, blueprintId) {
     await this.waitForEnvironment(environment.id);
 
-    console.log(`starting to deploy environmentId: ${environment.id}, blueprintId: ${blueprintId}`);
-    const deployment = await apiClient.callApi('post', `environments/${environment.id}/deployments`,
-        {data: {blueprintId, blueprintRevision}});
-
-    console.log(`Started deployment ${deployment.id}`);
-
-    return deployment;
+    return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {data: {blueprintId, blueprintRevision}});
   }
 
   async destroyEnvironment(environment) {
     await this.waitForEnvironment(environment.id);
 
-    console.log(`Starting to destroy environmentId: ${environment.id}`);
-    const deployment = await apiClient.callApi('post', `environments/${environment.id}/destroy`);
-    console.log(`Started destroy ${deployment.id}`);
-
-    return deployment;
+    return await apiClient.callApi('post', `environments/${environment.id}/destroy`);
   }
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {
     let hasMoreLogs;
 
     do {
-      ({ hasMoreLogs, events } = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps/${stepName}/log`));
+      const { events, hasMoreLogs: currentHasMoreLogs } = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps/${stepName}/log`);
       events.forEach((event) => console.log(event.message));
 
+      hasMoreLogs = currentHasMoreLogs;
       await apiClient.sleep(1000);
     } while (hasMoreLogs)
   }
 
-  async pollDeploymentStatus(deploymentLogId) {
+  async fetchDeploymentSteps(deploymentLogId, stepsToSkip) {
     const inProgressStepStatuses = ['IN_PROGRESS', 'NOT_STARTED'];
-    const stepsAlreadyLogged = [];
+    const doneSteps = [];
+
+    const steps = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
+
+    for (const step of steps) {
+      const alreadyLogged = stepsToSkip.includes(step.name);
+      const inProgress = inProgressStepStatuses.includes(step.status);
+
+      if (!alreadyLogged && !inProgress) {
+        console.log(`$$$ ${step.name}`);
+
+        console.log(range(100).map(() => '#').join(''));
+        await this.writeDeploymentStepLog(deploymentLogId, step.name);
+
+        doneSteps.push(step.name);
+      }
+    }
+
+    return doneSteps;
+  }
+
+  async pollDeploymentStatus(deploymentLogId) {
+    let stepsAlreadyLogged = [];
     const maxRetryNumber = 200;
     let retryCount = 0;
 
     while (true) {
-      console.log(`Fetching deployment log...`)
       const { status } = await apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
 
       if (status !== 'IN_PROGRESS') {
-        console.debug(`Environment has reached status ${status}`);
+        await this.fetchDeploymentSteps(deploymentLogId, stepsAlreadyLogged);
         return;
       }
-      if (retryCount >= maxRetryNumber) throw new Error('Polling deployment log timed out');
 
-      console.debug(`Fetching deployment steps...`);
-      const steps = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
+      if (retryCount >= maxRetryNumber) throw new Error('Polling deployment timed out');
 
-      for (const step of steps) {
-        console.debug(`Inspecting step ${step.name}`);
-        const alreadyLogged = stepsAlreadyLogged.includes(step.name);
-        const inProgress = inProgressStepStatuses.includes(step.status);
-
-        if (!alreadyLogged && !inProgress) {
-          console.debug(`Fetching logs of step ${step.name} since its status is ${step.status}`);
-          await this.writeDeploymentStepLog(deploymentLogId, step.name);
-          stepsAlreadyLogged.push(step.name);
-        }
-      }
+      const doneSteps = await this.fetchDeploymentSteps(deploymentLogId, stepsAlreadyLogged);
+      stepsAlreadyLogged = [ ...stepsAlreadyLogged, ...doneSteps ];
 
       retryCount++;
       await apiClient.sleep(2000);
@@ -129,13 +128,12 @@ class DeployUtils {
     let status;
 
     do {
-      console.debug('Checking if environment is in deployable...');
       ({ status } = await apiClient.callApi('get', `environments/${environmentId}`));
 
       if (environmentValidStatuses.includes(status)) return;
       if (retryCount >= maxRetryNumber) throw new Error('Polling environment timed out');
 
-      console.log(`Waiting for environment to become deployable... (current status: ${status})`);
+      console.log(`Waiting for environment to become deployable. (current status: ${status})`);
 
       retryCount++;
       await apiClient.sleep(5000);

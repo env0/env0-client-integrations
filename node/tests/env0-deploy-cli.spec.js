@@ -66,10 +66,11 @@ describe("env0-deploy-cli", () => {
         command
         ${'-v'}
         ${'--version'}
+        ${'version'}
         `('when user asks to see the version with $command', ({ command }) => {
             beforeEach(async () => {
                 jest.spyOn(console, 'log');
-                await mockOptionsAndRun({ rawArgs: [ command ]});
+                await mockOptionsAndRun({ command, rawArgs: [ command ]});
             })
 
             it('should show the proper version', () => {

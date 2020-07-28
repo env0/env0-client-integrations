@@ -105,7 +105,7 @@ const isInternalCommand = (command, args) => {
     return true;
   }
 
-  if (['-v', '--version'].some(h => args.includes(h))) {
+  if (['-v', '--version'].some(h => args.includes(h)) || command === 'version') {
     console.log(version);
     return true;
   }

@@ -118,12 +118,14 @@ describe("env0-deploy-utils", () => {
       mockCallApi.mockResolvedValue([]);
     });
 
-    it('should call api', async () => {
-      mockCallApi.mockResolvedValueOnce({ status: 'SUCCESS' });
+    it('should call api and and return status', async () => {
+      const mockStatus = 'SUCCESS';
+      mockCallApi.mockResolvedValueOnce({ status: mockStatus });
 
-      await deployUtils.pollDeploymentStatus(mockDeploymentId);
+      const status = await deployUtils.pollDeploymentStatus(mockDeploymentId);
 
       expect(mockCallApi).toBeCalledWith('get', `environments/deployments/${mockDeploymentId}`);
+      expect(status).toBe(mockStatus);
     });
   });
 

@@ -109,14 +109,14 @@ class DeployUtils {
   async pollDeploymentStatus(deploymentLogId) {
     const MAX_TIME_IN_SECONDS = 10800 // 3 hours
     const start = Date.now();
-    let stepsAlreadyLogged = [];
+    const stepsAlreadyLogged = [];
 
     while (true) {
       const { status } = await this.apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
 
       stepsAlreadyLogged.push(...await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged));
 
-      if (status !== 'IN_PROGRESS') return;
+      if (status !== 'IN_PROGRESS') return status;
 
       const elapsedTimeInSeconds = (Date.now() - start) / 1000;
       if (elapsedTimeInSeconds > MAX_TIME_IN_SECONDS) throw new Error('Polling deployment timed out');

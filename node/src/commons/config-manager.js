@@ -24,10 +24,12 @@ const getEnvVars = () => {
 
     Object.entries(envVarToOptionMapper).forEach(([envVar, option]) => {
         if (process.env[envVar]) {
-            console.log(`Found environment variable ${envVar}`);
             config[option] = process.env[envVar];
         }
     });
+
+    const found = Object.keys(config);
+    if (found.length) console.log(`Found environment variables ${found}`);
 
     return config;
 }
@@ -37,7 +39,7 @@ const read = (configFromParams) => {
     const configFromEnv = getEnvVars();
 
     if (fs.existsSync(CONFIG_FILE)) {
-        console.log('Reading from existing configuration...');
+        console.log('Found existing configuration');
         const raw = fs.readFileSync(CONFIG_FILE);
 
         try {

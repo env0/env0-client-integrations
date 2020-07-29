@@ -77,18 +77,15 @@ class DeployUtils {
   }
 
   async fetchDeploymentSteps(deploymentLogId, stepsToSkip) {
-    const inProgressStepStatuses = ['IN_PROGRESS', 'NOT_STARTED'];
     const doneSteps = [];
 
     const steps = await this.apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
 
     for (const step of steps) {
       const alreadyLogged = stepsToSkip.includes(step.name);
-      const inProgress = inProgressStepStatuses.includes(step.status);
 
-      if (!alreadyLogged && !inProgress) {
+      if (!alreadyLogged && step.status !== 'NOT_STARTED') {
         console.log(`$$$ ${step.name}`);
-
         console.log('#'.repeat(100));
         await this.writeDeploymentStepLog(deploymentLogId, step.name);
 

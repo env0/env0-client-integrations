@@ -139,7 +139,7 @@ describe("env0-deploy-utils", () => {
     it.each`
     stepsFromApi | stepsToSkip
     ${[ { name: 'git:clone', status: 'SUCCESS' } ]} | ${[ 'git:clone' ]}
-    ${[{ name: 'git:clone', status: 'IN_PROGRESS' } ]} | ${[]}
+    ${[{ name: 'git:clone', status: 'NOT_STARTED' } ]} | ${[]}
     `('should skip step log', async ({ stepsFromApi, stepsToSkip }) => {
       mockCallApi.mockResolvedValue(stepsFromApi);
 

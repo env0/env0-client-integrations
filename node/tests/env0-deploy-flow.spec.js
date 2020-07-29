@@ -27,7 +27,7 @@ describe("env0-deploy-flow", () => {
 
   beforeEach(() => {
     deployUtilsMock.getEnvironment.mockResolvedValue({ id: environmentId });
-    deployUtilsMock.waitForEnvironment.mockResolvedValue({});
+    deployUtilsMock.waitForEnvironment.mockResolvedValue(undefined);
     deployUtilsMock.deployEnvironment.mockResolvedValue({ id: deploymentLogId });
     deployUtilsMock.destroyEnvironment.mockResolvedValue({ id: deploymentLogId });
   })

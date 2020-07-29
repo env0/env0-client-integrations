@@ -3,6 +3,7 @@ const commandLineUsage = require('command-line-usage');
 const runCommand = require('./env0-deploy-flow');
 const boxen = require('boxen');
 const { OPTIONS } = require('./commons/constants');
+const { argumentsMap, allArguments, baseArguments } = require('./commons/arguments');
 
 const mainDefinitions = [
   { name: 'command', defaultOption: true },
@@ -17,31 +18,24 @@ const {
   ENVIRONMENT_NAME,
   ENVIRONMENT_VARIABLES,
   SENSITIVE_ENVIRONMENT_VARIABLES,
-  REVISION,
-  ARCHIVE_AFTER_DESTROY
 } = OPTIONS;
-
-const optionDefinitions = [
-  { name: API_KEY, alias: 'k', type: String, description: 'Your env0 API Key' },
-  { name: API_SECRET, alias: 's', type: String, description: 'Your env0 API Secret' },
-  { name: ORGANIZATION_ID, alias: 'o', type: String, description: 'Your env0 Organization id' },
-  { name: PROJECT_ID, alias: 'p', type: String, description: 'Your env0 Project id' },
-  { name: BLUEPRINT_ID, alias: 'b', type: String, description: 'The Blueprint id you would like to deploy' },
-  { name: ENVIRONMENT_NAME, alias: 'e', type: String, description: 'The environment name you would like to create, if it exists it will deploy to that environment' },
-  { name: ENVIRONMENT_VARIABLES, alias: 'v', type: String, multiple: true, defaultValue: [], description: 'The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"' },
-  { name: SENSITIVE_ENVIRONMENT_VARIABLES, alias: 'q', type: String, multiple: true, defaultValue: [], description: 'The sensitive environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"' },
-  { name: REVISION, alias: 'r', type: String, defaultValue: 'master', description: 'Your git revision, can be a branch tag or a commit hash. Default value "master" ' },
-  { name: ARCHIVE_AFTER_DESTROY, type: Boolean, defaultValue: false, description: 'Archive the environment after a successful destroy' },
-];
 
 const availableCommands = {
   'deploy': {
-    options: optionDefinitions,
+    options: allArguments,
     description: 'Deploys an environment'
   },
   'destroy': {
-    options: optionDefinitions,
+    options: allArguments,
     description: 'Destroys an environment'
+  },
+  'approve': {
+    options: [ ...baseArguments, argumentsMap[ENVIRONMENT_NAME] ],
+    description: 'Accepts a deployment that is pending approval'
+  },
+  'cancel': {
+    options: [ ...baseArguments, argumentsMap[ENVIRONMENT_NAME] ],
+    description: 'Cancels an deployment that is pending approval'
   },
   'help': {
     description: 'Shows this help message'
@@ -81,7 +75,7 @@ const sections = [
   },
   {
     header: 'Options',
-    optionList: optionDefinitions.map(option => ({
+    optionList: allArguments.map(option => ({
       ...option,
     }))
   }

@@ -152,6 +152,7 @@ describe("env0-deploy-utils", () => {
       const mockStep = { name: 'git:clone', status: 'SUCCESS' };
 
       mockCallApi.mockResolvedValueOnce([ mockStep ]);
+      mockCallApi.mockResolvedValueOnce([ mockStep ]); // mock for getting steps in write deployment step log function
       mockCallApi.mockResolvedValueOnce({ events: [] }); // mock for the write deployment step log function
 
       const doneSteps = await deployUtils.processDeploymentSteps(mockDeploymentId, []);
@@ -161,25 +162,47 @@ describe("env0-deploy-utils", () => {
   })
 
   describe('write deployment step log', () => {
-    const mockStepName = 'git:clone';
+    const mockStep = { name: 'git:clone', status: 'SUCCESS' };
 
-    it('should call api once when hasMoreLogs=false', async () => {
+    it('should call api for once (both for getting steps and log = total of 2)', async () => {
+      mockCallApi.mockResolvedValueOnce([ mockStep ]);
       mockCallApi.mockResolvedValueOnce({ events: [], hasMoreLogs: false });
 
-      await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStepName)
+      await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name)
 
-      expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStepName}/log`);
-      expect(mockCallApi).toBeCalledTimes(1);
-    });
-
-    it('should call api twice when hasMoreLogs=true', async () => {
-      mockCallApi.mockResolvedValueOnce({ events: [], hasMoreLogs: true });
-      mockCallApi.mockResolvedValueOnce({ events: [], hasMoreLogs: false });
-
-      await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStepName)
-
-      expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStepName}/log`);
+      expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, { params: { startTime: undefined }});
       expect(mockCallApi).toBeCalledTimes(2);
     });
+
+    it.each`
+    when | hasMoreLogs | mockStep
+    ${'hasMore logs is true'} | ${true} | ${{ name: 'git:clone', status: 'SUCCESS' }}
+    ${'step is still in progress'} | ${false} | ${{ name: 'git:clone', status: 'IN_PROGRESS' }}
+    `('should call api twice (both for getting steps and log = total of 4) when $when', async ({ hasMoreLogs, mockStep }) => {
+      mockCallApi.mockResolvedValueOnce([ mockStep ]);
+      mockCallApi.mockResolvedValueOnce({ events: [], hasMoreLogs });
+      mockCallApi.mockResolvedValueOnce([ { ...mockStep, status: 'SUCCESS'} ]);
+      mockCallApi.mockResolvedValueOnce({ events: [], hasMoreLogs: false });
+
+      await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name)
+
+      expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, { params: { startTime: undefined }});
+      expect(mockCallApi).toBeCalledTimes(4);
+    });
+
+    it('should use nextStartTime from api on consecutive calls', async () => {
+      const mockNextStartTime = 'party time';
+
+      mockCallApi.mockResolvedValueOnce([ mockStep ]);
+      mockCallApi.mockResolvedValueOnce({ events: [], hasMoreLogs: true, nextStartTime: mockNextStartTime });
+      mockCallApi.mockResolvedValueOnce([ { ...mockStep, status: 'SUCCESS'} ]);
+      mockCallApi.mockResolvedValueOnce({ events: [], hasMoreLogs: false });
+
+      await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name)
+
+
+      expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, { params: { startTime: undefined }});
+      expect(mockCallApi).toHaveBeenLastCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, { params: { startTime: mockNextStartTime }});
+    })
   });
 });

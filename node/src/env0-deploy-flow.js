@@ -17,6 +17,12 @@ const assertRequiredOptions = (options) => {
   }
 }
 
+const assertDeploymentStatus = (status) => {
+  if (!['SUCCESS', 'WAITING_FOR_USER'].includes(status)) {
+    throw new Error(`Deployment failed. Current deployment status is ${status})`);
+  }
+}
+
 const runCommand = async (command, options, environmentVariables) => {
   options = configManager.read(options);
   assertRequiredOptions(options);
@@ -36,29 +42,34 @@ const runCommand = async (command, options, environmentVariables) => {
 
 const createAndDeploy = async (options, environmentVariables) => {
   let environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
+
   if (!environment) {
     console.log('did not find an environment');
     environment = await deployUtils.createEnvironment(options.environmentName, options.organizationId, options.projectId);
   }
+
   await setConfigurationFromOptions(environmentVariables, environment, options.blueprintId);
 
   const deployment = await deployUtils.deployEnvironment(environment, options.revision, options.blueprintId);
-  await deployUtils.pollDeploymentStatus(deployment.id);
+  const status = await deployUtils.pollDeploymentStatus(deployment.id);
+
+  assertDeploymentStatus(status);
 };
 
 const destroy = async (options) => {
   const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
+  let status;
 
   if (environment) {
     const deployment = await deployUtils.destroyEnvironment(environment);
-    await deployUtils.pollDeploymentStatus(deployment.id);
+    status = await deployUtils.pollDeploymentStatus(deployment.id);
 
-    if (options.archiveAfterDestroy) {
-      await deployUtils.archiveIfInactive(environment.id);
-    }
+    if (options.archiveAfterDestroy) await deployUtils.archiveIfInactive(environment.id);
   } else {
     throw new Error(`Could not find an environment with the name ${options.environmentName}`);
   }
+
+  assertDeploymentStatus(status);
 };
 
 const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {

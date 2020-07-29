@@ -30,6 +30,7 @@ describe("env0-deploy-flow", () => {
     deployUtilsMock.waitForEnvironment.mockResolvedValue(undefined);
     deployUtilsMock.deployEnvironment.mockResolvedValue({ id: deploymentLogId });
     deployUtilsMock.destroyEnvironment.mockResolvedValue({ id: deploymentLogId });
+    deployUtilsMock.pollDeploymentStatus.mockResolvedValue('SUCCESS');
   })
 
   it('should read and write persistent options', async () => {
@@ -51,10 +52,10 @@ describe("env0-deploy-flow", () => {
   describe("when all required options exist", () => {
     describe('when deployment fails', () => {
       describe.each`
-      command | mock
-      ${'deploy'}  | ${deployUtilsMock.deployEnvironment}
-      ${'destroy'} | ${deployUtilsMock.destroyEnvironment}
-      `('$command', ({ command, mock }) => {
+      when | command | mock
+      ${'when deploy env command fail'} | ${'deploy'}  | ${deployUtilsMock.deployEnvironment}
+      ${'when destroy env command fail'} | ${'destroy'} | ${deployUtilsMock.destroyEnvironment}
+      `('$when', ({ command, mock }) => {
 
         it("should throw exception when deployment fails", async () => {
           const errorMessage = 'Some Error Occured';
@@ -63,9 +64,22 @@ describe("env0-deploy-flow", () => {
           expect(runCommand(command)).rejects.toThrow(errorMessage);
         });
       })
+
+      describe.each`
+      when | command | mock
+      ${'when deploy env command returned bad status'} | ${'deploy'}  | ${deployUtilsMock.deployEnvironment}
+      ${'when destroy env command return bad status'} | ${'destroy'} | ${deployUtilsMock.destroyEnvironment}
+      `('$when', ({ command, mock }) => {
+
+        it("should throw exception when deployment fails", async () => {
+          mock.mockResolvedValue('FAILURE');
+
+          expect(runCommand(command)).rejects.toThrow(expect.objectContaining({ message: expect.stringContaining('Deployment failed')}));
+        });
+      })
     });
 
-    describe('deploy', () => {
+    describe('on deploy', () => {
       it("should fail when it fails to set configuration", async () => {
         const configError = "Configuration error";
         deployUtilsMock.setConfiguration.mockRejectedValue(new Error(configError));

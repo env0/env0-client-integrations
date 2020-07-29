@@ -1,11 +1,10 @@
-const mockCallApi = jest.fn();
-
-// import needs to be after mock!
 const DeployUtils = require("../src/env0-deploy-utils");
 
 jest.mock("../src/commons/api-client", () =>
     jest.fn().mockImplementation(() => ({ callApi: mockCallApi, sleep: () => Promise.resolve() }))
 );
+
+const mockCallApi = jest.fn();
 
 const mockEnvironmentId = 'environment0';
 const mockDeploymentId = 'deployment0';
@@ -14,11 +13,14 @@ describe("env0-deploy-utils", () => {
   const deployUtils = new DeployUtils();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCallApi.mockResolvedValue([]);
+    mockCallApi.mockClear();
   });
 
   describe('set configuration', () => {
+    beforeEach(() => {
+      mockCallApi.mockResolvedValue([]);
+    });
+
     it('should query existing configurations for update', async () => {
       await deployUtils.setConfiguration(
           {id:'environment-1', organizationId: 'organization-1'},
@@ -112,6 +114,10 @@ describe("env0-deploy-utils", () => {
   });
 
   describe('poll deployment status', () => {
+    beforeEach(() => {
+      mockCallApi.mockResolvedValue([]);
+    });
+
     it('should call api', async () => {
       mockCallApi.mockResolvedValueOnce({ status: 'SUCCESS' });
 
@@ -121,11 +127,9 @@ describe("env0-deploy-utils", () => {
     });
   });
 
-  describe('fetch deployment steps', () => {
-    const mockStep = { name: 'git:clone', status: 'SUCCESS' };
-
+  describe('write deployment steps', () => {
     it('should call api', async () => {
-      mockCallApi.mockResolvedValueOnce([]);
+      mockCallApi.mockResolvedValue([]);
 
       await deployUtils.fetchDeploymentSteps(mockDeploymentId, []);
 
@@ -137,7 +141,7 @@ describe("env0-deploy-utils", () => {
     ${[ { name: 'git:clone', status: 'SUCCESS' } ]} | ${[ 'git:clone' ]}
     ${[{ name: 'git:clone', status: 'IN_PROGRESS' } ]} | ${[]}
     `('should skip step log', async ({ stepsFromApi, stepsToSkip }) => {
-      mockCallApi.mockResolvedValueOnce(stepsFromApi);
+      mockCallApi.mockResolvedValue(stepsFromApi);
 
       const doneSteps = await deployUtils.fetchDeploymentSteps(mockDeploymentId, stepsToSkip);
 
@@ -145,6 +149,8 @@ describe("env0-deploy-utils", () => {
     })
 
     it('should get step log', async () => {
+      const mockStep = { name: 'git:clone', status: 'SUCCESS' };
+
       mockCallApi.mockResolvedValueOnce([ mockStep ]);
       mockCallApi.mockResolvedValueOnce({ events: [] }); // mock for the write deployment step log function
 

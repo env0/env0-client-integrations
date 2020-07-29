@@ -28,7 +28,7 @@ const runCommand = async (command, options, environmentVariables) => {
     deploy: createAndDeploy
   }
 
-  await DeployUtils.init(options);
+  await deployUtils.init(options);
   await commands[command](options, environmentVariables);
 
   configManager.write(options);

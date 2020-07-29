@@ -44,7 +44,6 @@ const createAndDeploy = async (options, environmentVariables) => {
   let environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
 
   if (!environment) {
-    console.log('did not find an environment');
     environment = await deployUtils.createEnvironment(options.environmentName, options.organizationId, options.projectId);
   }
 

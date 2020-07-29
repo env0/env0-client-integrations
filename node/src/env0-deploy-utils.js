@@ -66,14 +66,24 @@ class DeployUtils {
   }
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {
-    let hasMoreLogs;
+    let shouldPoll, startTime;
 
     do {
-      const { events, hasMoreLogs: currentHasMoreLogs } = await this.apiClient.callApi('get', `deployments/${deploymentLogId}/steps/${stepName}/log`);
+      const steps = await this.apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
+      const step = steps.find(step => step.name === stepName);
+
+      const { events, nextStartTime, hasMoreLogs } = await this.apiClient.callApi(
+          'get',
+          `deployments/${deploymentLogId}/steps/${stepName}/log`,
+          { params: { startTime }}
+          );
+
       events.forEach((event) => console.log(event.message));
 
-      hasMoreLogs = currentHasMoreLogs;
-    } while (hasMoreLogs)
+      if (nextStartTime) startTime = nextStartTime;
+
+      shouldPoll = hasMoreLogs || step.status === 'IN_PROGRESS';
+    } while (shouldPoll)
   }
 
   async processDeploymentSteps(deploymentLogId, stepsToSkip) {

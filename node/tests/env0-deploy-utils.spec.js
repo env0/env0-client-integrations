@@ -207,4 +207,35 @@ describe("env0-deploy-utils", () => {
       expect(mockCallApi).toHaveBeenLastCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, { params: { startTime: mockNextStartTime }});
     })
   });
+
+  describe('deploy environment', async () => {
+    const mockEnvironment = { id: 'env0', status: 'SUCCESS' };
+    const mockBlueprintRevision = 'rev0';
+    const mockBlueprintId = 'blueprint0';
+    const mockRequiresApproval = true;
+
+    await deployUtils.deployEnvironment(mockEnvironment, mockBlueprintRevision, mockBlueprintId, mockRequiresApproval);
+
+    expect(mockCallApi).toHaveBeenLastCalledWith(
+        'post',
+        `environments/${mockEnvironment.id}/deployments`,
+        { data: { blueprintId: mockBlueprintId, blueprintRevision: mockBlueprintRevision, userRequiresApproval: mockRequiresApproval } }
+        )
+  })
+
+  describe('approve deployment', () => {
+    it('should call api', async () => {
+      await deployUtils.approveDeployment(mockDeploymentId);
+
+      expect(mockCallApi).toBeCalledWith('put', `environments/deployments/${mockDeploymentId}`);
+    });
+  });
+
+  describe('cancel deployment', () => {
+    it('should call api', async () => {
+      await deployUtils.cancelDeployment(mockDeploymentId);
+
+      expect(mockCallApi).toBeCalledWith('put', `environments/deployments/${mockDeploymentId}/cancel`);
+    });
+  });
 });

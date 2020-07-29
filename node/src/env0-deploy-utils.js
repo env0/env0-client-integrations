@@ -76,7 +76,7 @@ class DeployUtils {
     } while (hasMoreLogs)
   }
 
-  async fetchDeploymentSteps(deploymentLogId, stepsToSkip) {
+  async processDeploymentSteps(deploymentLogId, stepsToSkip) {
     const doneSteps = [];
 
     const steps = await this.apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
@@ -104,7 +104,7 @@ class DeployUtils {
     while (true) {
       const { status } = await this.apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
 
-      stepsAlreadyLogged.push(...await this.fetchDeploymentSteps(deploymentLogId, stepsAlreadyLogged));
+      stepsAlreadyLogged.push(...await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged));
 
       if (status !== 'IN_PROGRESS') return;
 

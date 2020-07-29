@@ -131,7 +131,7 @@ describe("env0-deploy-utils", () => {
     it('should call api', async () => {
       mockCallApi.mockResolvedValue([]);
 
-      await deployUtils.fetchDeploymentSteps(mockDeploymentId, []);
+      await deployUtils.processDeploymentSteps(mockDeploymentId, []);
 
       expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps`);
     })
@@ -143,7 +143,7 @@ describe("env0-deploy-utils", () => {
     `('should skip step log', async ({ stepsFromApi, stepsToSkip }) => {
       mockCallApi.mockResolvedValue(stepsFromApi);
 
-      const doneSteps = await deployUtils.fetchDeploymentSteps(mockDeploymentId, stepsToSkip);
+      const doneSteps = await deployUtils.processDeploymentSteps(mockDeploymentId, stepsToSkip);
 
       expect(doneSteps).toEqual([]);
     })
@@ -154,7 +154,7 @@ describe("env0-deploy-utils", () => {
       mockCallApi.mockResolvedValueOnce([ mockStep ]);
       mockCallApi.mockResolvedValueOnce({ events: [] }); // mock for the write deployment step log function
 
-      const doneSteps = await deployUtils.fetchDeploymentSteps(mockDeploymentId, []);
+      const doneSteps = await deployUtils.processDeploymentSteps(mockDeploymentId, []);
 
       expect(doneSteps).toEqual([ mockStep.name ])
     })

@@ -40,31 +40,39 @@ describe("env0-deploy-flow", () => {
   })
 
   describe('when there are missing required options', () => {
-    it('should fail with proper error message', () => {
-      expect(runCommand('deploy', {})).rejects.toThrow(expect.stringContaining('Missing required options'));
+    it('should fail with proper error message', async () => {
+      jest.spyOn(configManager, 'read').mockReturnValue({});
+      await expect(runCommand('deploy', {})).rejects.toThrow(
+          expect.objectContaining({ message: expect.stringContaining('Missing required options')})
+      );
     })
   });
 
   describe("when all required options exist", () => {
-    describe.each`
-    command | mock
-    ${'deploy'} | ${deployUtilsMock.deployEnvironment}
-    ${'destroy'} | ${deployUtilsMock.destroyEnvironment}
-    `('$command', ({ command, mock }) => {
+    describe('when deployment fails', () => {
+      describe.each`
+      command | mock
+      ${'deploy'}  | ${deployUtilsMock.deployEnvironment}
+      ${'destroy'} | ${deployUtilsMock.destroyEnvironment}
+      `('$command', ({ command, mock }) => {
 
+        it("should throw exception when deployment fails", async () => {
+          const errorMessage = 'Some Error Occured';
+          mock.mockRejectedValue(new Error(errorMessage));
+
+          expect(runCommand(command)).rejects.toThrow(errorMessage);
+        });
+      })
+    });
+
+    describe('deploy', () => {
       it("should fail when it fails to set configuration", async () => {
         const configError = "Configuration error";
         deployUtilsMock.setConfiguration.mockRejectedValue(new Error(configError));
 
-        expect(runCommand(command, mockRequiredOptions, { name: "shoes", value: "socks " })).rejects.toThrow(configError);
+        await expect(runCommand('deploy', mockRequiredOptions, [{ name: "shoes", value: "socks " }])).rejects.toThrow(configError);
       });
 
-      it("should throw exception when deployment fails", async () => {
-        const errorMessage = 'Some Error Occured';
-        mock.mockRejectedValue(new Error(errorMessage));
-
-        expect(runCommand(command)).rejects.toThrow(errorMessage);
-      });
-    })
+    });
   });
 });

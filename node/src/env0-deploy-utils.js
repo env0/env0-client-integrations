@@ -1,5 +1,4 @@
 const Env0ApiClient = require('./commons/api-client');
-const { range } = require('lodash');
 
 class DeployUtils {
   constructor() {
@@ -90,7 +89,7 @@ class DeployUtils {
       if (!alreadyLogged && !inProgress) {
         console.log(`$$$ ${step.name}`);
 
-        console.log(range(100).map(() => '#').join(''));
+        console.log('#'.repeat(100));
         await this.writeDeploymentStepLog(deploymentLogId, step.name);
 
         doneSteps.push(step.name);

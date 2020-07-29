@@ -112,14 +112,12 @@ describe("env0-deploy-utils", () => {
   });
 
   describe('poll deployment status', () => {
-    it('should call api twice', async () => {
-      // one for polling and one for writing the logs
+    it('should call api', async () => {
       mockCallApi.mockResolvedValueOnce({ status: 'SUCCESS' });
 
       await deployUtils.pollDeploymentStatus(mockDeploymentId);
 
       expect(mockCallApi).toBeCalledWith('get', `environments/deployments/${mockDeploymentId}`);
-      expect(mockCallApi).toBeCalledTimes(2);
     });
   });
 

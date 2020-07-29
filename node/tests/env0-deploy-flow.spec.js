@@ -18,6 +18,7 @@ const mockRequiredOptions = {
 describe("env0-deploy-flow", () => {
   const deployUtilsMock = DeployUtils.mock.instances[0];
   const environmentId = 12345;
+  const deploymentLogId = 67890;
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -26,7 +27,10 @@ describe("env0-deploy-flow", () => {
 
   beforeEach(() => {
     deployUtilsMock.getEnvironment.mockResolvedValue({ id: environmentId });
-    deployUtilsMock.pollEnvironmentStatus.mockResolvedValue("ACTIVE");
+    deployUtilsMock.waitForEnvironment.mockResolvedValue(undefined);
+    deployUtilsMock.deployEnvironment.mockResolvedValue({ id: deploymentLogId });
+    deployUtilsMock.destroyEnvironment.mockResolvedValue({ id: deploymentLogId });
+    deployUtilsMock.pollDeploymentStatus.mockResolvedValue('SUCCESS');
   })
 
   it('should read and write persistent options', async () => {
@@ -37,26 +41,52 @@ describe("env0-deploy-flow", () => {
   })
 
   describe('when there are missing required options', () => {
-    it('should fail with proper error message', () => {
-      expect(runCommand('deploy', {})).rejects.toThrow(expect.stringContaining('Missing required options'));
+    it('should fail with proper error message', async () => {
+      jest.spyOn(configManager, 'read').mockReturnValue({});
+      await expect(runCommand('deploy', {})).rejects.toThrow(
+          expect.objectContaining({ message: expect.stringContaining('Missing required options')})
+      );
     })
   });
 
   describe("when all required options exist", () => {
-    describe('deploy', () => {
+    describe('when deployment fails', () => {
+      describe.each`
+      when | command | mock
+      ${'when deploy env command fail'} | ${'deploy'}  | ${deployUtilsMock.deployEnvironment}
+      ${'when destroy env command fail'} | ${'destroy'} | ${deployUtilsMock.destroyEnvironment}
+      `('$when', ({ command, mock }) => {
 
+        it("should throw exception when deployment fails", async () => {
+          const errorMessage = 'Some Error Occured';
+          mock.mockRejectedValue(new Error(errorMessage));
+
+          expect(runCommand(command)).rejects.toThrow(errorMessage);
+        });
+      })
+
+      describe.each`
+      when | command | mock
+      ${'when deploy env command returned bad status'} | ${'deploy'}  | ${deployUtilsMock.deployEnvironment}
+      ${'when destroy env command return bad status'} | ${'destroy'} | ${deployUtilsMock.destroyEnvironment}
+      `('$when', ({ command, mock }) => {
+
+        it("should throw exception when deployment fails", async () => {
+          mock.mockResolvedValue('FAILURE');
+
+          expect(runCommand(command)).rejects.toThrow(expect.objectContaining({ message: expect.stringContaining('Deployment failed')}));
+        });
+      })
+    });
+
+    describe('on deploy', () => {
       it("should fail when it fails to set configuration", async () => {
         const configError = "Configuration error";
         deployUtilsMock.setConfiguration.mockRejectedValue(new Error(configError));
 
-        expect(runCommand('deploy', mockRequiredOptions, { name: "shoes", value: "socks " })).rejects.toThrow(configError);
+        await expect(runCommand('deploy', mockRequiredOptions, [{ name: "shoes", value: "socks " }])).rejects.toThrow(configError);
       });
 
-      it("should throw exception when environment status is FAILED", async () => {
-        deployUtilsMock.pollEnvironmentStatus.mockResolvedValue("FAILED");
-
-        expect(runCommand('deploy')).rejects.toThrow(`Environment ${environmentId} did not reach ACTIVE status`);
-      });
-    })
+    });
   });
 });

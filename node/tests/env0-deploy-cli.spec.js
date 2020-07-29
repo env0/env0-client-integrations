@@ -2,6 +2,7 @@ const runCommand = require('../src/env0-deploy-flow');
 const run = require('../src/env0-deploy-cli');
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
+const { version } = require('../package.json')
 
 jest.mock('../src/env0-deploy-flow');
 jest.mock('command-line-usage');
@@ -58,6 +59,21 @@ describe("env0-deploy-cli", () => {
 
             it('should not call run deployment', () => {
                 expect(runCommand).not.toBeCalled();
+            })
+        })
+
+        describe.each`
+        command
+        ${'--version'}
+        ${'version'}
+        `('when user asks to see the version with $command', ({ command }) => {
+            beforeEach(async () => {
+                jest.spyOn(console, 'log');
+                await mockOptionsAndRun({ command, rawArgs: [ command ]});
+            })
+
+            it('should show the proper version', () => {
+                expect(console.log).toBeCalledWith(version);
             })
         })
 

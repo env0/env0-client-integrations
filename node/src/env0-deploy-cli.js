@@ -3,6 +3,7 @@ const commandLineUsage = require('command-line-usage');
 const runCommand = require('./env0-deploy-flow');
 const boxen = require('boxen');
 const { OPTIONS } = require('./commons/constants');
+const { version } = require('../package.json');
 const { argumentsMap, allArguments, baseArguments } = require('./commons/arguments');
 
 const mainDefinitions = [
@@ -36,6 +37,9 @@ const availableCommands = {
   'cancel': {
     options: [ ...baseArguments, argumentsMap[ENVIRONMENT_NAME] ],
     description: 'Cancels an deployment that is pending approval'
+  },
+  'version': {
+    description: 'Shows the CLI version'
   },
   'help': {
     description: 'Shows this help message'
@@ -88,10 +92,17 @@ const assertCommandExists = (command) => {
   }
 }
 
-const isCallingForHelp = (command, args) => {
-  const HELP_ARGS = ['-h', '--help'];
+const isInternalCommand = (command, args) => {
+  if (['-h', '--help'].some(h => args.includes(h)) || command === 'help') {
+    const usage = commandLineUsage(sections);
+    console.log(usage);
+    return true;
+  }
 
-  return HELP_ARGS.some(h => args.includes(h)) || command === 'help'
+  if (['--version'].some(h => args.includes(h)) || command === 'version') {
+    console.log(version);
+    return true;
+  }
 }
 
 const run = async () => {
@@ -101,18 +112,15 @@ const run = async () => {
   try {
     const { command } = mainOptions;
 
-    if (isCallingForHelp(command, argv)) {
-      const usage = commandLineUsage(sections);
-      console.log(usage);
-    } else {
-      assertCommandExists(command);
+    if (isInternalCommand(command, argv)) return;
 
-      const commandDefinitions = availableCommands[command].options;
-      const commandOptions = commandLineArgs(commandDefinitions, { argv });
-      const environmentVariables = getEnvironmentVariablesOptions(commandOptions[ENVIRONMENT_VARIABLES], commandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]);
+    assertCommandExists(command);
 
-      await runCommand(command, commandOptions, environmentVariables);
-    }
+    const commandDefinitions = availableCommands[command].options;
+    const commandOptions = commandLineArgs(commandDefinitions, { argv });
+    const environmentVariables = getEnvironmentVariablesOptions(commandOptions[ENVIRONMENT_VARIABLES], commandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]);
+
+    await runCommand(command, commandOptions, environmentVariables);
   } catch (error) {
     let { message } = error;
     if (error.response && error.response.data && error.response.data.message) {

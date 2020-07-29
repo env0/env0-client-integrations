@@ -17,6 +17,11 @@ const assertRequiredOptions = (options) => {
   }
 }
 
+const getAndAssertAnExistingEnvironment = async (options) => {
+  const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
+  if (!environment) throw new Error(`Could not find an environment with the name ${options.environmentName}`);
+}
+
 const runCommand = async (command, options, environmentVariables) => {
   options = configManager.read(options);
   assertRequiredOptions(options);
@@ -25,7 +30,9 @@ const runCommand = async (command, options, environmentVariables) => {
 
   const commands = {
     destroy: destroy,
-    deploy: createAndDeploy
+    deploy: createAndDeploy,
+    approve: setDeploymentApprovalStatus('approve'),
+    cancel: setDeploymentApprovalStatus('cancel')
   }
 
   await DeployUtils.init(options);
@@ -33,6 +40,10 @@ const runCommand = async (command, options, environmentVariables) => {
 
   configManager.write(options);
 };
+
+const setDeploymentApprovalStatus = (command) => async (options) => {
+  const environment = await getAndAssertAnExistingEnvironment(options);
+}
 
 const createAndDeploy = async (options, environmentVariables) => {
   console.log('Starting deployment');

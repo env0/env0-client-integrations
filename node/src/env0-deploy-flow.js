@@ -35,6 +35,8 @@ const runCommand = async (command, options, environmentVariables) => {
   }
 
   await deployUtils.init(options);
+
+  console.log('Waiting for deployment to start...')
   await commands[command](options, environmentVariables);
 
   configManager.write(options);

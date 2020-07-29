@@ -70,7 +70,8 @@ class DeployUtils {
 
     do {
       const steps = await this.apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
-      const step = steps.find(step => step.name === stepName);
+      const { status } = steps.find(step => step.name === stepName);
+      const stepInProgress = status === 'IN_PROGRESS';
 
       const { events, nextStartTime, hasMoreLogs } = await this.apiClient.callApi(
           'get',
@@ -81,8 +82,9 @@ class DeployUtils {
       events.forEach((event) => console.log(event.message));
 
       if (nextStartTime) startTime = nextStartTime;
+      if (stepInProgress) await this.apiClient.sleep(1000);
 
-      shouldPoll = hasMoreLogs || step.status === 'IN_PROGRESS';
+      shouldPoll = hasMoreLogs || stepInProgress;
     } while (shouldPoll)
   }
 

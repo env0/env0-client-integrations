@@ -64,7 +64,6 @@ describe("env0-deploy-cli", () => {
 
         describe.each`
         command
-        ${'-v'}
         ${'--version'}
         ${'version'}
         `('when user asks to see the version with $command', ({ command }) => {

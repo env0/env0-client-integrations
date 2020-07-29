@@ -18,14 +18,9 @@ const assertRequiredOptions = (options) => {
 }
 
 const assertDeploymentStatus = (status) => {
-  if (!['SUCCESS', 'WAITING_FOR_USER'].includes(status)) {
-    throw new Error(`Deployment failed. Current deployment status is ${status})`);
+  if (!['SUCCESS', 'WAITING_FOR_USER', 'CANCELLED'].includes(status)) {
+    throw new Error(`Deployment failed. Current deployment status is ${status}`);
   }
-}
-
-const getAndAssertAnExistingEnvironment = async (options) => {
-  const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
-  if (!environment) throw new Error(`Could not find an environment with the name ${options.environmentName}`);
 }
 
 const runCommand = async (command, options, environmentVariables) => {
@@ -50,19 +45,38 @@ const runCommand = async (command, options, environmentVariables) => {
 };
 
 const setDeploymentApprovalStatus = (command) => async (options) => {
-  const environment = await getAndAssertAnExistingEnvironment(options);
+  const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
+
+  if (!environment) {
+    throw new Error(`Could not find an environment with the name ${options.environmentName}`);
+  }
+
+  if (environment.status !== 'WAITING_FOR_USER') {
+    throw new Error(`Environment is not waiting for approval. Environment status is ${environment.status}`);
+  }
+
+  const { latestDeploymentLog } = environment;
+
+  command === 'approve' ?
+      await deployUtils.approveDeployment(latestDeploymentLog.id) :
+      await deployUtils.cancelDeployment(latestDeploymentLog.id);
+
+  const status = await deployUtils.pollDeploymentStatus(latestDeploymentLog.id);
+  assertDeploymentStatus(status);
 }
 
 const createAndDeploy = async (options, environmentVariables) => {
-  let environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
+  const { environmentName, projectId, organizationId, blueprintId, revision, requiresApproval } = options;
+
+  let environment = await deployUtils.getEnvironment(environmentName, projectId);
 
   if (!environment) {
-    environment = await deployUtils.createEnvironment(options.environmentName, options.organizationId, options.projectId);
+    environment = await deployUtils.createEnvironment(environmentName, organizationId, projectId);
   }
 
-  await setConfigurationFromOptions(environmentVariables, environment, options.blueprintId);
+  await setConfigurationFromOptions(environmentVariables, environment, blueprintId);
 
-  const deployment = await deployUtils.deployEnvironment(environment, options.revision, options.blueprintId);
+  const deployment = await deployUtils.deployEnvironment(environment, revision, blueprintId, requiresApproval);
   const status = await deployUtils.pollDeploymentStatus(deployment.id);
 
   assertDeploymentStatus(status);

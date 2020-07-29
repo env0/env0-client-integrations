@@ -28,6 +28,14 @@ class DeployUtils {
     return environment;
   }
 
+  async approveDeployment(deploymentLogId) {
+    await this.apiClient.callApi('put', `environments/deployments/${deploymentLogId}`);
+  }
+
+  async cancelDeployment(deploymentLogId) {
+    await this.apiClient.callApi('put', `environments/deployments/${deploymentLogId}/cancel`);
+  }
+
   async setConfiguration(environment, blueprintId, configurationName, configurationValue, isSensitive) {
     const configuration = {
       isSensitive,
@@ -53,10 +61,13 @@ class DeployUtils {
     await this.apiClient.callApi('post', 'configuration', {data: {...configuration, projectId: undefined}});
   }
 
-  async deployEnvironment(environment, blueprintRevision, blueprintId) {
+  async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval) {
     await this.waitForEnvironment(environment.id);
 
-    return await this.apiClient.callApi('post', `environments/${environment.id}/deployments`, {data: {blueprintId, blueprintRevision}});
+    return await this.apiClient.callApi(
+        'post',
+        `environments/${environment.id}/deployments`,
+        { data: { blueprintId, blueprintRevision, userRequiresApproval: requiresApproval } });
   }
 
   async destroyEnvironment(environment) {
@@ -118,7 +129,10 @@ class DeployUtils {
 
       stepsAlreadyLogged.push(...await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged));
 
-      if (status !== 'IN_PROGRESS') return status;
+      if (status !== 'IN_PROGRESS') {
+        status === 'WAITING_FOR_USER' && console.log('Deployment is waiting for an approval. Run \'env0 approve\' or \'env0 cancel\' to continue.');
+        return status;
+      }
 
       const elapsedTimeInSeconds = (Date.now() - start) / 1000;
       if (elapsedTimeInSeconds > MAX_TIME_IN_SECONDS) throw new Error('Polling deployment timed out');
@@ -135,6 +149,10 @@ class DeployUtils {
 
     do {
       ({ status } = await this.apiClient.callApi('get', `environments/${environmentId}`));
+
+      if (status === 'WAITING_FOR_USER') {
+        throw new Error('Deployment is waiting for an approval. Run \'env0 approve\' or \'env0 cancel\' to continue.');
+      }
 
       if (environmentValidStatuses.includes(status)) return;
       if (retryCount >= maxRetryNumber) throw new Error('Polling environment timed out');

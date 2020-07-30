@@ -221,6 +221,7 @@ class DeployUtils {
       "CANCELLED",
       "ABORTED",
     ];
+
     const maxRetryNumber = 180; // waiting for 15 minutes (180 * 5 seconds)
     let retryCount = 0;
     let status;

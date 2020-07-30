@@ -95,6 +95,8 @@ describe("env0-deploy-utils", () => {
       ${"ACTIVE"}
       ${"FAILED"}
       ${"TIMEOUT"}
+      ${"CANCELLED"}
+      ${"ABORTED"}
     `("should call api client once", async ({ status }) => {
       mockCallApi.mockResolvedValue({ status });
 

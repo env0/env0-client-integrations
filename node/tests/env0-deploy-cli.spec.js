@@ -8,8 +8,6 @@ jest.mock('../src/env0-deploy-flow');
 jest.mock('command-line-usage');
 jest.mock('command-line-args');
 
-jest.spyOn(process, 'exit').mockReturnValue({});
-
 const mockOptions = {
   help: false,
   blue: 'pill',
@@ -26,7 +24,9 @@ const mockOptionsAndRun = async ({ command, rawArgs, args }) => {
 };
 
 describe('env0-deploy-cli', () => {
-  beforeEach(() => jest.resetAllMocks());
+  beforeEach(() => {
+    jest.spyOn(process, 'exit').mockReturnValue({});
+  });
 
   describe("when command doesn't exist", () => {
     beforeEach(async () => {

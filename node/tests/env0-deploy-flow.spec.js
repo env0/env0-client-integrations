@@ -21,7 +21,6 @@ describe('env0-deploy-flow', () => {
   const deploymentLogId = 67890;
 
   beforeEach(() => {
-    jest.resetAllMocks();
     jest.spyOn(configManager, 'read').mockReturnValue(mockRequiredOptions);
   });
 

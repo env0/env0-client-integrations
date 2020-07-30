@@ -27,7 +27,8 @@ const runCommand = async (command, options, environmentVariables) => {
   options = configManager.read(options);
   assertRequiredOptions(options);
 
-  console.log(`Running ${command} with the following arguments:`, options);
+  console.log(`Running ${command} with the following arguments:`);
+  Object.keys(options).forEach(opt => console.log(`$ ${opt}: ${options[opt]}`));
 
   const commands = {
     destroy: destroy,
@@ -40,6 +41,7 @@ const runCommand = async (command, options, environmentVariables) => {
 
   console.log('Waiting for deployment to start...')
   await commands[command](options, environmentVariables);
+  console.log(`Command ${command} has finished successfully.`);
 
   configManager.write(options);
 };

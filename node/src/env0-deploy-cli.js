@@ -109,9 +109,9 @@ const run = async () => {
   const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
   const argv = mainOptions._unknown || [];
 
-  try {
-    const { command } = mainOptions;
+  const { command } = mainOptions;
 
+  try {
     if (isInternalCommand(command, argv)) return;
 
     assertCommandExists(command);
@@ -122,6 +122,7 @@ const run = async () => {
 
     await runCommand(command, commandOptions, environmentVariables);
   } catch (error) {
+    console.error(`Command ${command} has failed. Error:`);
     let { message } = error;
     if (error.response && error.response.data && error.response.data.message) {
       message += `: ${error.response.data.message}`

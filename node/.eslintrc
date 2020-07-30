@@ -9,5 +9,8 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["prettier"]
+  "plugins": ["prettier"],
+  "rules": {
+    "no-constant-condition": "warn"
+  }
 }

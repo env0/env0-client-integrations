@@ -15,10 +15,6 @@ const mockDeploymentId = 'deployment0';
 describe('env0-deploy-utils', () => {
   const deployUtils = new DeployUtils();
 
-  beforeEach(() => {
-    mockCallApi.mockClear();
-  });
-
   describe('set configuration', () => {
     beforeEach(() => {
       mockCallApi.mockResolvedValue([]);

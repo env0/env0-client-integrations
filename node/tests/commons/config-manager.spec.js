@@ -10,10 +10,6 @@ describe('config manager', () => {
     [OPTIONS.API_SECRET]: 'secret0'
   };
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe('read', () => {
     describe('when config file exists', () => {
       beforeEach(() => {

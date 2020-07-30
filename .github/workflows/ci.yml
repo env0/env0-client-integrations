@@ -27,4 +27,4 @@ jobs:
         CI: true
     - name: lint
       working-directory: ${{ matrix.package }}
-        run: yarn lint
+      run: yarn lint

@@ -25,3 +25,6 @@ jobs:
       run: yarn test --colors
       env:
         CI: true
+    - name: lint
+      working-directory: ${{ matrix.package }}
+        run: yarn lint

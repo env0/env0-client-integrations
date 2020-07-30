@@ -1,62 +1,113 @@
 ![CI](https://github.com/env0/env0-client-integrations/workflows/CI/badge.svg?branch=master)
 
-#### 🚧 ⚠️ WIP, the API may change
+# env0 NodeJS CLI
 
-# Nodejs client
+The command-line tool for the env0 platform.
 
-At [env0](https://env0.com) we believe in eating your own dog food so we are using env0 to deploy env0.
+## Features
 
-![eat your own dog food](https://assets.hwvp.com/uploads/articles/eat-your-own-dogfood-saas-vendors-aka-drink-your-own-champagne/_blogFeaturedImage/dogfood.jpg)
+  - **deploy** - Creates a new environment or deploy an existing environment.
+  - **destroy** - Destroys an existing environment.
+  - **approve**	- Resumes a deployment that awaits an approval.
+  - **cancel** - Cancels a deployment that awaits an approval.
 
-This is a Nodejs client that we are using to deploy env0 on each PR.
+## Installation
 
-## API Referece
-
-https://docs.env0.com/reference
-
-## Install
-
-```
-$ git clone https://github.com/env0/env0-client-integrations.git
-$ cd env0-client-integrations
-$ npm install
+```bash
+$ yarn global add @env0/cli
+# or
+$ npm install -g @env0/cli
 ```
 
-For yarn please run:
+## Command Overview
 
-`$ yarn install`
+### `env0 help`
 
-## env0 cli example
+Run `env0 help` to get a helpful list of supported commands and arguments.
 
-`$ env0 deploy -k <apiKey> -s <apiSecret> -a <Deploy> -o <organizationId> -p <projectId> -b <blueprintId> -e <environmentName> -r [master] -v [stage=dev]`
+### `env0 deploy <arguments>`
 
-`$ env0 --help`
+Initiates a new deployment on env0, whether for a new environment or for an existing one.
 
-### Options
+### `env0 destroy <arguments>`
 
-**-k --apiKey** - Your env0 API Key
+Initiates a new deployment to destroy and existing environment.
 
-**-s --apiSecret** - Your env0 API Secret
+### `env0 approve <arguments>`
 
-**-o --organizationId** - Your env0 Organization id
+Runs an approval of an existing deployment that is waiting to be approved (AKA waiting in plan stage).
 
-**-p --projectId** - Your env0 Project id
+### `env0 cancel <arguments>`
 
-**-b --blueprintId** - The Blueprint id you would like to deploy with (Optional for existing environments)
+Cancels an existing deployment that is waiting to be approved (AKA waiting in plan stage).
 
-**-e --environmentName** - The environment name you would like to create, if it exists it will deploy to that environment (Required for existing environments)
-  
- **-v --environmentVariables** - The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"
+## Arguments Overview
 
-**-q --sensitiveEnvironmentVariables** - Same as environment variables (`-v`) but will be marked as sensitive and hidden on env0 platform.
+The arguments are loaded from env0 configuration files, environment variables and CLI parameters.
+The order of precedence of the arguments is:
+1. `env0` CLI explicit parameters
+2. Environment Variables
+3. Configuration File
 
-**-r --revision** - You git revision, can be a branch tag or a commit hash. Default value `master`
+### API Key
+> env0 API Key (Required)
+- Usage: `--apiKey`
+- Alias: `-k`
 
-**--archiveAfterDestroy** - Archive the environment after a successful destroy
+### API Secret
+> env0 API Secret (Required)
+- Usage: `--apiSecret`
+- Alias: `-s`
 
-**-h --help** - Get help
+### Organization ID
+> env0 Organization ID (Required)
+- Usage: `--organizationId`
+- Alias: `-o`
+
+### Project ID
+> env0 Project ID (Required)
+- Usage: `--projectId`
+- Alias: `-p`
+
+### Blueprint ID
+> The Blueprint ID you would like to deploy with (Required for new environments)
+- Usage: `--blueprintId`
+- Alias: `-b`
+
+### Environment Name
+> The environment name you would like to create, or deploy to an existing one (Required for existing environments)
+- Usage: `--environmentName`
+- Alias: `-e`
 
 ### Environment Variables
+> The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"
+- Usage: `--environmentVariables`
+- Alias: `-v`
+
+For sensitive environment variables, use:
+- Usage: `--sensitiveEnvironmentVariables`
+- Alias: `-q`
+
+### Revision
+> Your GIT revision, can be a branch, a tag or a commit hash. Defaults to `master`
+- Usage: `--revision`
+- Alias: `-r`
+
+### Archive After Destroy
+> Archives the environment after a successful destroy
+- Usage: `--archiveAfterDestroy`
+
+### Requires Approval
+> Require approval for deployment
+- Usage: `--archiveAfterDestroy`
+- Alias: `-a`
+
+## Configuration File
+After initial deployment, a configuration file will be created under `~/.env0/config.json`
+
+This file holds your last action's required parameters and will spare you from re-configuring the required parameters on every action.
+
+## Supported Environment Variables
 
 - `ENV0_API_KEY`
 - `ENV0_API_SECRET`
@@ -65,13 +116,6 @@ For yarn please run:
 - `ENV0_BLUEPRINT_ID`
 - `ENV0_ENVIRONMENT_NAME`
 
-### Configuration File
+## API Reference
 
-After initial deployment, a configuration file would be created under `~/.env0/config.json`<br/>
-This file will save your last action's required parameters and will spare you from re-configuring the required parameters on every action.
-
-### Order of precedence
-
-1. `env0` CLI explicit parameters
-2. Environment Variables
-3. Configuration File
+https://docs.env0.com/reference

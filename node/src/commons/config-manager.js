@@ -58,8 +58,6 @@ const read = (configFromParams) => {
 
 const write = (options) => {
     const reduced = pick(options, INCLUDED_OPTIONS);
-
-    console.log('Writing configuration to disk...');
     fs.outputJsonSync(CONFIG_FILE, reduced, { spaces: 2 });
 }
 

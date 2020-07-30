@@ -86,7 +86,38 @@ describe("env0-deploy-flow", () => {
 
         await expect(runCommand('deploy', mockRequiredOptions, [{ name: "shoes", value: "socks " }])).rejects.toThrow(configError);
       });
-
     });
+
+    describe.each`
+    command | mock
+    ${'approve'} | ${deployUtilsMock.approveDeployment}
+    ${'cancel'} | ${deployUtilsMock.cancelDeployment}
+    `('on $command', ({ command, mock}) => {
+
+      it('should call relevant deploy util method', async () => {
+        deployUtilsMock.getEnvironment.mockResolvedValue({ status: 'WAITING_FOR_USER', latestDeploymentLog: { id: 'deploy0' } });
+
+        await runCommand(command, mockRequiredOptions);
+
+        expect(mock).toBeCalled();
+      })
+
+      it('should fail if environment is not found', async () => {
+        deployUtilsMock.getEnvironment.mockResolvedValue(undefined);
+
+        await expect(runCommand(command, mockRequiredOptions)).rejects.toThrow(
+            expect.objectContaining({ message: expect.stringContaining('Could not find an environment')})
+        );
+      });
+
+      it('should fail if environment is not waiting for approval', async () => {
+        deployUtilsMock.getEnvironment.mockResolvedValueOnce({ status: 'NOT WAITING FOR USER' });
+
+        await expect(runCommand(command, mockRequiredOptions)).rejects.toThrow(
+            expect.objectContaining({ message: expect.stringContaining('Environment is not waiting for approval')})
+        );
+
+      });
+    })
   });
 });

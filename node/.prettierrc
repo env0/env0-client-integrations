@@ -5,6 +5,5 @@
   "trailingComma": "none",
   "proseWrap": "preserve",
   "quoteProps": "as-needed",
-  "jsxBracketSameLine": true,
   "arrowParens": "avoid"
 }

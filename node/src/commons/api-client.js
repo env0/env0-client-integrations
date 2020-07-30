@@ -14,12 +14,12 @@ class Env0ApiClient {
         'Content-Type': 'application/json',
         'User-Agent': `env0-node-cli-${version}`
       }
-    })
+    });
   }
 
   async callApi(method, route, config) {
     const response = await this.apliClient({
-      method,      
+      method,
       url: route,
       ...config
     });

@@ -4,7 +4,7 @@ const runCommand = require('./env0-deploy-flow');
 const boxen = require('boxen');
 const { OPTIONS } = require('./commons/constants');
 const { version } = require('../package.json');
-const { argumentsMap, allArguments, baseArguments } = require('./commons/arguments');
+const { allArguments, baseArguments } = require('./commons/arguments');
 
 const mainDefinitions = [
   { name: 'command', defaultOption: true },
@@ -31,11 +31,11 @@ const availableCommands = {
     description: 'Destroys an environment'
   },
   'approve': {
-    options: [ ...baseArguments, argumentsMap[ENVIRONMENT_NAME] ],
+    options: baseArguments,
     description: 'Accepts a deployment that is pending approval'
   },
   'cancel': {
-    options: [ ...baseArguments, argumentsMap[ENVIRONMENT_NAME] ],
+    options: baseArguments,
     description: 'Cancels an deployment that is pending approval'
   },
   'version': {

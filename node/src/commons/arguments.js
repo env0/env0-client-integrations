@@ -31,5 +31,5 @@ const argumentsMap = {
 module.exports = {
     argumentsMap,
     allArguments: Object.values(argumentsMap),
-    baseArguments: [ argumentsMap[API_KEY], argumentsMap[API_SECRET], argumentsMap[ORGANIZATION_ID], argumentsMap[PROJECT_ID] ]
+    baseArguments: [ argumentsMap[API_KEY], argumentsMap[API_SECRET], argumentsMap[ORGANIZATION_ID], argumentsMap[PROJECT_ID], argumentsMap[ENVIRONMENT_NAME] ]
 };

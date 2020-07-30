@@ -6,9 +6,8 @@
     "es6": true
   },
   "parserOptions": {
-    // Allows for the parsing of modern ECMAScript features
     "ecmaVersion": 2018,
-    // Allows for the use of imports
     "sourceType": "module"
-  }
+  },
+  "plugins": ["prettier"]
 }

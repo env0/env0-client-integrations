@@ -1,27 +1,27 @@
 const DeployUtils = require('./env0-deploy-utils');
-const configManager = require("./commons/config-manager");
+const configManager = require('./commons/config-manager');
 const { OPTIONS } = require('./commons/constants');
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID } = OPTIONS;
 
 const deployUtils = new DeployUtils();
 
-const assertRequiredOptions = (options) => {
+const assertRequiredOptions = options => {
   const requiredOptions = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID];
 
   let missingOptions = [];
   requiredOptions.forEach(opt => !Object.keys(options).includes(opt) && missingOptions.push(opt));
 
   if (missingOptions.length) {
-    throw new Error(`Missing required options: ${missingOptions}`)
+    throw new Error(`Missing required options: ${missingOptions}`);
   }
-}
+};
 
-const assertDeploymentStatus = (status) => {
+const assertDeploymentStatus = status => {
   if (!['SUCCESS', 'WAITING_FOR_USER', 'CANCELLED'].includes(status)) {
     throw new Error(`Deployment failed. Current deployment status is ${status}`);
   }
-}
+};
 
 const runCommand = async (command, options, environmentVariables) => {
   options = configManager.read(options);
@@ -35,18 +35,18 @@ const runCommand = async (command, options, environmentVariables) => {
     deploy: createAndDeploy,
     approve: setDeploymentApprovalStatus('approve'),
     cancel: setDeploymentApprovalStatus('cancel')
-  }
+  };
 
   await deployUtils.init(options);
 
-  console.log('Waiting for deployment to start...')
+  console.log('Waiting for deployment to start...');
   await commands[command](options, environmentVariables);
   console.log(`Command ${command} has finished successfully.`);
 
   configManager.write(options);
 };
 
-const setDeploymentApprovalStatus = (command) => async (options) => {
+const setDeploymentApprovalStatus = command => async options => {
   const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
 
   if (!environment) {
@@ -59,13 +59,13 @@ const setDeploymentApprovalStatus = (command) => async (options) => {
 
   const { latestDeploymentLog } = environment;
 
-  command === 'approve' ?
-      await deployUtils.approveDeployment(latestDeploymentLog.id) :
-      await deployUtils.cancelDeployment(latestDeploymentLog.id);
+  command === 'approve'
+    ? await deployUtils.approveDeployment(latestDeploymentLog.id)
+    : await deployUtils.cancelDeployment(latestDeploymentLog.id);
 
   const status = await deployUtils.pollDeploymentStatus(latestDeploymentLog.id);
   assertDeploymentStatus(status);
-}
+};
 
 const createAndDeploy = async (options, environmentVariables) => {
   const { environmentName, projectId, organizationId, blueprintId, revision, requiresApproval } = options;
@@ -84,7 +84,7 @@ const createAndDeploy = async (options, environmentVariables) => {
   assertDeploymentStatus(status);
 };
 
-const destroy = async (options) => {
+const destroy = async options => {
   const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
   let status;
 
@@ -103,7 +103,9 @@ const destroy = async (options) => {
 const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {
   if (environmentVariables && environmentVariables.length > 0) {
     for (const config of environmentVariables) {
-      console.log(`Setting Environment Variable ${config.name} to be ${config.value} in environmentId: ${environment.id}`);
+      console.log(
+        `Setting Environment Variable ${config.name} to be ${config.value} in environmentId: ${environment.id}`
+      );
       await deployUtils.setConfiguration(environment, blueprintId, config.name, config.value, config.sensitive);
     }
   }

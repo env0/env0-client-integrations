@@ -119,3 +119,12 @@ This file holds your last action's required parameters and will spare you from r
 ## API Reference
 
 https://docs.env0.com/reference
+
+## Compiling from Source
+
+You can compile and run the CLI from source by cloning the repo from Github and then running the following:
+```bash
+# clone the repo from github
+yarn install
+yarn link # link your local copy of the CLI to your terminal path
+```

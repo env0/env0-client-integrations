@@ -2,7 +2,7 @@
   "name": "env0-deploy-scripts",
   "version": "1.0.1",
   "description": "Deploy env0 using env0 system",
-  "main": "src/env0-deploy-cli.js",
+  "main": "src/main.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint ."
@@ -18,6 +18,7 @@
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.1.0",
     "fs-extra": "^9.0.1",
+    "inquirer": "^7.3.3",
     "lodash": "^4.17.19"
   },
   "devDependencies": {

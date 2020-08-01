@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
-const configManager = require('../../src/commons/config-manager');
-const { OPTIONS } = require('../../src/commons/constants');
+const configManager = require('../../src/utils/config-manager');
+const { options } = require('../../src/config/constants');
 
 jest.mock('fs-extra');
 
 describe('config manager', () => {
   const mockOptions = {
-    [OPTIONS.API_KEY]: 'key0',
-    [OPTIONS.API_SECRET]: 'secret0'
+    [options.API_KEY]: 'key0',
+    [options.API_SECRET]: 'secret0'
   };
 
   describe('read', () => {
@@ -33,18 +33,18 @@ describe('config manager', () => {
         const anotherApiKey = 'key1';
         process.env.ENV0_API_KEY = anotherApiKey;
 
-        const options = configManager.read();
+        const config = configManager.read();
 
-        expect(options).toEqual({ ...mockOptions, [OPTIONS.API_KEY]: anotherApiKey });
+        expect(config).toEqual({ ...mockOptions, [options.API_KEY]: anotherApiKey });
       });
 
       it('cli parameters should take precedence over env vars + config file', async () => {
         const expectedKey = 'key2';
         process.env.ENV0_API_KEY = 'key1';
 
-        const options = configManager.read({ [OPTIONS.API_KEY]: expectedKey });
+        const config = configManager.read({ [options.API_KEY]: expectedKey });
 
-        expect(options).toEqual({ ...mockOptions, [OPTIONS.API_KEY]: expectedKey });
+        expect(config).toEqual({ ...mockOptions, [options.API_KEY]: expectedKey });
       });
     });
 

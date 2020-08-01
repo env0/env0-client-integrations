@@ -1,18 +1,18 @@
-const DeployUtils = require('../src/env0-deploy-utils');
+const mockCallApi = jest.fn();
 
-jest.mock('../src/commons/api-client', () =>
+const DeployUtils = require('../../src/utils/deploy-utils');
+
+jest.mock('../../src/utils/api-client', () =>
   jest.fn().mockImplementation(() => ({
     callApi: mockCallApi,
     sleep: () => Promise.resolve()
   }))
 );
 
-const mockCallApi = jest.fn();
-
 const mockEnvironmentId = 'environment0';
 const mockDeploymentId = 'deployment0';
 
-describe('env0-deploy-utils', () => {
+describe('deploy utils', () => {
   const deployUtils = new DeployUtils();
 
   describe('set configuration', () => {

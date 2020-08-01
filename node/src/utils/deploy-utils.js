@@ -1,22 +1,20 @@
-const Env0ApiClient = require('./commons/api-client');
+const Env0ApiClient = require('./api-client');
+
+const apiClient = new Env0ApiClient();
 
 class DeployUtils {
-  constructor() {
-    this.apiClient = new Env0ApiClient();
-  }
-
-  async init(options) {
-    await this.apiClient.init(options.apiKey, options.apiSecret);
+  static async init(options) {
+    await apiClient.init(options.apiKey, options.apiSecret);
   }
 
   async getEnvironment(environmentName, projectId) {
-    const environments = await this.apiClient.callApi('get', `environments?projectId=${projectId}`);
+    const environments = await apiClient.callApi('get', `environments?projectId=${projectId}`);
 
     return environments.find(env => env.name === environmentName);
   }
 
   async createEnvironment(environmentName, organizationId, projectId) {
-    const environment = await this.apiClient.callApi('post', 'environments', {
+    const environment = await apiClient.callApi('post', 'environments', {
       data: {
         name: environmentName,
         organizationId: organizationId,
@@ -29,11 +27,11 @@ class DeployUtils {
   }
 
   async approveDeployment(deploymentLogId) {
-    await this.apiClient.callApi('put', `environments/deployments/${deploymentLogId}`);
+    await apiClient.callApi('put', `environments/deployments/${deploymentLogId}`);
   }
 
   async cancelDeployment(deploymentLogId) {
-    await this.apiClient.callApi('put', `environments/deployments/${deploymentLogId}/cancel`);
+    await apiClient.callApi('put', `environments/deployments/${deploymentLogId}/cancel`);
   }
 
   async setConfiguration(environment, blueprintId, configurationName, configurationValue, isSensitive) {
@@ -53,7 +51,7 @@ class DeployUtils {
       blueprintId,
       environmentId: environment.id
     };
-    const configurations = await this.apiClient.callApi('get', 'configuration', { params });
+    const configurations = await apiClient.callApi('get', 'configuration', { params });
     const existingConfiguration = configurations.find(config => config.name === configurationName);
 
     if (existingConfiguration) {
@@ -66,7 +64,7 @@ class DeployUtils {
     }
 
     console.log(`setting the following configuration: ${JSON.stringify(configuration)}`);
-    await this.apiClient.callApi('post', 'configuration', {
+    await apiClient.callApi('post', 'configuration', {
       data: { ...configuration, projectId: undefined }
     });
   }
@@ -74,7 +72,7 @@ class DeployUtils {
   async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval) {
     await this.waitForEnvironment(environment.id);
 
-    return await this.apiClient.callApi('post', `environments/${environment.id}/deployments`, {
+    return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {
       data: {
         blueprintId,
         blueprintRevision,
@@ -86,18 +84,18 @@ class DeployUtils {
   async destroyEnvironment(environment) {
     await this.waitForEnvironment(environment.id);
 
-    return await this.apiClient.callApi('post', `environments/${environment.id}/destroy`);
+    return await apiClient.callApi('post', `environments/${environment.id}/destroy`);
   }
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {
     let shouldPoll, startTime;
 
     do {
-      const steps = await this.apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
+      const steps = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
       const { status } = steps.find(step => step.name === stepName);
       const stepInProgress = status === 'IN_PROGRESS';
 
-      const { events, nextStartTime, hasMoreLogs } = await this.apiClient.callApi(
+      const { events, nextStartTime, hasMoreLogs } = await apiClient.callApi(
         'get',
         `deployments/${deploymentLogId}/steps/${stepName}/log`,
         { params: { startTime } }
@@ -106,7 +104,7 @@ class DeployUtils {
       events.forEach(event => console.log(event.message));
 
       if (nextStartTime) startTime = nextStartTime;
-      if (stepInProgress) await this.apiClient.sleep(1000);
+      if (stepInProgress) await apiClient.sleep(1000);
 
       shouldPoll = hasMoreLogs || stepInProgress;
     } while (shouldPoll);
@@ -115,7 +113,7 @@ class DeployUtils {
   async processDeploymentSteps(deploymentLogId, stepsToSkip) {
     const doneSteps = [];
 
-    const steps = await this.apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
+    const steps = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
 
     for (const step of steps) {
       const alreadyLogged = stepsToSkip.includes(step.name);
@@ -138,7 +136,7 @@ class DeployUtils {
     const stepsAlreadyLogged = [];
 
     while (true) {
-      const { status } = await this.apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
+      const { status } = await apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
 
       stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged)));
 
@@ -151,7 +149,7 @@ class DeployUtils {
       const elapsedTimeInSeconds = (Date.now() - start) / 1000;
       if (elapsedTimeInSeconds > MAX_TIME_IN_SECONDS) throw new Error('Polling deployment timed out');
 
-      await this.apiClient.sleep(2000);
+      await apiClient.sleep(2000);
     }
   }
 
@@ -163,7 +161,7 @@ class DeployUtils {
     let status;
 
     do {
-      ({ status } = await this.apiClient.callApi('get', `environments/${environmentId}`));
+      ({ status } = await apiClient.callApi('get', `environments/${environmentId}`));
 
       if (status === 'WAITING_FOR_USER') {
         throw new Error("Deployment is waiting for an approval. Run 'env0 approve' or 'env0 cancel' to continue.");
@@ -175,15 +173,15 @@ class DeployUtils {
       console.log(`Waiting for environment to become deployable. (current status: ${status})`);
 
       retryCount++;
-      await this.apiClient.sleep(5000);
+      await apiClient.sleep(5000);
     } while (!environmentValidStatuses.includes(status));
   }
 
   async archiveIfInactive(environmentId) {
     const envRoute = `environments/${environmentId}`;
-    const environment = await this.apiClient.callApi('get', envRoute);
+    const environment = await apiClient.callApi('get', envRoute);
     if (environment.status !== 'INACTIVE') throw new Error('Environment did not reach INACTIVE status');
-    await this.apiClient.callApi('put', envRoute, {
+    await apiClient.callApi('put', envRoute, {
       data: { isArchived: true }
     });
     console.log(`Environment ${environment.name} has been archived`);

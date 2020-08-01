@@ -1,4 +1,4 @@
-const { OPTIONS } = require('./constants');
+const { options } = require('./constants');
 
 const {
   API_KEY,
@@ -12,24 +12,38 @@ const {
   REVISION,
   ARCHIVE_AFTER_DESTROY,
   REQUIRES_APPROVAL
-} = OPTIONS;
+} = options;
 
 const argumentsMap = {
-  [API_KEY]: { name: API_KEY, alias: 'k', type: String, description: 'Your env0 API Key' },
-  [API_SECRET]: { name: API_SECRET, alias: 's', type: String, description: 'Your env0 API Secret' },
-  [ORGANIZATION_ID]: { name: ORGANIZATION_ID, alias: 'o', type: String, description: 'Your env0 Organization id' },
-  [PROJECT_ID]: { name: PROJECT_ID, alias: 'p', type: String, description: 'Your env0 Project id' },
-  [BLUEPRINT_ID]: {
-    name: BLUEPRINT_ID,
-    alias: 'b',
+  [API_KEY]: { name: API_KEY, alias: 'k', type: String, description: 'env0 API Key', prompt: 'env0 API Key' },
+  [API_SECRET]: {
+    name: API_SECRET,
+    alias: 's',
     type: String,
-    description: 'The Blueprint id you would like to deploy'
+    description: 'env0 API Secret',
+    prompt: 'env0 API Secret'
   },
+  [ORGANIZATION_ID]: {
+    name: ORGANIZATION_ID,
+    alias: 'o',
+    type: String,
+    description: 'env0 Organization ID',
+    prompt: 'Organization ID'
+  },
+  [PROJECT_ID]: { name: PROJECT_ID, alias: 'p', type: String, description: 'env0 Project ID', prompt: 'Project ID' },
   [ENVIRONMENT_NAME]: {
     name: ENVIRONMENT_NAME,
     alias: 'e',
     type: String,
-    description: 'The environment name you would like to create, if it exists it will deploy to that environment'
+    description: 'The environment name you would like to create, if it exists it will deploy to that environment',
+    prompt: 'Environment Name'
+  },
+  [BLUEPRINT_ID]: {
+    name: BLUEPRINT_ID,
+    alias: 'b',
+    type: String,
+    description: 'The Blueprint id you would like to deploy',
+    prompt: 'Blueprint ID'
   },
   [REQUIRES_APPROVAL]: {
     name: REQUIRES_APPROVAL,
@@ -72,6 +86,7 @@ const argumentsMap = {
 };
 
 module.exports = {
+  argumentsMap,
   allArguments: Object.values(argumentsMap),
   baseArguments: [
     argumentsMap[API_KEY],

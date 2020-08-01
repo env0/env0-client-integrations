@@ -1,17 +1,35 @@
 {
-  "name": "env0-deploy-scripts",
+  "name": "@env0/cli",
   "version": "1.0.1",
-  "description": "Deploy env0 using env0 system",
+  "description": "env0 CLI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/env0/env0-client-integrations",
+    "directory": "node"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "bugs": {
+    "url": "https://github.com/env0/env0-client-integrations/issues"
+  },
   "main": "src/env0-deploy-cli.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint ."
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "files": [
+    "bin",
+    "src"
+  ],
   "bin": {
-    "env0": "index.js"
+    "env0": "bin/cli.js"
   },
+  "keywords": [
+    "env0",
+    "cli"
+  ],
   "dependencies": {
     "axios": "^0.19.0",
     "boxen": "^4.2.0",

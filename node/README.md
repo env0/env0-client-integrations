@@ -98,8 +98,8 @@ For sensitive environment variables, use:
 - Usage: `--archiveAfterDestroy`
 
 ### Requires Approval
-> Require approval for deployment
-- Usage: `--archiveAfterDestroy`
+> Requires approval for deployment
+- Usage: `--requiresApproval`
 - Alias: `-a`
 
 ## Configuration File

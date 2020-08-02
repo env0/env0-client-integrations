@@ -16,9 +16,9 @@ describe('logger', () => {
   `('should hide $option', ({ option }) => {
     logger.setSecrets({ [option]: mockSecret });
 
-    logger.info(`${option}: ${mockSecret}`);
+    logger.info(`${option}: ${mockSecret} ${option}: ${mockSecret}`);
 
-    expect(console.log).toBeCalledWith(`${option}: ${secureMockSecret}`);
+    expect(console.log).toBeCalledWith(`${option}: ${secureMockSecret} ${option}: ${secureMockSecret}`);
   });
 
   it.each`

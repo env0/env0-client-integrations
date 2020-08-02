@@ -1,12 +1,12 @@
 const os = require('os');
 const fs = require('fs-extra');
 const path = require('path');
-const { OPTIONS } = require('./constants');
+const { options } = require('../config/constants');
 const { pick } = require('lodash');
 
 const CONFIG_FILE = path.join(os.homedir(), '.env0', 'config.json');
 
-const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME } = OPTIONS;
+const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME } = options;
 
 const INCLUDED_OPTIONS = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME];
 
@@ -62,6 +62,7 @@ const write = options => {
 };
 
 module.exports = {
+  INCLUDED_OPTIONS,
   read,
   write
 };

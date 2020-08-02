@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/env0/env0-client-integrations/issues"
   },
-  "main": "src/env0-deploy-cli.js",
+  "main": "src/main.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint ."

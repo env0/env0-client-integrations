@@ -3,7 +3,7 @@ const { version } = require('../../package.json');
 
 class Env0ApiClient {
   async init(apiKey, apiSecret) {
-    this.apliClient = axios.create({
+    this.apiClient = axios.create({
       baseURL: process.env.ENV0_API_URL || 'https://api.env0.com',
       auth: {
         username: apiKey,
@@ -18,7 +18,7 @@ class Env0ApiClient {
   }
 
   async callApi(method, route, config) {
-    const response = await this.apliClient({
+    const response = await this.apiClient({
       method,
       url: route,
       ...config

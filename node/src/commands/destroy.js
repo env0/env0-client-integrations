@@ -3,6 +3,7 @@ const DeployUtils = require('../lib/deploy-utils');
 const destroy = async options => {
   const deployUtils = new DeployUtils();
 
+  console.log('Waiting for deployment to start...');
   const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
   let status;
 

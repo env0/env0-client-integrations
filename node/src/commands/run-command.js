@@ -36,7 +36,6 @@ const runCommand = async (command, options, environmentVariables) => {
 
   await DeployUtils.init(options);
 
-  console.log('Waiting for deployment to start...');
   await commands[command](options, environmentVariables);
   console.log(`Command ${command} has finished successfully.`);
 };

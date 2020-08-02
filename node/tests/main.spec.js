@@ -1,11 +1,13 @@
 const runCommand = require('../src/commands/run-command');
 const run = require('../src/main');
 const commandLineArgs = require('command-line-args');
-const commandLineUsage = require('command-line-usage');
 const { version } = require('../package.json');
+const help = require('../src/commands/help');
+const configure = require('../src/commands/configure');
 
 jest.mock('../src/commands/run-command');
-jest.mock('command-line-usage');
+jest.mock('../src/commands/help');
+jest.mock('../src/commands/configure');
 jest.mock('command-line-args');
 
 const mockOptions = {
@@ -26,6 +28,8 @@ const mockOptionsAndRun = async ({ command, rawArgs, args }) => {
 describe('main', () => {
   beforeEach(() => {
     jest.spyOn(process, 'exit').mockReturnValue({});
+    jest.spyOn(console, 'log').mockReturnValue({});
+    jest.spyOn(console, 'error').mockReturnValue({});
   });
 
   describe("when command doesn't exist", () => {
@@ -37,24 +41,60 @@ describe('main', () => {
       expect(runCommand).not.toBeCalled();
     });
 
+    it('should print to stderr', () => {
+      expect(console.error).toBeCalled();
+    });
     it('should exit with 1', () => {
       expect(process.exit).toBeCalledWith(1);
     });
   });
 
   describe('when command exists', () => {
-    describe.each`
-      command
-      ${'-h'}
-      ${'--help'}
-      ${'help'}
-    `('when user asks for help with $command', ({ command }) => {
+    describe('help', () => {
+      describe.each`
+        command
+        ${'-h'}
+        ${'--help'}
+        ${'help'}
+      `('when user asks for help with $command', ({ command }) => {
+        beforeEach(async () => {
+          await mockOptionsAndRun({ command, rawArgs: [command] });
+        });
+
+        it('should present the help message', () => {
+          expect(help).toBeCalled();
+        });
+
+        it('should not call run deployment', () => {
+          expect(runCommand).not.toBeCalled();
+        });
+      });
+    });
+
+    describe('version', () => {
+      describe.each`
+        command
+        ${'--version'}
+        ${'version'}
+      `('when user asks to see the version with $command', ({ command }) => {
+        beforeEach(async () => {
+          jest.spyOn(console, 'log');
+          await mockOptionsAndRun({ command, rawArgs: [command] });
+        });
+
+        it('should show the proper version', () => {
+          expect(console.log).toBeCalledWith(version);
+        });
+      });
+    });
+
+    describe('configure', () => {
       beforeEach(async () => {
-        await mockOptionsAndRun({ command, rawArgs: [command] });
+        await mockOptionsAndRun({ command: 'configure' });
       });
 
       it('should present the help message', () => {
-        expect(commandLineUsage).toBeCalled();
+        expect(configure).toBeCalled();
       });
 
       it('should not call run deployment', () => {
@@ -62,39 +102,26 @@ describe('main', () => {
       });
     });
 
-    describe.each`
-      command
-      ${'--version'}
-      ${'version'}
-    `('when user asks to see the version with $command', ({ command }) => {
-      beforeEach(async () => {
-        jest.spyOn(console, 'log');
-        await mockOptionsAndRun({ command, rawArgs: [command] });
-      });
+    describe('environment variables parsing', () => {
+      describe.each`
+        command      | args
+        ${'deploy'}  | ${mockOptions}
+        ${'destroy'} | ${mockOptions}
+      `('on $command', ({ command, args }) => {
+        beforeEach(async () => {
+          await mockOptionsAndRun({ command, args });
+        });
 
-      it('should show the proper version', () => {
-        expect(console.log).toBeCalledWith(version);
-      });
-    });
+        const expectedEnvVars = [
+          { name: 'key1', value: 'value1', sensitive: false },
+          { name: 'key2', value: 'value2', sensitive: false },
+          { name: 'sensitiveKey1', value: 'sensitiveValue1', sensitive: true },
+          { name: 'sensitiveKey2', value: 'sensitiveValue2', sensitive: true }
+        ];
 
-    describe.each`
-      command      | args
-      ${'deploy'}  | ${mockOptions}
-      ${'destroy'} | ${mockOptions}
-    `('on $command', ({ command, args }) => {
-      beforeEach(async () => {
-        await mockOptionsAndRun({ command, args });
-      });
-
-      const expectedEnvVars = [
-        { name: 'key1', value: 'value1', sensitive: false },
-        { name: 'key2', value: 'value2', sensitive: false },
-        { name: 'sensitiveKey1', value: 'sensitiveValue1', sensitive: true },
-        { name: 'sensitiveKey2', value: 'sensitiveValue2', sensitive: true }
-      ];
-
-      it('should run deployment with proper params', () => {
-        expect(runCommand).toBeCalledWith(command, expect.objectContaining(args), expectedEnvVars);
+        it('should run deployment with proper params', () => {
+          expect(runCommand).toBeCalledWith(command, expect.objectContaining(args), expectedEnvVars);
+        });
       });
     });
   });

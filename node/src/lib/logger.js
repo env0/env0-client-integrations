@@ -26,7 +26,7 @@ const masker = format(info => {
   let message = _.cloneDeep(info.message);
 
   secrets.forEach(secret => {
-    if (message.includes(secret)) message = _.replace(message, secret, getSecureSecret(secret));
+    if (message.includes(secret)) message = message.split(secret).join(getSecureSecret(secret));
   });
 
   info.message = message;

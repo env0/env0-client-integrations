@@ -22,7 +22,7 @@ const setSecrets = options => {
 };
 
 const masker = format(info => {
-  let message = info.message;
+  let message = _.cloneDeep(info.message);
 
   secrets.forEach(secret => {
     if (message.includes(secret)) message = _.replace(message, secret, getSecureSecret(secret));
@@ -35,6 +35,7 @@ const masker = format(info => {
 const logger = createLogger({
   format: format.combine(
     masker(),
+    format.splat(),
     format.printf(info => info.message)
   ),
   transports: [new transports.Console({ showLevel: false })]

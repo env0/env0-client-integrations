@@ -1,11 +1,12 @@
 const DeployUtils = require('../lib/deploy-utils');
+const logger = require('../lib/logger');
 
 const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {
   const deployUtils = new DeployUtils();
 
   if (environmentVariables && environmentVariables.length > 0) {
     for (const config of environmentVariables) {
-      console.log(
+      logger.info(
         `Setting Environment Variable ${config.name} to be ${config.value} in environmentId: ${environment.id}`
       );
       await deployUtils.setConfiguration(environment, blueprintId, config.name, config.value, config.sensitive);

@@ -4,6 +4,7 @@ const { options } = require('./config/constants');
 const { commands } = require('./config/commands');
 const { version } = require('../package.json');
 const help = require('./commands/help');
+const logger = require('./lib/logger');
 
 const mainDefinitions = [{ name: 'command', defaultOption: true }];
 
@@ -27,7 +28,7 @@ const isInternalCommand = async (command, args) => {
   }
 
   if (['--version'].some(h => args.includes(h)) || command === 'version') {
-    console.log(version);
+    logger.info(version);
     isInternalCmd = true;
   }
 
@@ -47,6 +48,7 @@ const run = async () => {
 
     const commandDefinitions = commands[command].options;
     const commandOptions = commandLineArgs(commandDefinitions, { argv });
+
     const environmentVariables = getEnvironmentVariablesOptions(
       commandOptions[ENVIRONMENT_VARIABLES],
       commandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]
@@ -54,13 +56,13 @@ const run = async () => {
 
     await runCommand(command, commandOptions, environmentVariables);
   } catch (error) {
-    console.error(`Command ${command} has failed. Error:`);
+    logger.error(`Command ${command} has failed. Error:`);
     let { message } = error;
     if (error.response && error.response.data && error.response.data.message) {
       message += `: ${error.response.data.message}`;
     }
 
-    console.error(message);
+    logger.error(message);
     process.exit(1);
   }
 };
@@ -69,7 +71,7 @@ const parseEnvironmentVariables = (environmentVariables, sensitive) => {
   const result = [];
 
   if (environmentVariables && environmentVariables.length > 0) {
-    console.log(`Getting ${sensitive ? 'Sensitive ' : ''}Environment Variables from options:`, environmentVariables);
+    logger.info(`Getting ${sensitive ? 'Sensitive ' : ''}Environment Variables from options:`, environmentVariables);
 
     environmentVariables.forEach(config => {
       let [name, ...value] = config.split('=');

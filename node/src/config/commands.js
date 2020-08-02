@@ -18,7 +18,7 @@ const commands = {
     description: 'Cancels an deployment that is pending approval'
   },
   configure: {
-    description: 'Configures AWS  CLI  options'
+    description: 'Configures env0 CLI options'
   },
   version: {
     description: 'Shows the CLI version'

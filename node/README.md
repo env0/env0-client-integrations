@@ -89,7 +89,7 @@ For sensitive environment variables, use:
 - Alias: `-q`
 
 ### Revision
-> Your GIT revision, can be a branch, a tag or a commit hash. Defaults to `master`
+> Your GIT revision, can be a branch, a tag or a commit hash. (For existing environments - if not specified, will use the previously defined revision)
 - Usage: `--revision`
 - Alias: `-r`
 

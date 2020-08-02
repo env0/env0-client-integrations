@@ -26,7 +26,7 @@ const sections = [
   {
     header: 'Usage',
     content: [
-      `$ env0 deploy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${BLUEPRINT_ID}> -e <${ENVIRONMENT_NAME}> -r [master] -v [stage=dev]`,
+      `$ env0 deploy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${BLUEPRINT_ID}> -e <${ENVIRONMENT_NAME}> -r <revision> -v [stage=dev]`,
       '$ env0 --help'
     ]
   },

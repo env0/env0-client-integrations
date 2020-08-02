@@ -74,7 +74,6 @@ const argumentsMap = {
     name: REVISION,
     alias: 'r',
     type: String,
-    defaultValue: 'master',
     description: 'Your git revision, can be a branch tag or a commit hash. Default value "master" '
   },
   [ARCHIVE_AFTER_DESTROY]: {

@@ -3,7 +3,9 @@ const run = require('../src/main');
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 const { version } = require('../package.json');
+const logger = require('../src/lib/logger');
 
+jest.mock('../src/lib/logger');
 jest.mock('../src/commands/run-command');
 jest.mock('command-line-usage');
 jest.mock('command-line-args');
@@ -68,12 +70,11 @@ describe('main', () => {
       ${'version'}
     `('when user asks to see the version with $command', ({ command }) => {
       beforeEach(async () => {
-        jest.spyOn(console, 'log');
         await mockOptionsAndRun({ command, rawArgs: [command] });
       });
 
       it('should show the proper version', () => {
-        expect(console.log).toBeCalledWith(version);
+        expect(logger.info).toBeCalledWith(version);
       });
     });
 

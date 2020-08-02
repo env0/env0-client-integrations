@@ -5,6 +5,7 @@ const destroy = require('./destroy');
 const approve = require('./approve');
 const cancel = require('./cancel');
 const { options } = require('../config/constants');
+const logger = require('../lib/logger');
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME } = options;
 
@@ -24,8 +25,10 @@ const runCommand = async (command, options, environmentVariables) => {
   assertRequiredOptions(options);
   configManager.write(options);
 
-  console.log(`Running ${command} with the following arguments:`);
-  Object.keys(options).forEach(opt => console.log(`$ ${opt}: ${options[opt]}`));
+  logger.setSecrets(options);
+
+  logger.info(`Running ${command} with the following arguments:`);
+  Object.keys(options).forEach(opt => logger.info(`$ ${opt}: ${options[opt]}`));
 
   const commands = {
     destroy: destroy,
@@ -36,9 +39,9 @@ const runCommand = async (command, options, environmentVariables) => {
 
   await DeployUtils.init(options);
 
-  console.log('Waiting for deployment to start...');
+  logger.info('Waiting for deployment to start...');
   await commands[command](options, environmentVariables);
-  console.log(`Command ${command} has finished successfully.`);
+  logger.info(`Command ${command} has finished successfully.`);
 };
 
 module.exports = runCommand;

@@ -11,12 +11,9 @@ const getSecureSecret = secret => {
 };
 
 const setSecrets = options => {
-  const secretOptions = _(argumentsMap)
+  secrets = _(argumentsMap)
     .pickBy(({ secret }) => secret)
     .keys()
-    .value();
-
-  secrets = _(secretOptions)
     .map(opt => options[opt])
     .compact()
     .value();

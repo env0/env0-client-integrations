@@ -131,7 +131,7 @@ class DeployUtils {
     return doneSteps;
   }
 
-  async pollDeploymentStatus(deploymentLogId) {
+  async pollDeploymentStatus(deploymentLogId, shouldProcessDeploymentSteps) {
     const MAX_TIME_IN_SECONDS = 10800; // 3 hours
     const start = Date.now();
     const stepsAlreadyLogged = [];
@@ -139,7 +139,9 @@ class DeployUtils {
     while (true) {
       const { status } = await apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
 
-      stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged)));
+      if (shouldProcessDeploymentSteps) {
+        stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged)));
+      }
 
       if (status !== 'IN_PROGRESS') {
         status === 'WAITING_FOR_USER' &&

@@ -69,7 +69,7 @@ class DeployUtils {
     });
   }
 
-  async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval) {
+  async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval = false) {
     await this.waitForEnvironment(environment.id);
 
     return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {

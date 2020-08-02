@@ -1,10 +1,10 @@
-const runCommand = require('../src/env0-deploy-flow');
-const run = require('../src/env0-deploy-cli');
+const runCommand = require('../src/commands/run-command');
+const run = require('../src/main');
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 const { version } = require('../package.json');
 
-jest.mock('../src/env0-deploy-flow');
+jest.mock('../src/commands/run-command');
 jest.mock('command-line-usage');
 jest.mock('command-line-args');
 
@@ -23,7 +23,7 @@ const mockOptionsAndRun = async ({ command, rawArgs, args }) => {
   await run();
 };
 
-describe('env0-deploy-cli', () => {
+describe('main', () => {
   beforeEach(() => {
     jest.spyOn(process, 'exit').mockReturnValue({});
   });

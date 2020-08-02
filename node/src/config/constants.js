@@ -1,4 +1,4 @@
-const OPTIONS = {
+const options = {
   API_KEY: 'apiKey',
   API_SECRET: 'apiSecret',
   ORGANIZATION_ID: 'organizationId',
@@ -13,5 +13,5 @@ const OPTIONS = {
 };
 
 module.exports = {
-  OPTIONS
+  options
 };

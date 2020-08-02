@@ -2,7 +2,7 @@ const { createLogger, format, transports } = require('winston');
 const _ = require('lodash');
 const { argumentsMap } = require('../config/arguments');
 
-const secrets = [];
+let secrets = [];
 
 const getSecureSecret = secret => {
   const charsToKeep = 5;
@@ -16,9 +16,10 @@ const setSecrets = options => {
     .keys()
     .value();
 
-  const secretValues = secretOptions.map(opt => options[opt]);
-
-  secrets.push(...secretValues);
+  secrets = _(secretOptions)
+    .map(opt => options[opt])
+    .compact()
+    .value();
 };
 
 const masker = format(info => {

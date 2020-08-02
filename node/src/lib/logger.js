@@ -25,10 +25,7 @@ const masker = format(info => {
   let message = info.message;
 
   secrets.forEach(secret => {
-    if (message.includes(secret)) {
-      const secureSecret = getSecureSecret(secret);
-      message = _.replace(message, secret, secureSecret);
-    }
+    if (message.includes(secret)) message = _.replace(message, secret, getSecureSecret(secret));
   });
 
   info.message = message;

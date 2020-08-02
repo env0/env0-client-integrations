@@ -88,7 +88,8 @@ class DeployUtils {
   }
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {
-    let shouldPoll, startTime;
+    let shouldPoll = false;
+    let startTime = undefined;
 
     do {
       const steps = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);

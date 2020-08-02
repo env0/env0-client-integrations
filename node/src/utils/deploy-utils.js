@@ -186,5 +186,11 @@ class DeployUtils {
     });
     console.log(`Environment ${environment.name} has been archived`);
   }
+
+  assertDeploymentStatus(status) {
+    if (!['SUCCESS', 'WAITING_FOR_USER', 'CANCELLED'].includes(status)) {
+      throw new Error(`Deployment failed. Current deployment status is ${status}`);
+    }
+  }
 }
 module.exports = DeployUtils;

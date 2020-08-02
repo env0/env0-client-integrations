@@ -1,5 +1,4 @@
 const DeployUtils = require('../utils/deploy-utils');
-const { assertDeploymentStatus } = require('../utils/assertions');
 
 const setDeploymentApprovalStatus = command => async options => {
   const deployUtils = new DeployUtils();
@@ -21,7 +20,7 @@ const setDeploymentApprovalStatus = command => async options => {
     : await deployUtils.cancelDeployment(latestDeploymentLog.id);
 
   const status = await deployUtils.pollDeploymentStatus(latestDeploymentLog.id);
-  assertDeploymentStatus(status);
+  deployUtils.assertDeploymentStatus(status);
 };
 
 module.exports = setDeploymentApprovalStatus;

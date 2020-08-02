@@ -1,5 +1,4 @@
 const DeployUtils = require('../utils/deploy-utils');
-const { assertDeploymentStatus } = require('../utils/assertions');
 
 const destroy = async options => {
   const deployUtils = new DeployUtils();
@@ -16,7 +15,7 @@ const destroy = async options => {
     throw new Error(`Could not find an environment with the name ${options.environmentName}`);
   }
 
-  assertDeploymentStatus(status);
+  deployUtils.assertDeploymentStatus(status);
 };
 
 module.exports = destroy;

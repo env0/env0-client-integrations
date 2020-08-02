@@ -4,7 +4,20 @@ const deploy = require('./deploy');
 const destroy = require('./destroy');
 const approve = require('./approve');
 const cancel = require('./cancel');
-const { assertRequiredOptions } = require('../utils/assertions');
+const { options } = require('../config/constants');
+
+const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME } = options;
+
+const assertRequiredOptions = options => {
+  const requiredOptions = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME];
+
+  let missingOptions = [];
+  requiredOptions.forEach(opt => !Object.keys(options).includes(opt) && missingOptions.push(opt));
+
+  if (missingOptions.length) {
+    throw new Error(`Missing required options: ${missingOptions}`);
+  }
+};
 
 const runCommand = async (command, options, environmentVariables) => {
   options = configManager.read(options);

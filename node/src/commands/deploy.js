@@ -1,5 +1,4 @@
 const DeployUtils = require('../utils/deploy-utils');
-const { assertDeploymentStatus } = require('../utils/assertions');
 
 const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {
   const deployUtils = new DeployUtils();
@@ -30,7 +29,7 @@ const deploy = async (options, environmentVariables) => {
   const deployment = await deployUtils.deployEnvironment(environment, revision, blueprintId, requiresApproval);
   const status = await deployUtils.pollDeploymentStatus(deployment.id);
 
-  assertDeploymentStatus(status);
+  deployUtils.assertDeploymentStatus(status);
 };
 
 module.exports = deploy;

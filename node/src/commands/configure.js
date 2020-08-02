@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const configManager = require('../utils/config-manager');
+const configManager = require('../lib/config-manager');
 const { argumentsMap } = require('../config/arguments');
 
 const emptyConfig = configManager.INCLUDED_OPTIONS.reduce((acc, key) => {

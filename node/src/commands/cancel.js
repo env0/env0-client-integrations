@@ -1,3 +1,3 @@
-const setDeploymentStatusApproval = require('../utils/set-deployment-approval-status');
+const setDeploymentStatusApproval = require('../lib/set-deployment-approval-status');
 
 module.exports = setDeploymentStatusApproval('cancel');

@@ -1,5 +1,5 @@
-const DeployUtils = require('../utils/deploy-utils');
-const configManager = require('../utils/config-manager');
+const DeployUtils = require('../lib/deploy-utils');
+const configManager = require('../lib/config-manager');
 const deploy = require('./deploy');
 const destroy = require('./destroy');
 const approve = require('./approve');

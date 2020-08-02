@@ -1,4 +1,4 @@
-const DeployUtils = require('../utils/deploy-utils');
+const DeployUtils = require('../lib/deploy-utils');
 
 const setDeploymentApprovalStatus = command => async options => {
   const deployUtils = new DeployUtils();

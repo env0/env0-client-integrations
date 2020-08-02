@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const configManager = require('../../src/utils/config-manager');
+const configManager = require('../../src/lib/config-manager');
 const { options } = require('../../src/config/constants');
 
 jest.mock('fs-extra');

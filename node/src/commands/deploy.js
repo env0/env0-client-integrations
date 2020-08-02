@@ -1,4 +1,4 @@
-const DeployUtils = require('../utils/deploy-utils');
+const DeployUtils = require('../lib/deploy-utils');
 
 const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {
   const deployUtils = new DeployUtils();

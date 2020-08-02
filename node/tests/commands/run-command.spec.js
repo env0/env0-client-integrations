@@ -1,5 +1,5 @@
 const runCommand = require('../../src/commands/run-command');
-const configManager = require('../../src/utils/config-manager');
+const configManager = require('../../src/lib/config-manager');
 const { options } = require('../../src/config/constants');
 const deploy = require('../../src/commands/deploy');
 const destroy = require('../../src/commands/destroy');
@@ -10,8 +10,8 @@ jest.mock('../../src/commands/deploy');
 jest.mock('../../src/commands/destroy');
 jest.mock('../../src/commands/approve');
 jest.mock('../../src/commands/cancel');
-jest.mock('../../src/utils/deploy-utils');
-jest.mock('../../src/utils/config-manager');
+jest.mock('../../src/lib/deploy-utils');
+jest.mock('../../src/lib/config-manager');
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME } = options;
 

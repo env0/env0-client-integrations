@@ -15,13 +15,21 @@ const {
 } = options;
 
 const argumentsMap = {
-  [API_KEY]: { name: API_KEY, alias: 'k', type: String, description: 'env0 API Key', prompt: 'env0 API Key' },
+  [API_KEY]: {
+    name: API_KEY,
+    alias: 'k',
+    type: String,
+    description: 'env0 API Key',
+    prompt: 'env0 API Key',
+    secret: true
+  },
   [API_SECRET]: {
     name: API_SECRET,
     alias: 's',
     type: String,
     description: 'env0 API Secret',
-    prompt: 'env0 API Secret'
+    prompt: 'env0 API Secret',
+    secret: true
   },
   [ORGANIZATION_ID]: {
     name: ORGANIZATION_ID,

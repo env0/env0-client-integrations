@@ -4,7 +4,9 @@ const commandLineArgs = require('command-line-args');
 const { version } = require('../package.json');
 const help = require('../src/commands/help');
 const configure = require('../src/commands/configure');
+const logger = require('../src/lib/logger');
 
+jest.mock('../src/lib/logger');
 jest.mock('../src/commands/run-command');
 jest.mock('../src/commands/help');
 jest.mock('../src/commands/configure');
@@ -28,8 +30,6 @@ const mockOptionsAndRun = async ({ command, rawArgs, args }) => {
 describe('main', () => {
   beforeEach(() => {
     jest.spyOn(process, 'exit').mockReturnValue({});
-    jest.spyOn(console, 'log').mockReturnValue({});
-    jest.spyOn(console, 'error').mockReturnValue({});
   });
 
   describe("when command doesn't exist", () => {
@@ -42,7 +42,7 @@ describe('main', () => {
     });
 
     it('should print to stderr', () => {
-      expect(console.error).toBeCalled();
+      expect(logger.error).toBeCalled();
     });
     it('should exit with 1', () => {
       expect(process.exit).toBeCalledWith(1);
@@ -78,12 +78,11 @@ describe('main', () => {
         ${'version'}
       `('when user asks to see the version with $command', ({ command }) => {
         beforeEach(async () => {
-          jest.spyOn(console, 'log');
           await mockOptionsAndRun({ command, rawArgs: [command] });
         });
 
         it('should show the proper version', () => {
-          expect(console.log).toBeCalledWith(version);
+          expect(logger.info).toBeCalledWith(version);
         });
       });
     });

@@ -1,4 +1,5 @@
 const Env0ApiClient = require('./api-client');
+const logger = require('./logger');
 const _ = require('lodash');
 
 const apiClient = new Env0ApiClient();
@@ -29,7 +30,7 @@ class DeployUtils {
         lifespanEndAt: null
       }
     });
-    console.log(`Created environment ${environment.id}`);
+    logger.info(`Created environment ${environment.id}`);
     return environment;
   }
 
@@ -52,7 +53,7 @@ class DeployUtils {
       value: configurationValue
     };
 
-    console.log(`getting configuration for environmentId: ${environment.id}`);
+    logger.info(`getting configuration for environmentId: ${environment.id}`);
     const params = {
       organizationId: environment.organizationId,
       blueprintId,
@@ -62,7 +63,7 @@ class DeployUtils {
     const existingConfiguration = configurations.find(config => config.name === configurationName);
 
     if (existingConfiguration) {
-      console.log(
+      logger.info(
         `found a configuration that matches the configurationName: ${configurationName}, existingConfiguration: ${JSON.stringify(
           existingConfiguration
         )}`
@@ -70,7 +71,7 @@ class DeployUtils {
       configuration.id = existingConfiguration.id;
     }
 
-    console.log(`setting the following configuration: ${JSON.stringify(configuration)}`);
+    logger.info(`setting the following configuration: ${JSON.stringify(configuration)}`);
     await apiClient.callApi('post', 'configuration', {
       data: { ...configuration, projectId: undefined }
     });
@@ -111,7 +112,7 @@ class DeployUtils {
         { params: { startTime } }
       );
 
-      events.forEach(event => console.log(event.message));
+      events.forEach(event => logger.info(event.message));
 
       if (nextStartTime) startTime = nextStartTime;
       if (stepInProgress) await apiClient.sleep(1000);
@@ -129,8 +130,8 @@ class DeployUtils {
       const alreadyLogged = stepsToSkip.includes(step.name);
 
       if (!alreadyLogged && step.status !== 'NOT_STARTED') {
-        console.log(`$$$ ${step.name}`);
-        console.log('#'.repeat(100));
+        logger.info(`$$$ ${step.name}`);
+        logger.info('#'.repeat(100));
         await this.writeDeploymentStepLog(deploymentLogId, step.name);
 
         doneSteps.push(step.name);
@@ -154,7 +155,7 @@ class DeployUtils {
 
       if (status !== 'IN_PROGRESS') {
         status === 'WAITING_FOR_USER' &&
-          console.log("Deployment is waiting for an approval. Run 'env0 approve' or 'env0 cancel' to continue.");
+          logger.info("Deployment is waiting for an approval. Run 'env0 approve' or 'env0 cancel' to continue.");
         return status;
       }
 
@@ -182,7 +183,7 @@ class DeployUtils {
       if (environmentValidStatuses.includes(status)) return;
       if (retryCount >= maxRetryNumber) throw new Error('Polling environment timed out');
 
-      console.log(`Waiting for environment to become deployable. (current status: ${status})`);
+      logger.info(`Waiting for environment to become deployable. (current status: ${status})`);
 
       retryCount++;
       await apiClient.sleep(5000);
@@ -196,7 +197,7 @@ class DeployUtils {
     await apiClient.callApi('put', envRoute, {
       data: { isArchived: true }
     });
-    console.log(`Environment ${environment.name} has been archived`);
+    logger.info(`Environment ${environment.name} has been archived`);
   }
 
   assertDeploymentStatus(status) {

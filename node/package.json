@@ -37,7 +37,8 @@
     "command-line-usage": "^6.1.0",
     "fs-extra": "^9.0.1",
     "inquirer": "^7.3.3",
-    "lodash": "^4.17.19"
+    "lodash": "^4.17.19",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

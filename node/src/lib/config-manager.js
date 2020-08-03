@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const { options } = require('../config/constants');
 const { pick } = require('lodash');
+const logger = require('./logger');
 
 const CONFIG_FILE = path.join(os.homedir(), '.env0', 'config.json');
 
@@ -29,7 +30,7 @@ const getEnvVars = () => {
   });
 
   const found = Object.keys(config);
-  if (found.length) console.log(`Found environment variables ${found}`);
+  if (found.length) logger.info(`Found environment variables ${found}`);
 
   return config;
 };
@@ -39,7 +40,7 @@ const read = configFromParams => {
   const configFromEnv = getEnvVars();
 
   if (fs.existsSync(CONFIG_FILE)) {
-    console.log('Found existing configuration');
+    logger.info('Found existing configuration');
     const raw = fs.readFileSync(CONFIG_FILE);
 
     try {

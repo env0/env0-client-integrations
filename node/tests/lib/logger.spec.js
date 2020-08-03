@@ -5,8 +5,8 @@ global.console = {
   log: jest.fn()
 };
 
-const mockSecret = 'AAAAABBBBBCCCCCDDDDD';
-const secureMockSecret = '***************DDDDD';
+const mockSecret = 'TopSecret';
+const secureSecret = '**********';
 
 describe('logger', () => {
   it.each`
@@ -18,7 +18,7 @@ describe('logger', () => {
 
     logger.info(`${option}: ${mockSecret} ${option}: ${mockSecret}`);
 
-    expect(console.log).toBeCalledWith(`${option}: ${secureMockSecret} ${option}: ${secureMockSecret}`);
+    expect(console.log).toBeCalledWith(`${option}: ${secureSecret} ${option}: ${secureSecret}`);
   });
 
   it.each`

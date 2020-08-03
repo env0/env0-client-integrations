@@ -2,13 +2,9 @@ const { createLogger, format, transports } = require('winston');
 const _ = require('lodash');
 const { argumentsMap } = require('../config/arguments');
 
-let secrets = [];
+const SECURE_STRING = '**********';
 
-const getSecureSecret = secret => {
-  const charsToKeep = 5;
-  const pattern = new RegExp(`^.{1,${secret.length - charsToKeep}}`);
-  return secret.replace(pattern, sub => '*'.repeat(sub.length));
-};
+let secrets = [];
 
 const setSecrets = options => {
   secrets = _(argumentsMap)
@@ -23,7 +19,7 @@ const masker = format(info => {
   let message = _.cloneDeep(info.message);
 
   secrets.forEach(secret => {
-    if (message.includes(secret)) message = message.split(secret).join(getSecureSecret(secret));
+    if (message.includes(secret)) message = message.split(secret).join(SECURE_STRING);
   });
 
   info.message = message;

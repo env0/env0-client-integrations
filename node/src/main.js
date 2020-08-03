@@ -4,6 +4,7 @@ const { options } = require('./config/constants');
 const { commands } = require('./config/commands');
 const { version } = require('../package.json');
 const help = require('./commands/help');
+const configure = require('./commands/configure');
 const logger = require('./lib/logger');
 
 const mainDefinitions = [{ name: 'command', defaultOption: true }];
@@ -29,6 +30,11 @@ const isInternalCommand = async (command, args) => {
 
   if (['--version'].some(h => args.includes(h)) || command === 'version') {
     logger.info(version);
+    isInternalCmd = true;
+  }
+
+  if (command === 'configure') {
+    await configure();
     isInternalCmd = true;
   }
 

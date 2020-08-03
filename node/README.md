@@ -97,10 +97,6 @@ For sensitive environment variables, use:
 - Usage: `--revision`
 - Alias: `-r`
 
-### Archive After Destroy
-> Archives the environment after a successful destroy
-- Usage: `--archiveAfterDestroy`
-
 ### Requires Approval
 > Requires approval for deployment. Valid values are either "true" or "false".
 - Usage: `--requiresApproval <true/false>`

@@ -193,16 +193,6 @@ class DeployUtils {
     } while (!environmentValidStatuses.includes(status));
   }
 
-  async archiveIfInactive(environmentId) {
-    const envRoute = `environments/${environmentId}`;
-    const environment = await apiClient.callApi('get', envRoute);
-    if (environment.status !== 'INACTIVE') throw new Error('Environment did not reach INACTIVE status');
-    await apiClient.callApi('put', envRoute, {
-      data: { isArchived: true }
-    });
-    logger.info(`Environment ${environment.name} has been archived`);
-  }
-
   assertDeploymentStatus(status) {
     if (!['SUCCESS', 'WAITING_FOR_USER', 'CANCELLED'].includes(status)) {
       throw new Error(`Deployment failed. Current deployment status is ${status}`);

@@ -4,7 +4,7 @@ const _ = require('lodash');
 const logger = require('../lib/logger');
 const { convertRequiresApprovalToBoolean } = require('../lib/genetal-utils');
 
-const { PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL, ARCHIVE_AFTER_DESTROY } = options;
+const { PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 
 const assertEnvironmentExists = environment => {
   if (!environment) {
@@ -29,8 +29,6 @@ const destroy = async options => {
 
   const deployment = await deployUtils.destroyEnvironment(environment);
   status = await deployUtils.pollDeploymentStatus(deployment.id);
-
-  if (options[ARCHIVE_AFTER_DESTROY]) await deployUtils.archiveIfInactive(environment.id);
 
   deployUtils.assertDeploymentStatus(status);
 };

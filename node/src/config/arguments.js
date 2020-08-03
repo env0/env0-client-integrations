@@ -10,7 +10,6 @@ const {
   ENVIRONMENT_VARIABLES,
   SENSITIVE_ENVIRONMENT_VARIABLES,
   REVISION,
-  ARCHIVE_AFTER_DESTROY,
   REQUIRES_APPROVAL
 } = options;
 
@@ -83,12 +82,6 @@ const argumentsMap = {
     alias: 'r',
     type: String,
     description: 'Your git revision, can be a branch tag or a commit hash. Default value "master" '
-  },
-  [ARCHIVE_AFTER_DESTROY]: {
-    name: ARCHIVE_AFTER_DESTROY,
-    type: Boolean,
-    defaultValue: false,
-    description: 'Archive the environment after a successful destroy'
   }
 };
 

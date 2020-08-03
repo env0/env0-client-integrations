@@ -20,8 +20,10 @@ const destroy = async options => {
 
   assertEnvironmentExists(environment);
 
-  if (!_.isUndefined(options[REQUIRES_APPROVAL]) && options[REQUIRES_APPROVAL] !== environment.requiresApproval) {
-    await deployUtils.updateEnvironment(environment, { requiresApproval: options[REQUIRES_APPROVAL] });
+  const requiresApproval = eval(options[REQUIRES_APPROVAL]);
+
+  if (!_.isUndefined(requiresApproval) && requiresApproval !== environment.requiresApproval) {
+    await deployUtils.updateEnvironment(environment, { requiresApproval: requiresApproval });
   }
 
   const deployment = await deployUtils.destroyEnvironment(environment);

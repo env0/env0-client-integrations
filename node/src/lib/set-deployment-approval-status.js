@@ -1,4 +1,5 @@
 const DeployUtils = require('../lib/deploy-utils');
+const logger = require('../lib/logger');
 
 const setDeploymentApprovalStatus = (command, shouldProcessDeploymentSteps) => async options => {
   const deployUtils = new DeployUtils();
@@ -15,7 +16,7 @@ const setDeploymentApprovalStatus = (command, shouldProcessDeploymentSteps) => a
 
   const { latestDeploymentLog } = environment;
 
-  if (command === 'approve') console.log('Approving deployment. Waiting for it to resume...');
+  if (command === 'approve') logger.info('Approving deployment. Waiting for it to resume...');
 
   command === 'approve'
     ? await deployUtils.approveDeployment(latestDeploymentLog.id)

@@ -1,6 +1,7 @@
 const DeployUtils = require('../lib/deploy-utils');
 const { options } = require('../config/constants');
 const _ = require('lodash');
+const logger = require('../lib/logger');
 
 const { PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL, ARCHIVE_AFTER_DESTROY } = options;
 
@@ -13,7 +14,7 @@ const assertEnvironmentExists = environment => {
 const destroy = async options => {
   const deployUtils = new DeployUtils();
 
-  console.log('Waiting for deployment to start...');
+  logger.info('Waiting for deployment to start...');
   const environment = await deployUtils.getEnvironment(options[ENVIRONMENT_NAME], options[PROJECT_ID]);
   let status;
 

@@ -19,7 +19,7 @@ const deploy = async (options, environmentVariables) => {
 
   const { environmentName, projectId, organizationId, blueprintId, revision, requiresApproval } = options;
 
-  console.log('Waiting for deployment to start...');
+  logger.info('Waiting for deployment to start...');
   let environment = await deployUtils.getEnvironment(environmentName, projectId);
 
   if (!environment) {

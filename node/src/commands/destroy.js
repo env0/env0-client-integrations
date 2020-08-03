@@ -2,6 +2,7 @@ const DeployUtils = require('../lib/deploy-utils');
 const { options } = require('../config/constants');
 const _ = require('lodash');
 const logger = require('../lib/logger');
+const { convertRequiresApprovalToBoolean } = require('../lib/genetal-utils');
 
 const { PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL, ARCHIVE_AFTER_DESTROY } = options;
 
@@ -20,7 +21,7 @@ const destroy = async options => {
 
   assertEnvironmentExists(environment);
 
-  const requiresApproval = eval(options[REQUIRES_APPROVAL]);
+  const requiresApproval = convertRequiresApprovalToBoolean(options[REQUIRES_APPROVAL]);
 
   if (!_.isUndefined(requiresApproval) && requiresApproval !== environment.requiresApproval) {
     await deployUtils.updateEnvironment(environment, { requiresApproval: requiresApproval });

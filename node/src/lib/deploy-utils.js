@@ -86,7 +86,7 @@ class DeployUtils {
     const payload = removeEmptyValues({
       blueprintId,
       blueprintRevision,
-      userRequiresApproval: eval(requiresApproval)
+      userRequiresApproval: requiresApproval
     });
 
     return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {

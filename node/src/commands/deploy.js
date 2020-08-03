@@ -1,5 +1,6 @@
 const DeployUtils = require('../lib/deploy-utils');
 const logger = require('../lib/logger');
+const { convertRequiresApprovalToBoolean } = require('../lib/genetal-utils');
 
 const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {
   const deployUtils = new DeployUtils();
@@ -28,7 +29,12 @@ const deploy = async (options, environmentVariables) => {
 
   await setConfigurationFromOptions(environmentVariables, environment, blueprintId);
 
-  const deployment = await deployUtils.deployEnvironment(environment, revision, blueprintId, requiresApproval);
+  const deployment = await deployUtils.deployEnvironment(
+    environment,
+    revision,
+    blueprintId,
+    convertRequiresApprovalToBoolean(requiresApproval)
+  );
   const status = await deployUtils.pollDeploymentStatus(deployment.id);
 
   deployUtils.assertDeploymentStatus(status);

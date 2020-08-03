@@ -30,8 +30,6 @@ const mockOptionsAndRun = async ({ command, rawArgs, args }) => {
 describe('main', () => {
   beforeEach(() => {
     jest.spyOn(process, 'exit').mockReturnValue({});
-    jest.spyOn(console, 'log').mockReturnValue({});
-    jest.spyOn(console, 'error').mockReturnValue({});
   });
 
   describe("when command doesn't exist", () => {
@@ -44,7 +42,7 @@ describe('main', () => {
     });
 
     it('should print to stderr', () => {
-      expect(console.error).toBeCalled();
+      expect(logger.error).toBeCalled();
     });
     it('should exit with 1', () => {
       expect(process.exit).toBeCalledWith(1);
@@ -83,8 +81,9 @@ describe('main', () => {
           await mockOptionsAndRun({ command, rawArgs: [command] });
         });
 
-      it('should show the proper version', () => {
-        expect(logger.info).toBeCalledWith(version);
+        it('should show the proper version', () => {
+          expect(logger.info).toBeCalledWith(version);
+        });
       });
     });
 

@@ -248,14 +248,24 @@ describe('deploy utils', () => {
       });
     });
 
-    it('should set a default requires approval to false', async () => {
-      await deployUtils.deployEnvironment(mockEnvironment, mockBlueprintRevision, mockBlueprintId);
+    it.each`
+      userRequiresApproval | expectedPayload
+      ${false}             | ${{ userRequiresApproval: false }}
+      ${undefined}         | ${{}}
+      ${true}              | ${{ userRequiresApproval: true }}
+    `('should remove undefined values from request payload', async ({ userRequiresApproval, expectedPayload }) => {
+      await deployUtils.deployEnvironment(
+        mockEnvironment,
+        mockBlueprintRevision,
+        mockBlueprintId,
+        userRequiresApproval
+      );
 
       expect(mockCallApi).toHaveBeenLastCalledWith('post', `environments/${mockEnvironment.id}/deployments`, {
         data: {
           blueprintId: mockBlueprintId,
           blueprintRevision: mockBlueprintRevision,
-          userRequiresApproval: false
+          ...expectedPayload
         }
       });
     });

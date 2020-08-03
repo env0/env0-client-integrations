@@ -1,6 +1,9 @@
 const Env0ApiClient = require('./api-client');
+const _ = require('lodash');
 
 const apiClient = new Env0ApiClient();
+
+const removeEmptyValues = payload => _.omitBy(payload, _.isUndefined);
 
 class DeployUtils {
   static async init(options) {
@@ -11,6 +14,10 @@ class DeployUtils {
     const environments = await apiClient.callApi('get', `environments?projectId=${projectId}`);
 
     return environments.find(env => env.name === environmentName);
+  }
+
+  async updateEnvironment(environment, data) {
+    await apiClient.callApi('put', `environments/${environment.id}`, { data });
   }
 
   async createEnvironment(environmentName, organizationId, projectId) {
@@ -69,15 +76,17 @@ class DeployUtils {
     });
   }
 
-  async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval = false) {
+  async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval) {
     await this.waitForEnvironment(environment.id);
 
+    const payload = {
+      blueprintId,
+      blueprintRevision,
+      userRequiresApproval: requiresApproval
+    };
+
     return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {
-      data: {
-        blueprintId,
-        blueprintRevision,
-        userRequiresApproval: requiresApproval
-      }
+      data: removeEmptyValues(payload)
     });
   }
 
@@ -131,7 +140,7 @@ class DeployUtils {
     return doneSteps;
   }
 
-  async pollDeploymentStatus(deploymentLogId, shouldProcessDeploymentSteps) {
+  async pollDeploymentStatus(deploymentLogId, shouldProcessDeploymentSteps = true) {
     const MAX_TIME_IN_SECONDS = 10800; // 3 hours
     const start = Date.now();
     const stepsAlreadyLogged = [];

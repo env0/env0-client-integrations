@@ -6,8 +6,10 @@ const approve = require('./approve');
 const cancel = require('./cancel');
 const { options } = require('../config/constants');
 const logger = require('../lib/logger');
+const _ = require('lodash');
+const { argumentsMap } = require('../config/arguments');
 
-const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME } = options;
+const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 
 const assertRequiredOptions = options => {
   const requiredOptions = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME];
@@ -20,9 +22,21 @@ const assertRequiredOptions = options => {
   }
 };
 
+const assertRequiresApprovalOption = requiresApproval => {
+  const validValues = ['true', 'false'];
+
+  if (!_.isUndefined(requiresApproval) && !validValues.includes(requiresApproval)) {
+    throw Error(
+      `Bad argument received. --${REQUIRES_APPROVAL} (-${argumentsMap[REQUIRES_APPROVAL].alias}) can be either "true" or "false".`
+    );
+  }
+};
+
 const runCommand = async (command, options, environmentVariables) => {
   options = configManager.read(options);
   assertRequiredOptions(options);
+  assertRequiresApprovalOption(options[REQUIRES_APPROVAL]);
+
   configManager.write(options);
 
   logger.setSecrets(options);

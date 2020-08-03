@@ -1,3 +1,4 @@
+require('jest-extended');
 const runCommand = require('../../src/commands/run-command');
 const configManager = require('../../src/lib/config-manager');
 const { options } = require('../../src/config/constants');
@@ -13,7 +14,7 @@ jest.mock('../../src/commands/cancel');
 jest.mock('../../src/lib/deploy-utils');
 jest.mock('../../src/lib/config-manager');
 
-const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME } = options;
+const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 
 const mockRequiredOptions = {
   [PROJECT_ID]: 'proj0',
@@ -40,6 +41,32 @@ describe('run command', () => {
       jest.spyOn(configManager, 'read').mockReturnValue({});
       await expect(runCommand('deploy', {})).rejects.toThrow(
         expect.objectContaining({ message: expect.stringContaining('Missing required options') })
+      );
+    });
+  });
+
+  describe('requires approval argument', () => {
+    it.each`
+      requiresApprovalValue
+      ${'true'}
+      ${'false'}
+      ${undefined}
+    `(
+      'should succeed when requires approval argument has a value of $requiresApprovalValue',
+      async ({ requiresApprovalValue }) => {
+        const options = { ...mockRequiredOptions, [REQUIRES_APPROVAL]: requiresApprovalValue };
+        jest.spyOn(configManager, 'read').mockReturnValue(options);
+
+        await expect(runCommand('deploy', options)).toResolve();
+      }
+    );
+
+    it('should fail when requires approval argument has an invalid value', async () => {
+      const options = { ...mockRequiredOptions, [REQUIRES_APPROVAL]: 'something' };
+      jest.spyOn(configManager, 'read').mockReturnValue(options);
+
+      await expect(runCommand('deploy', options)).rejects.toThrow(
+        expect.objectContaining({ message: expect.stringContaining('Bad argument') })
       );
     });
   });

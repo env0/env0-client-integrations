@@ -249,17 +249,12 @@ describe('deploy utils', () => {
     });
 
     it.each`
-      userRequiresApproval | expectedPayload
-      ${false}             | ${{ userRequiresApproval: false }}
-      ${undefined}         | ${{}}
-      ${true}              | ${{ userRequiresApproval: true }}
-    `('should remove undefined values from request payload', async ({ userRequiresApproval, expectedPayload }) => {
-      await deployUtils.deployEnvironment(
-        mockEnvironment,
-        mockBlueprintRevision,
-        mockBlueprintId,
-        userRequiresApproval
-      );
+      requiresApproval | expectedPayload
+      ${false}         | ${{ userRequiresApproval: false }}
+      ${undefined}     | ${{}}
+      ${true}          | ${{ userRequiresApproval: true }}
+    `('should remove undefined values from request payload', async ({ requiresApproval, expectedPayload }) => {
+      await deployUtils.deployEnvironment(mockEnvironment, mockBlueprintRevision, mockBlueprintId, requiresApproval);
 
       expect(mockCallApi).toHaveBeenLastCalledWith('post', `environments/${mockEnvironment.id}/deployments`, {
         data: {

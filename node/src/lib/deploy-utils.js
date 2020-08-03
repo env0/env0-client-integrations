@@ -1,6 +1,9 @@
 const Env0ApiClient = require('./api-client');
 const logger = require('./logger');
 const _ = require('lodash');
+const { options } = require('../config/constants');
+
+const { API_KEY, API_SECRET } = options;
 
 const apiClient = new Env0ApiClient();
 
@@ -8,7 +11,7 @@ const removeEmptyValues = payload => _.omitBy(payload, _.isUndefined);
 
 class DeployUtils {
   static async init(options) {
-    await apiClient.init(options.apiKey, options.apiSecret);
+    await apiClient.init(options[API_KEY], options[API_SECRET]);
   }
 
   async getEnvironment(environmentName, projectId) {
@@ -80,14 +83,14 @@ class DeployUtils {
   async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval) {
     await this.waitForEnvironment(environment.id);
 
-    const payload = {
+    const payload = removeEmptyValues({
       blueprintId,
       blueprintRevision,
-      userRequiresApproval: requiresApproval
-    };
+      userRequiresApproval: eval(requiresApproval)
+    });
 
     return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {
-      data: removeEmptyValues(payload)
+      data: payload
     });
   }
 

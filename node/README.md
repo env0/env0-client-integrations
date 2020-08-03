@@ -102,8 +102,8 @@ For sensitive environment variables, use:
 - Usage: `--archiveAfterDestroy`
 
 ### Requires Approval
-> Requires approval for deployment
-- Usage: `--requiresApproval`
+> Requires approval for deployment. Valid values are either "true" or "false".
+- Usage: `--requiresApproval <true/false>`
 - Alias: `-a`
 
 ## Configuration File

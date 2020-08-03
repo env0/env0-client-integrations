@@ -56,9 +56,9 @@ const argumentsMap = {
   [REQUIRES_APPROVAL]: {
     name: REQUIRES_APPROVAL,
     alias: 'a',
-    type: Boolean,
-    defaultValue: false,
-    description: 'Whether deployment should wait for approval on plan stage before deploying your environment'
+    type: String,
+    description:
+      'Whether deployment should wait for approval on plan stage before deploying your environment. Can be either "true" or "false"'
   },
   [ENVIRONMENT_VARIABLES]: {
     name: ENVIRONMENT_VARIABLES,

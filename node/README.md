@@ -93,17 +93,13 @@ For sensitive environment variables, use:
 - Alias: `-q`
 
 ### Revision
-> Your GIT revision, can be a branch, a tag or a commit hash. Defaults to `master`
+> Your GIT revision, can be a branch, a tag or a commit hash. (For existing environments - if not specified, will use the previously defined revision)
 - Usage: `--revision`
 - Alias: `-r`
 
-### Archive After Destroy
-> Archives the environment after a successful destroy
-- Usage: `--archiveAfterDestroy`
-
 ### Requires Approval
-> Requires approval for deployment
-- Usage: `--requiresApproval`
+> Requires approval for deployment. Valid values are either "true" or "false".
+- Usage: `--requiresApproval <true/false>`
 - Alias: `-a`
 
 ## Configuration File

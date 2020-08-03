@@ -10,7 +10,6 @@ const {
   ENVIRONMENT_VARIABLES,
   SENSITIVE_ENVIRONMENT_VARIABLES,
   REVISION,
-  ARCHIVE_AFTER_DESTROY,
   REQUIRES_APPROVAL
 } = options;
 
@@ -56,9 +55,9 @@ const argumentsMap = {
   [REQUIRES_APPROVAL]: {
     name: REQUIRES_APPROVAL,
     alias: 'a',
-    type: Boolean,
-    defaultValue: false,
-    description: 'Whether deployment should wait for approval on plan stage before deploying your environment'
+    type: String,
+    description:
+      'Whether deployment should wait for approval on plan stage before deploying your environment. Can be either "true" or "false"'
   },
   [ENVIRONMENT_VARIABLES]: {
     name: ENVIRONMENT_VARIABLES,
@@ -82,14 +81,7 @@ const argumentsMap = {
     name: REVISION,
     alias: 'r',
     type: String,
-    defaultValue: 'master',
     description: 'Your git revision, can be a branch tag or a commit hash. Default value "master" '
-  },
-  [ARCHIVE_AFTER_DESTROY]: {
-    name: ARCHIVE_AFTER_DESTROY,
-    type: Boolean,
-    defaultValue: false,
-    description: 'Archive the environment after a successful destroy'
   }
 };
 

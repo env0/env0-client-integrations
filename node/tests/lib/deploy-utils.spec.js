@@ -12,7 +12,7 @@ jest.mock('../../src/lib/api-client', () =>
 const mockEnvironmentId = 'environment0';
 const mockDeploymentId = 'deployment0';
 
-describe('deploy lib', () => {
+describe('deploy utils', () => {
   const deployUtils = new DeployUtils();
 
   describe('set configuration', () => {
@@ -244,6 +244,23 @@ describe('deploy lib', () => {
           blueprintId: mockBlueprintId,
           blueprintRevision: mockBlueprintRevision,
           userRequiresApproval: mockRequiresApproval
+        }
+      });
+    });
+
+    it.each`
+      requiresApproval | expectedPayload
+      ${false}         | ${{ userRequiresApproval: false }}
+      ${undefined}     | ${{}}
+      ${true}          | ${{ userRequiresApproval: true }}
+    `('should remove undefined values from request payload', async ({ requiresApproval, expectedPayload }) => {
+      await deployUtils.deployEnvironment(mockEnvironment, mockBlueprintRevision, mockBlueprintId, requiresApproval);
+
+      expect(mockCallApi).toHaveBeenLastCalledWith('post', `environments/${mockEnvironment.id}/deployments`, {
+        data: {
+          blueprintId: mockBlueprintId,
+          blueprintRevision: mockBlueprintRevision,
+          ...expectedPayload
         }
       });
     });

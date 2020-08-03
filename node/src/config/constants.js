@@ -8,7 +8,6 @@ const options = {
   ENVIRONMENT_VARIABLES: 'environmentVariables',
   SENSITIVE_ENVIRONMENT_VARIABLES: 'sensitiveEnvironmentVariables',
   REVISION: 'revision',
-  ARCHIVE_AFTER_DESTROY: 'archiveAfterDestroy',
   REQUIRES_APPROVAL: 'requiresApproval'
 };
 

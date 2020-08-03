@@ -1,17 +1,27 @@
 const Env0ApiClient = require('./api-client');
 const logger = require('./logger');
+const _ = require('lodash');
+const { options } = require('../config/constants');
+
+const { API_KEY, API_SECRET } = options;
 
 const apiClient = new Env0ApiClient();
 
+const removeEmptyValues = payload => _.omitBy(payload, _.isUndefined);
+
 class DeployUtils {
   static async init(options) {
-    await apiClient.init(options.apiKey, options.apiSecret);
+    await apiClient.init(options[API_KEY], options[API_SECRET]);
   }
 
   async getEnvironment(environmentName, projectId) {
     const environments = await apiClient.callApi('get', `environments?projectId=${projectId}`);
 
     return environments.find(env => env.name === environmentName);
+  }
+
+  async updateEnvironment(environment, data) {
+    await apiClient.callApi('put', `environments/${environment.id}`, { data });
   }
 
   async createEnvironment(environmentName, organizationId, projectId) {
@@ -73,12 +83,14 @@ class DeployUtils {
   async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval) {
     await this.waitForEnvironment(environment.id);
 
+    const payload = removeEmptyValues({
+      blueprintId,
+      blueprintRevision,
+      userRequiresApproval: requiresApproval
+    });
+
     return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {
-      data: {
-        blueprintId,
-        blueprintRevision,
-        userRequiresApproval: requiresApproval
-      }
+      data: payload
     });
   }
 
@@ -132,7 +144,7 @@ class DeployUtils {
     return doneSteps;
   }
 
-  async pollDeploymentStatus(deploymentLogId) {
+  async pollDeploymentStatus(deploymentLogId, shouldProcessDeploymentSteps = true) {
     const MAX_TIME_IN_SECONDS = 10800; // 3 hours
     const start = Date.now();
     const stepsAlreadyLogged = [];
@@ -140,7 +152,9 @@ class DeployUtils {
     while (true) {
       const { status } = await apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
 
-      stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged)));
+      if (shouldProcessDeploymentSteps) {
+        stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged)));
+      }
 
       if (status !== 'IN_PROGRESS') {
         status === 'WAITING_FOR_USER' &&
@@ -177,16 +191,6 @@ class DeployUtils {
       retryCount++;
       await apiClient.sleep(5000);
     } while (!environmentValidStatuses.includes(status));
-  }
-
-  async archiveIfInactive(environmentId) {
-    const envRoute = `environments/${environmentId}`;
-    const environment = await apiClient.callApi('get', envRoute);
-    if (environment.status !== 'INACTIVE') throw new Error('Environment did not reach INACTIVE status');
-    await apiClient.callApi('put', envRoute, {
-      data: { isArchived: true }
-    });
-    logger.info(`Environment ${environment.name} has been archived`);
   }
 
   assertDeploymentStatus(status) {

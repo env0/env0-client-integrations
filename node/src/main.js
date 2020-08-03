@@ -62,7 +62,7 @@ const run = async () => {
 
     await runCommand(command, commandOptions, environmentVariables);
   } catch (error) {
-    logger.error(`Command ${command} has failed. Error:`);
+    commands[command] && logger.error(`Command ${command} has failed. Error:`);
     let { message } = error;
     if (error.response && error.response.data && error.response.data.message) {
       message += `: ${error.response.data.message}`;

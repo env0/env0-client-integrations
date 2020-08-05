@@ -1,7 +1,8 @@
 const mockCallApi = jest.fn();
-
+const { options } = require('../../src/config/constants');
 const DeployUtils = require('../../src/lib/deploy-utils');
 
+jest.mock('../../src/lib/logger');
 jest.mock('../../src/lib/api-client', () =>
   jest.fn().mockImplementation(() => ({
     callApi: mockCallApi,
@@ -11,6 +12,8 @@ jest.mock('../../src/lib/api-client', () =>
 
 const mockEnvironmentId = 'environment0';
 const mockDeploymentId = 'deployment0';
+
+const { BLUEPRINT_ID, REVISION, REQUIRES_APPROVAL } = options;
 
 describe('deploy utils', () => {
   const deployUtils = new DeployUtils();
@@ -221,47 +224,38 @@ describe('deploy utils', () => {
     });
   });
 
-  describe('deploy environment', async () => {
+  describe('deploy environment', () => {
     const mockEnvironment = { id: 'env0', status: 'ACTIVE' };
-    const mockBlueprintRevision = 'rev0';
-    const mockBlueprintId = 'blueprint0';
-    const mockRequiresApproval = true;
+    const mockOptions = {
+      [REVISION]: 'rev0',
+      [BLUEPRINT_ID]: 'blueprint0'
+    };
 
     beforeEach(() => {
       mockCallApi.mockReturnValue(mockEnvironment);
     });
 
     it('should call api', async () => {
-      await deployUtils.deployEnvironment(
-        mockEnvironment,
-        mockBlueprintRevision,
-        mockBlueprintId,
-        mockRequiresApproval
-      );
+      await deployUtils.deployEnvironment(mockEnvironment, mockOptions);
 
       expect(mockCallApi).toHaveBeenLastCalledWith('post', `environments/${mockEnvironment.id}/deployments`, {
         data: {
-          blueprintId: mockBlueprintId,
-          blueprintRevision: mockBlueprintRevision,
-          userRequiresApproval: mockRequiresApproval
+          blueprintId: mockOptions[BLUEPRINT_ID],
+          blueprintRevision: mockOptions[REVISION]
         }
       });
     });
 
     it.each`
       requiresApproval | expectedPayload
-      ${false}         | ${{ userRequiresApproval: false }}
+      ${'false'}       | ${{ userRequiresApproval: false }}
       ${undefined}     | ${{}}
-      ${true}          | ${{ userRequiresApproval: true }}
+      ${'true'}        | ${{ userRequiresApproval: true }}
     `('should remove undefined values from request payload', async ({ requiresApproval, expectedPayload }) => {
-      await deployUtils.deployEnvironment(mockEnvironment, mockBlueprintRevision, mockBlueprintId, requiresApproval);
+      await deployUtils.deployEnvironment(mockEnvironment, { [REQUIRES_APPROVAL]: requiresApproval });
 
       expect(mockCallApi).toHaveBeenLastCalledWith('post', `environments/${mockEnvironment.id}/deployments`, {
-        data: {
-          blueprintId: mockBlueprintId,
-          blueprintRevision: mockBlueprintRevision,
-          ...expectedPayload
-        }
+        data: expectedPayload
       });
     });
   });

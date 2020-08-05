@@ -2,13 +2,21 @@ const deploy = require('../../src/commands/deploy');
 const DeployUtils = require('../../src/lib/deploy-utils');
 const { options } = require('../../src/config/constants');
 
-const { REQUIRES_APPROVAL } = options;
+const { ENVIRONMENT_NAME, PROJECT_ID, ORGANIZATION_ID, BLUEPRINT_ID } = options;
+
+const mockOptions = {
+  [PROJECT_ID]: 'project0',
+  [ENVIRONMENT_NAME]: 'environment0',
+  [ORGANIZATION_ID]: 'organization0',
+  [BLUEPRINT_ID]: 'blueprint0'
+};
 
 const mockGetEnvironment = jest.fn();
 const mockCreateEnvironment = jest.fn();
 const mockDeployEnvironment = jest.fn();
 
 jest.mock('../../src/lib/deploy-utils');
+jest.mock('../../src/lib/logger');
 
 describe('deploy', () => {
   beforeEach(() => {
@@ -21,17 +29,24 @@ describe('deploy', () => {
     }));
   });
 
-  describe('requires approval argument', () => {
-    it.each`
-      requiresApproval | expected
-      ${'true'}        | ${true}
-      ${'false'}       | ${false}
-      ${undefined}     | ${undefined}
-    `('should process requires approval argument properly', async ({ requiresApproval, expected }) => {
-      mockDeployEnvironment.mockResolvedValue({ id: 'deployment0' });
-      await deploy({ [REQUIRES_APPROVAL]: requiresApproval });
+  beforeEach(() => {
+    mockDeployEnvironment.mockResolvedValue({ id: 'deployment0' });
+  });
 
-      expect(mockDeployEnvironment).toBeCalledWith(undefined, undefined, undefined, expected);
-    });
+  it('should get environment', async () => {
+    await deploy(mockOptions);
+
+    expect(mockGetEnvironment).toBeCalledWith(mockOptions[ENVIRONMENT_NAME], mockOptions[PROJECT_ID]);
+  });
+
+  it("should create environment when it doesn't exist", async () => {
+    mockGetEnvironment.mockResolvedValue(undefined);
+
+    await deploy(mockOptions);
+    expect(mockCreateEnvironment).toBeCalledWith(
+      mockOptions[ENVIRONMENT_NAME],
+      mockOptions[ORGANIZATION_ID],
+      mockOptions[PROJECT_ID]
+    );
   });
 });

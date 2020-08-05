@@ -284,4 +284,22 @@ describe('deploy utils', () => {
       expect(mockCallApi).toBeCalledWith('put', `environments/deployments/${mockDeploymentId}/cancel`);
     });
   });
+
+  describe('destroy environment', () => {
+    const mockOptions = {
+      [TARGETS]: 'target1, target2'
+    };
+
+    it('should call api with proper data', async () => {
+      mockCallApi.mockResolvedValueOnce({ status: 'ACTIVE' });
+
+      await deployUtils.destroyEnvironment({ id: mockEnvironmentId }, mockOptions);
+
+      expect(mockCallApi).toBeCalledWith('post', `environments/${mockEnvironmentId}/destroy`, {
+        data: {
+          targets: mockOptions[TARGETS]
+        }
+      });
+    });
+  });
 });

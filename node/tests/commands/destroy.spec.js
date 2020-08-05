@@ -26,14 +26,13 @@ describe('destroy', () => {
 
   it('should call api with proper data', async () => {
     const mockEnvironment = { id: 'something', name: 'someone' };
-    const mockOptions = { [TARGETS]: 'target1,target2' };
 
     mockGetEnvironment.mockResolvedValue(mockEnvironment);
     mockDestroyEnvironment.mockResolvedValue({ id: 'id0' });
 
-    await destroy(mockOptions);
+    await destroy({});
 
-    expect(mockDestroyEnvironment).toBeCalledWith(mockEnvironment, mockOptions);
+    expect(mockDestroyEnvironment).toBeCalledWith(mockEnvironment);
   });
 
   it('should fail when environment doesnt exist', async () => {

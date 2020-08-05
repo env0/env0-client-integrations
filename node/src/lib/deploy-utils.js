@@ -96,14 +96,10 @@ class DeployUtils {
     });
   }
 
-  async destroyEnvironment(environment, options) {
+  async destroyEnvironment(environment) {
     await this.waitForEnvironment(environment.id);
 
-    const payload = removeEmptyValues({
-      targets: options[TARGETS]
-    });
-
-    return await apiClient.callApi('post', `environments/${environment.id}/destroy`, { data: payload });
+    return await apiClient.callApi('post', `environments/${environment.id}/destroy`);
   }
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {

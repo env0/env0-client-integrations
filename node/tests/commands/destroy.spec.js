@@ -9,7 +9,7 @@ const mockDestroyEnvironment = jest.fn();
 jest.mock('../../src/lib/logger');
 jest.mock('../../src/lib/deploy-utils');
 
-const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, TARGETS } = options;
+const { ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 
 describe('destroy', () => {
   beforeEach(() => {

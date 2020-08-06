@@ -8,7 +8,8 @@ const options = {
   ENVIRONMENT_VARIABLES: 'environmentVariables',
   SENSITIVE_ENVIRONMENT_VARIABLES: 'sensitiveEnvironmentVariables',
   REVISION: 'revision',
-  REQUIRES_APPROVAL: 'requiresApproval'
+  REQUIRES_APPROVAL: 'requiresApproval',
+  TARGETS: 'targets'
 };
 
 module.exports = {

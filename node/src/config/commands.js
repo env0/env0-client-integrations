@@ -1,4 +1,7 @@
-const { allArguments, baseArguments } = require('./arguments');
+const { argumentsMap, allArguments, baseArguments } = require('./arguments');
+const { options } = require('./constants');
+
+const { REQUIRES_APPROVAL, REVISION, ENVIRONMENT_VARIABLES, SENSITIVE_ENVIRONMENT_VARIABLES } = options;
 
 const commands = {
   deploy: {
@@ -6,7 +9,13 @@ const commands = {
     description: 'Deploys an environment'
   },
   destroy: {
-    options: allArguments,
+    options: [
+      ...baseArguments,
+      argumentsMap[REQUIRES_APPROVAL],
+      argumentsMap[REVISION],
+      argumentsMap[ENVIRONMENT_VARIABLES],
+      argumentsMap[SENSITIVE_ENVIRONMENT_VARIABLES]
+    ],
     description: 'Destroys an environment'
   },
   approve: {

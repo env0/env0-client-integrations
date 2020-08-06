@@ -10,7 +10,8 @@ const {
   ENVIRONMENT_VARIABLES,
   SENSITIVE_ENVIRONMENT_VARIABLES,
   REVISION,
-  REQUIRES_APPROVAL
+  REQUIRES_APPROVAL,
+  TARGETS
 } = options;
 
 const argumentsMap = {
@@ -82,6 +83,13 @@ const argumentsMap = {
     alias: 'r',
     type: String,
     description: 'Your git revision, can be a branch tag or a commit hash. Default value "master" '
+  },
+  [TARGETS]: {
+    name: TARGETS,
+    alias: 't',
+    type: String,
+    description:
+      'A list of resources to explicitly include in the deployment, delimited by comma. Format is "resource1,resource2,resource3"'
   }
 };
 

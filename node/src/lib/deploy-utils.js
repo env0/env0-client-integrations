@@ -2,8 +2,9 @@ const Env0ApiClient = require('./api-client');
 const logger = require('./logger');
 const _ = require('lodash');
 const { options } = require('../config/constants');
+const { convertRequiresApprovalToBoolean } = require('../lib/genetal-utils');
 
-const { API_KEY, API_SECRET } = options;
+const { API_KEY, API_SECRET, REQUIRES_APPROVAL, BLUEPRINT_ID, REVISION, TARGETS } = options;
 
 const apiClient = new Env0ApiClient();
 
@@ -80,13 +81,14 @@ class DeployUtils {
     });
   }
 
-  async deployEnvironment(environment, blueprintRevision, blueprintId, requiresApproval) {
+  async deployEnvironment(environment, options) {
     await this.waitForEnvironment(environment.id);
 
     const payload = removeEmptyValues({
-      blueprintId,
-      blueprintRevision,
-      userRequiresApproval: requiresApproval
+      blueprintId: options[BLUEPRINT_ID],
+      blueprintRevision: options[REVISION],
+      userRequiresApproval: convertRequiresApprovalToBoolean(options[REQUIRES_APPROVAL]),
+      targets: options[TARGETS]
     });
 
     return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {

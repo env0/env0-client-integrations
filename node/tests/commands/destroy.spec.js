@@ -6,6 +6,7 @@ const mockGetEnvironment = jest.fn();
 const mockUpdateEnvironment = jest.fn();
 const mockDestroyEnvironment = jest.fn();
 
+jest.mock('../../src/lib/logger');
 jest.mock('../../src/lib/deploy-utils');
 
 const { ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
@@ -23,11 +24,25 @@ describe('destroy', () => {
     });
   });
 
+  it('should call api with proper data', async () => {
+    const mockEnvironment = { id: 'something', name: 'someone' };
+
+    mockGetEnvironment.mockResolvedValue(mockEnvironment);
+    mockDestroyEnvironment.mockResolvedValue({ id: 'id0' });
+
+    await destroy({});
+
+    expect(mockDestroyEnvironment).toBeCalledWith(mockEnvironment);
+  });
+
   it('should fail when environment doesnt exist', async () => {
-    const options = { [ENVIRONMENT_NAME]: 'environment0' };
+    const mockEnvironmentName = 'environment0';
     mockGetEnvironment.mockResolvedValue(undefined);
 
-    await expect(destroy(options)).rejects.toThrow(Error, `Could not find an environment with the name environment0`);
+    await expect(destroy({ [ENVIRONMENT_NAME]: mockEnvironmentName })).rejects.toThrow(
+      Error,
+      `Could not find an environment with the name ${mockEnvironmentName}`
+    );
   });
 
   describe('requires approval argument', () => {

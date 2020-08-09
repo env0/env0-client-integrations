@@ -41,7 +41,14 @@ const argumentsMap = {
     prompt: 'Organization ID',
     group: ['deploy', 'destroy', 'approve', 'cancel']
   },
-  [PROJECT_ID]: { name: PROJECT_ID, alias: 'p', type: String, description: 'env0 Project ID', prompt: 'Project ID' },
+  [PROJECT_ID]: {
+    name: PROJECT_ID,
+    alias: 'p',
+    type: String,
+    description: 'env0 Project ID',
+    prompt: 'Project ID',
+    group: ['deploy', 'destroy', 'approve', 'cancel']
+  },
   [ENVIRONMENT_NAME]: {
     name: ENVIRONMENT_NAME,
     alias: 'e',

@@ -12,14 +12,16 @@ jest.mock('../src/commands/help');
 jest.mock('../src/commands/configure');
 jest.mock('command-line-args');
 
-const mockOptions = {
-  help: false,
-  blue: 'pill',
-  red: 'pill',
-  environmentVariables: ['key1=value1', 'key2=value2'],
-  sensitiveEnvironmentVariables: ['sensitiveKey1=sensitiveValue1', 'sensitiveKey2=sensitiveValue2'],
+const getMockOptions = command => ({
+  [command]: {
+    help: false,
+    blue: 'pill',
+    red: 'pill',
+    environmentVariables: ['key1=value1', 'key2=value2'],
+    sensitiveEnvironmentVariables: ['sensitiveKey1=sensitiveValue1', 'sensitiveKey2=sensitiveValue2']
+  },
   _unknown: ['test']
-};
+});
 
 const mockOptionsAndRun = async ({ command, rawArgs, args }) => {
   commandLineArgs.mockReturnValueOnce({ command, _unknown: rawArgs });
@@ -103,10 +105,12 @@ describe('main', () => {
 
     describe('environment variables parsing', () => {
       describe.each`
-        command      | args
-        ${'deploy'}  | ${mockOptions}
-        ${'destroy'} | ${mockOptions}
-      `('on $command', ({ command, args }) => {
+        command
+        ${'deploy'}
+        ${'destroy'}
+      `('on $command', ({ command }) => {
+        const args = getMockOptions(command);
+
         beforeEach(async () => {
           await mockOptionsAndRun({ command, args });
         });
@@ -119,7 +123,7 @@ describe('main', () => {
         ];
 
         it('should run deployment with proper params', () => {
-          expect(runCommand).toBeCalledWith(command, expect.objectContaining(args), expectedEnvVars);
+          expect(runCommand).toBeCalledWith(command, expect.objectContaining(args[command]), expectedEnvVars);
         });
       });
     });

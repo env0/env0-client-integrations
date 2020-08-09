@@ -53,14 +53,16 @@ const run = async () => {
     assertCommandExists(command);
 
     const commandDefinitions = commands[command].options;
-    const commandOptions = commandLineArgs(commandDefinitions, { argv });
+    const commandsOptions = commandLineArgs(commandDefinitions, { argv });
+
+    const currentCommandOptions = commandsOptions[command];
 
     const environmentVariables = getEnvironmentVariablesOptions(
-      commandOptions[ENVIRONMENT_VARIABLES],
-      commandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]
+      currentCommandOptions[ENVIRONMENT_VARIABLES],
+      currentCommandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]
     );
 
-    await runCommand(command, commandOptions, environmentVariables);
+    await runCommand(command, currentCommandOptions, environmentVariables);
   } catch (error) {
     commands[command] && logger.error(`Command ${command} has failed. Error:`);
     let { message } = error;

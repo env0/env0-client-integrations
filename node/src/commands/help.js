@@ -2,9 +2,7 @@ const commandLineUsage = require('command-line-usage');
 const boxen = require('boxen');
 const { allArguments } = require('../config/arguments');
 const { commands } = require('../config/commands');
-const { options } = require('../config/constants');
-
-const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, BLUEPRINT_ID } = options;
+const { repository } = require('../../package.json');
 
 const header = `
                                   .oooo.   
@@ -16,19 +14,23 @@ d88' \`88b \`888P"Y88b \`88.  .8'  888    888
 \`Y8bod8P' o888o o888o   \`8'      \`Y8bd8P'  
 
 Self-Service Cloud Environments
+https://www.env0.com
 `;
+
+const options = Object.keys(commands)
+  .filter(command => commands[command].options)
+  .map(command => ({
+    header: `${command} options`,
+    optionList: allArguments.map(option => ({
+      ...option
+    })),
+    group: [ command ]
+  }));
 
 const sections = [
   {
     content: boxen(header, { padding: 1, margin: 1, borderStyle: 'bold', align: 'center' }),
     raw: true
-  },
-  {
-    header: 'Usage',
-    content: [
-      `$ env0 deploy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${BLUEPRINT_ID}> -e <${ENVIRONMENT_NAME}> -r [revision] -v [stage=dev]`,
-      '$ env0 --help'
-    ]
   },
   {
     header: 'Available Commands',
@@ -37,11 +39,16 @@ const sections = [
       summary: commands[command].description
     }))
   },
+  ...options,
   {
-    header: 'Options',
-    optionList: allArguments.map(option => ({
-      ...option
+    header: 'Examples',
+    content: Object.keys(commands).map(command => ({
+      desc: commands[command].description,
+      example: commands[command].example,
     }))
+  },
+  {
+    content: `Project home: {underline ${repository.url}}`
   }
 ];
 

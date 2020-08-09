@@ -21,7 +21,8 @@ const argumentsMap = {
     type: String,
     description: 'env0 API Key',
     prompt: 'env0 API Key',
-    secret: true
+    secret: true,
+    group: ['deploy', 'destroy', 'approve', 'cancel']
   },
   [API_SECRET]: {
     name: API_SECRET,
@@ -29,36 +30,41 @@ const argumentsMap = {
     type: String,
     description: 'env0 API Secret',
     prompt: 'env0 API Secret',
-    secret: true
+    secret: true,
+    group: ['deploy', 'destroy', 'approve', 'cancel']
   },
   [ORGANIZATION_ID]: {
     name: ORGANIZATION_ID,
     alias: 'o',
     type: String,
     description: 'env0 Organization ID',
-    prompt: 'Organization ID'
+    prompt: 'Organization ID',
+    group: ['deploy', 'destroy', 'approve', 'cancel']
   },
   [PROJECT_ID]: { name: PROJECT_ID, alias: 'p', type: String, description: 'env0 Project ID', prompt: 'Project ID' },
   [ENVIRONMENT_NAME]: {
     name: ENVIRONMENT_NAME,
     alias: 'e',
     type: String,
-    description: 'The environment name you would like to create, if it exists it will deploy to that environment',
-    prompt: 'Environment Name'
+    description: 'The environment name you want to perform the action on',
+    prompt: 'Environment Name',
+    group: ['deploy', 'destroy', 'approve', 'cancel']
   },
   [BLUEPRINT_ID]: {
     name: BLUEPRINT_ID,
     alias: 'b',
     type: String,
     description: 'The Blueprint id you would like to deploy',
-    prompt: 'Blueprint ID'
+    prompt: 'Blueprint ID',
+    group: ['deploy']
   },
   [REQUIRES_APPROVAL]: {
     name: REQUIRES_APPROVAL,
     alias: 'a',
     type: String,
+    group: ['deploy', 'destroy'],
     description:
-      'Whether deployment should wait for approval on plan stage before deploying your environment. Can be either "true" or "false"'
+      'Whether deploy/destroy should wait for approval on plan stage before deploy/destroy your environment. Can be either "true" or "false"'
   },
   [ENVIRONMENT_VARIABLES]: {
     name: ENVIRONMENT_VARIABLES,
@@ -66,6 +72,7 @@ const argumentsMap = {
     type: String,
     multiple: true,
     defaultValue: [],
+    group: ['deploy'],
     description:
       'The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"'
   },
@@ -75,6 +82,7 @@ const argumentsMap = {
     type: String,
     multiple: true,
     defaultValue: [],
+    group: ['deploy'],
     description:
       'The sensitive environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"'
   },
@@ -82,12 +90,14 @@ const argumentsMap = {
     name: REVISION,
     alias: 'r',
     type: String,
+    group: ['deploy'],
     description: 'Your git revision, can be a branch tag or a commit hash. Default value "master" '
   },
   [TARGETS]: {
     name: TARGETS,
     alias: 't',
     type: String,
+    group: ['deploy'],
     description:
       'A list of resources to explicitly include in the deployment, delimited by comma. Format is "resource1,resource2,resource3"'
   }

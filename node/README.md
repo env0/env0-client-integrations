@@ -102,6 +102,11 @@ For sensitive environment variables, use:
 - Usage: `--requiresApproval <true/false>`
 - Alias: `-a`
 
+### Targets (Partial Apply)
+> A list of resources to explicitly include in the deployment, delimited by a comma. Format is "resource1,resource2,resource3"
+- Usage: `--targets`
+- Alias: `-t`
+
 ## Configuration File
 After initial deployment, a configuration file will be created under `~/.env0/config.json`
 

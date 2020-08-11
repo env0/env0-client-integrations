@@ -7,7 +7,11 @@ const { ENVIRONMENT_NAME, PROJECT_ID, ORGANIZATION_ID, BLUEPRINT_ID } = options;
 const mockOptions = {
   [PROJECT_ID]: 'project0',
   [ENVIRONMENT_NAME]: 'environment0',
-  [ORGANIZATION_ID]: 'organization0',
+  [ORGANIZATION_ID]: 'organization0'
+};
+
+const mockOptionsWithBlueprintId = {
+  ...mockOptions,
   [BLUEPRINT_ID]: 'blueprint0'
 };
 
@@ -34,7 +38,7 @@ describe('deploy', () => {
   });
 
   it('should get environment', async () => {
-    await deploy(mockOptions);
+    await deploy(mockOptionsWithBlueprintId);
 
     expect(mockGetEnvironment).toBeCalledWith(mockOptions[ENVIRONMENT_NAME], mockOptions[PROJECT_ID]);
   });
@@ -42,11 +46,19 @@ describe('deploy', () => {
   it("should create environment when it doesn't exist", async () => {
     mockGetEnvironment.mockResolvedValue(undefined);
 
-    await deploy(mockOptions);
+    await deploy(mockOptionsWithBlueprintId);
     expect(mockCreateEnvironment).toBeCalledWith(
       mockOptions[ENVIRONMENT_NAME],
       mockOptions[ORGANIZATION_ID],
       mockOptions[PROJECT_ID]
+    );
+  });
+
+  it('should fail when blueprint is missing on initial deployment', async () => {
+    mockGetEnvironment.mockResolvedValue(undefined);
+
+    await expect(deploy(mockOptions)).rejects.toThrow(
+      expect.objectContaining({ message: 'Missing blueprint ID on initial deployment' })
     );
   });
 });

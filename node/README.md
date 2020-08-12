@@ -1,8 +1,10 @@
-![CI](https://github.com/env0/env0-client-integrations/workflows/CI/badge.svg?branch=master)
 
-# env0 NodeJS CLI
-
+# @env0/cli ![](https://img.shields.io/npm/l/@env0/cli?color=blue) ![](https://img.shields.io/npm/v/@env0/cli) ![](https://img.shields.io/npm/dw/@env0/cli) ![](https://github.com/env0/env0-client-integrations/workflows/CI/badge.svg?branch=master) 
+ 
 The command-line tool for the env0 platform.
+
+- [Commands](https://github.com/env0/env0-client-integrations/tree/master/node#commands-overview)
+- [Arguments](https://github.com/env0/env0-client-integrations/tree/master/node#arguments-overview)
 
 ## Features
 
@@ -19,7 +21,7 @@ $ yarn global add @env0/cli
 $ npm install -g @env0/cli
 ```
 
-## Command Overview
+## Commands Overview
 
 ### `env0 help`
 

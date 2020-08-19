@@ -13,7 +13,6 @@ const getConfigurationChanges = environmentVariables =>
     isSensitive: variable.sensitive,
     name: variable.name,
     value: variable.value,
-    scope: 'DEPLOYMENT',
     type: 0 // supporting only environment variable type ATM
   }));
 

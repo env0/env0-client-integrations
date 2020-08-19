@@ -70,7 +70,6 @@ describe('deploy', () => {
       name: variable.name,
       value: variable.value,
       isSensitive: variable.sensitive,
-      scope: 'DEPLOYMENT',
       type: 0
     }));
 

@@ -10,7 +10,7 @@ const assertBlueprintExistsOnInitialDeployment = options => {
 };
 
 const getConfigurationChanges = environmentVariables =>
-  environmentVariables.map(variable => ({
+  (environmentVariables || []).map(variable => ({
     isSensitive: variable.sensitive,
     name: variable.name,
     value: variable.value,
@@ -31,10 +31,10 @@ const deploy = async (options, environmentVariables) => {
   if (!environment) {
     logger.info('Initial deployment detected');
     assertBlueprintExistsOnInitialDeployment(options);
-    environment = await deployUtils.createAndDeployEnvironment(configurationChanges, options);
+    environment = await deployUtils.createAndDeployEnvironment(options, configurationChanges);
     deployment = await deployUtils.getDeployment(environment.latestDeploymentLogId);
   } else {
-    deployment = await deployUtils.deployEnvironment(environment, configurationChanges, options);
+    deployment = await deployUtils.deployEnvironment(environment, options, configurationChanges);
   }
 
   const status = await deployUtils.pollDeploymentStatus(deployment.id);

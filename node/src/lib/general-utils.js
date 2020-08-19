@@ -3,13 +3,7 @@ const convertStringToBoolean = str => {
   if (str === 'false') return false;
 };
 
-const removeEmptyValuesFromObj = payload =>
-  JSON.parse(
-    JSON.stringify(payload, (_, value) => {
-      if (value === undefined) return undefined;
-      return value;
-    })
-  );
+const removeEmptyValuesFromObj = payload => JSON.parse(JSON.stringify(payload));
 
 module.exports = {
   convertStringToBoolean,

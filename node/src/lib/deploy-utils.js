@@ -36,7 +36,7 @@ class DeployUtils {
     await apiClient.callApi('put', `environments/${environment.id}`, { data });
   }
 
-  async createAndDeployEnvironment(configurationChanges, options) {
+  async createAndDeployEnvironment(options, configurationChanges) {
     const payload = removeEmptyValuesFromObj({
       name: options[ENVIRONMENT_NAME],
       organizationId: options[ORGANIZATION_ID],
@@ -60,7 +60,7 @@ class DeployUtils {
     await apiClient.callApi('put', `environments/deployments/${deploymentLogId}/cancel`);
   }
 
-  async deployEnvironment(environment, configurationChanges, options) {
+  async deployEnvironment(environment, options, configurationChanges) {
     await this.waitForEnvironment(environment.id);
 
     const payload = removeEmptyValuesFromObj({

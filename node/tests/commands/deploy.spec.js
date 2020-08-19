@@ -19,7 +19,6 @@ const mockOptionsWithRequired = {
 const mockGetEnvironment = jest.fn();
 const mockCreateAndDeployEnvironment = jest.fn();
 const mockDeployEnvironment = jest.fn();
-const mockGetDeployment = jest.fn();
 
 jest.mock('../../src/lib/deploy-utils');
 jest.mock('../../src/lib/logger');
@@ -31,15 +30,13 @@ describe('deploy', () => {
       createAndDeployEnvironment: mockCreateAndDeployEnvironment,
       deployEnvironment: mockDeployEnvironment,
       pollDeploymentStatus: jest.fn(),
-      assertDeploymentStatus: jest.fn(),
-      getDeployment: mockGetDeployment
+      assertDeploymentStatus: jest.fn()
     }));
   });
 
   beforeEach(() => {
     mockDeployEnvironment.mockResolvedValue({ id: 'deployment0' });
     mockCreateAndDeployEnvironment.mockResolvedValue({ latestDeploymentLogId: 'deployment0' });
-    mockGetDeployment.mockResolvedValue({ id: 'deployment0' });
   });
 
   it('should get environment', async () => {

@@ -25,19 +25,21 @@ const deploy = async (options, environmentVariables) => {
 
   const configurationChanges = getConfigurationChanges(environmentVariables);
 
-  let deployment;
+  let deploymentLogId;
   let environment = await deployUtils.getEnvironment(options[ENVIRONMENT_NAME], options[PROJECT_ID]);
 
   if (!environment) {
     logger.info('Initial deployment detected');
     assertBlueprintExistsOnInitialDeployment(options);
+
     environment = await deployUtils.createAndDeployEnvironment(options, configurationChanges);
-    deployment = await deployUtils.getDeployment(environment.latestDeploymentLogId);
+    deploymentLogId = environment.latestDeploymentLogId;
   } else {
-    deployment = await deployUtils.deployEnvironment(environment, options, configurationChanges);
+    const deployment = await deployUtils.deployEnvironment(environment, options, configurationChanges);
+    deploymentLogId = deployment.id;
   }
 
-  const status = await deployUtils.pollDeploymentStatus(deployment.id);
+  const status = await deployUtils.pollDeploymentStatus(deploymentLogId);
 
   deployUtils.assertDeploymentStatus(status);
 };

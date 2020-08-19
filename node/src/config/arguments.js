@@ -52,7 +52,7 @@ const argumentsMap = {
   },
   [WORKSPACE_NAME]: {
     name: WORKSPACE_NAME,
-    alias: 'e',
+    alias: 'w',
     type: String,
     description: 'Terraform Workspace name - cannot be changed after the first deployment',
     prompt: 'Terraform Workspace Name',

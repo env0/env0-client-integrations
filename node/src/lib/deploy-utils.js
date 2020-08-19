@@ -1,14 +1,21 @@
 const Env0ApiClient = require('./api-client');
 const logger = require('./logger');
-const _ = require('lodash');
 const { options } = require('../config/constants');
-const { convertRequiresApprovalToBoolean } = require('../lib/genetal-utils');
+const { convertStringToBoolean, removeEmptyValuesFromObj } = require('./general-utils');
 
-const { API_KEY, API_SECRET, REQUIRES_APPROVAL, BLUEPRINT_ID, REVISION, TARGETS } = options;
+const {
+  API_KEY,
+  API_SECRET,
+  REQUIRES_APPROVAL,
+  BLUEPRINT_ID,
+  REVISION,
+  TARGETS,
+  ENVIRONMENT_NAME,
+  ORGANIZATION_ID,
+  PROJECT_ID
+} = options;
 
 const apiClient = new Env0ApiClient();
-
-const removeEmptyValues = payload => _.omitBy(payload, _.isUndefined);
 
 class DeployUtils {
   static async init(options) {
@@ -21,21 +28,28 @@ class DeployUtils {
     return environments.find(env => env.name === environmentName);
   }
 
+  async getDeployment(deploymentLogId) {
+    return await apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
+  }
+
   async updateEnvironment(environment, data) {
     await apiClient.callApi('put', `environments/${environment.id}`, { data });
   }
 
-  async createEnvironment(environmentName, organizationId, projectId) {
-    const environment = await apiClient.callApi('post', 'environments', {
-      data: {
-        name: environmentName,
-        organizationId: organizationId,
-        projectId: projectId,
-        lifespanEndAt: null
-      }
+  async createAndDeployEnvironment(options, configurationChanges) {
+    const payload = removeEmptyValuesFromObj({
+      name: options[ENVIRONMENT_NAME],
+      organizationId: options[ORGANIZATION_ID],
+      projectId: options[PROJECT_ID],
+      lifespanEndAt: null,
+      deployRequest: {
+        blueprintId: options[BLUEPRINT_ID],
+        blueprintRevision: options[REVISION]
+      },
+      configurationChanges
     });
-    logger.info(`Created environment ${environment.id}`);
-    return environment;
+
+    return await apiClient.callApi('post', 'environments', { data: payload }); // returns the newly created environment with updated deployment log
   }
 
   async approveDeployment(deploymentLogId) {
@@ -46,49 +60,14 @@ class DeployUtils {
     await apiClient.callApi('put', `environments/deployments/${deploymentLogId}/cancel`);
   }
 
-  async setConfiguration(environment, blueprintId, configurationName, configurationValue, isSensitive) {
-    const configuration = {
-      isSensitive,
-      name: configurationName,
-      organizationId: environment.organizationId,
-      scope: 'ENVIRONMENT',
-      scopeId: environment.id,
-      type: 0,
-      value: configurationValue
-    };
-
-    logger.info(`getting configuration for environmentId: ${environment.id}`);
-    const params = {
-      organizationId: environment.organizationId,
-      blueprintId,
-      environmentId: environment.id
-    };
-    const configurations = await apiClient.callApi('get', 'configuration', { params });
-    const existingConfiguration = configurations.find(config => config.name === configurationName);
-
-    if (existingConfiguration) {
-      logger.info(
-        `found a configuration that matches the configurationName: ${configurationName}, existingConfiguration: ${JSON.stringify(
-          existingConfiguration
-        )}`
-      );
-      configuration.id = existingConfiguration.id;
-    }
-
-    logger.info(`setting the following configuration: ${JSON.stringify(configuration)}`);
-    await apiClient.callApi('post', 'configuration', {
-      data: { ...configuration, projectId: undefined }
-    });
-  }
-
-  async deployEnvironment(environment, options) {
+  async deployEnvironment(environment, options, configurationChanges) {
     await this.waitForEnvironment(environment.id);
 
-    const payload = removeEmptyValues({
-      blueprintId: options[BLUEPRINT_ID],
+    const payload = removeEmptyValuesFromObj({
       blueprintRevision: options[REVISION],
-      userRequiresApproval: convertRequiresApprovalToBoolean(options[REQUIRES_APPROVAL]),
-      targets: options[TARGETS]
+      userRequiresApproval: convertStringToBoolean(options[REQUIRES_APPROVAL]),
+      targets: options[TARGETS],
+      configurationChanges
     });
 
     return await apiClient.callApi('post', `environments/${environment.id}/deployments`, {

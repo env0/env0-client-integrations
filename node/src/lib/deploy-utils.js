@@ -11,6 +11,7 @@ const {
   REVISION,
   TARGETS,
   ENVIRONMENT_NAME,
+  WORKSPACE_NAME,
   ORGANIZATION_ID,
   PROJECT_ID
 } = options;
@@ -39,6 +40,7 @@ class DeployUtils {
   async createAndDeployEnvironment(options, configurationChanges) {
     const payload = removeEmptyValuesFromObj({
       name: options[ENVIRONMENT_NAME],
+      workspaceName: options[WORKSPACE_NAME],
       organizationId: options[ORGANIZATION_ID],
       projectId: options[PROJECT_ID],
       lifespanEndAt: null,

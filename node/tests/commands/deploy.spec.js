@@ -2,7 +2,7 @@ const deploy = require('../../src/commands/deploy');
 const DeployUtils = require('../../src/lib/deploy-utils');
 const { options } = require('../../src/config/constants');
 
-const { ENVIRONMENT_NAME, PROJECT_ID, ORGANIZATION_ID, BLUEPRINT_ID, REVISION } = options;
+const { ENVIRONMENT_NAME, PROJECT_ID, ORGANIZATION_ID, BLUEPRINT_ID, REVISION, WORKSPACE_NAME } = options;
 
 const mockOptions = {
   [PROJECT_ID]: 'project0',
@@ -12,6 +12,7 @@ const mockOptions = {
 
 const mockOptionsWithRequired = {
   ...mockOptions,
+  [WORKSPACE_NAME]: 'workspace0',
   [BLUEPRINT_ID]: 'blueprint0',
   [REVISION]: 'revision0'
 };
@@ -81,16 +82,21 @@ describe('deploy', () => {
       expect(mockCreateAndDeployEnvironment).toBeCalledWith(mockOptionsWithRequired, expectedConfigurationChanges);
     });
 
-    it('on redeploy', async () => {
+    it('should redeploy with arguments', async () => {
+      const mockEnvironment = { id: 'environment0' };
+      mockGetEnvironment.mockResolvedValue(mockEnvironment);
+      const redeployOptions = { ...mockOptionsWithRequired, [WORKSPACE_NAME]: undefined };
+      await deploy(redeployOptions, environmentVariables);
+
+      expect(mockDeployEnvironment).toBeCalledWith(mockEnvironment, redeployOptions, expectedConfigurationChanges);
+    });
+
+    it('should not allow to redeploy with workspace name set', async () => {
       const mockEnvironment = { id: 'environment0' };
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
 
-      await deploy(mockOptionsWithRequired, environmentVariables);
-
-      expect(mockDeployEnvironment).toBeCalledWith(
-        mockEnvironment,
-        mockOptionsWithRequired,
-        expectedConfigurationChanges
+      await expect(deploy({ [WORKSPACE_NAME]: 'workspace0' }, environmentVariables)).rejects.toThrowError(
+        'You may only set Terraform Workspace on the first deployment of an environment'
       );
     });
   });

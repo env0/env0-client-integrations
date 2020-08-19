@@ -2,48 +2,42 @@ const DeployUtils = require('../lib/deploy-utils');
 const logger = require('../lib/logger');
 const { options } = require('../config/constants');
 
-const { BLUEPRINT_ID } = options;
-
-const setConfigurationFromOptions = async (environmentVariables, environment, blueprintId) => {
-  const deployUtils = new DeployUtils();
-
-  if (environmentVariables && environmentVariables.length > 0) {
-    for (const config of environmentVariables) {
-      logger.info(
-        `Setting Environment Variable ${config.name} to be ${config.value} in environmentId: ${environment.id}`
-      );
-      await deployUtils.setConfiguration(environment, blueprintId, config.name, config.value, config.sensitive);
-    }
-  }
-};
+const { BLUEPRINT_ID, ENVIRONMENT_NAME, PROJECT_ID } = options;
 
 const assertBlueprintExistsOnInitialDeployment = options => {
   if (!options[BLUEPRINT_ID]) throw new Error('Missing blueprint ID on initial deployment');
 };
 
-const assertNoWorkspaceNameAllowedOnUpdate = (workspaceName) => {
-  if (workspaceName) throw new Error('A workspace name may only be set on newly created environments and may not be updated')
-};
+const getConfigurationChanges = environmentVariables =>
+  (environmentVariables || []).map(variable => ({
+    isSensitive: variable.sensitive,
+    name: variable.name,
+    value: variable.value,
+    type: 0 // supporting only environment variable type ATM
+  }));
 
 const deploy = async (options, environmentVariables) => {
   const deployUtils = new DeployUtils();
 
-  const { environmentName, projectId, organizationId, blueprintId, workspaceName } = options;
-
   logger.info('Waiting for deployment to start...');
-  let environment = await deployUtils.getEnvironment(environmentName, projectId);
+
+  const configurationChanges = getConfigurationChanges(environmentVariables);
+
+  let deploymentLogId;
+  let environment = await deployUtils.getEnvironment(options[ENVIRONMENT_NAME], options[PROJECT_ID]);
 
   if (!environment) {
+    logger.info('Initial deployment detected');
     assertBlueprintExistsOnInitialDeployment(options);
-    environment = await deployUtils.createEnvironment(environmentName, organizationId, projectId, workspaceName);
+
+    environment = await deployUtils.createAndDeployEnvironment(options, configurationChanges);
+    deploymentLogId = environment.latestDeploymentLogId;
   } else {
-    assertNoWorkspaceNameAllowedOnUpdate( workspaceName);
+    const deployment = await deployUtils.deployEnvironment(environment, options, configurationChanges);
+    deploymentLogId = deployment.id;
   }
 
-  await setConfigurationFromOptions(environmentVariables, environment, blueprintId);
-
-  const deployment = await deployUtils.deployEnvironment(environment, options);
-  const status = await deployUtils.pollDeploymentStatus(deployment.id);
+  const status = await deployUtils.pollDeploymentStatus(deploymentLogId);
 
   deployUtils.assertDeploymentStatus(status);
 };

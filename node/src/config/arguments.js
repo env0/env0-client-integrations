@@ -6,6 +6,7 @@ const {
   ORGANIZATION_ID,
   PROJECT_ID,
   BLUEPRINT_ID,
+  WORKSPACE_NAME,
   ENVIRONMENT_NAME,
   ENVIRONMENT_VARIABLES,
   SENSITIVE_ENVIRONMENT_VARIABLES,
@@ -48,6 +49,14 @@ const argumentsMap = {
     description: 'env0 Project ID',
     prompt: 'Project ID',
     group: ['deploy', 'destroy', 'approve', 'cancel']
+  },
+  [WORKSPACE_NAME]: {
+    name: WORKSPACE_NAME,
+    alias: 'e',
+    type: String,
+    description: 'Terraform Workspace name - cannot be changed after the first deployment',
+    prompt: 'Terraform Workspace Name',
+    group: ['deploy']
   },
   [ENVIRONMENT_NAME]: {
     name: ENVIRONMENT_NAME,

@@ -21,17 +21,23 @@ const assertBlueprintExistsOnInitialDeployment = options => {
   if (!options[BLUEPRINT_ID]) throw new Error('Missing blueprint ID on initial deployment');
 };
 
+const assertNoWorkspaceNameAllowedOnUpdate = (workspaceName) => {
+  if (workspaceName) throw new Error('A workspace name may only be set on newly created environments and may not be updated')
+};
+
 const deploy = async (options, environmentVariables) => {
   const deployUtils = new DeployUtils();
 
-  const { environmentName, projectId, organizationId, blueprintId } = options;
+  const { environmentName, projectId, organizationId, blueprintId, workspaceName } = options;
 
   logger.info('Waiting for deployment to start...');
   let environment = await deployUtils.getEnvironment(environmentName, projectId);
 
   if (!environment) {
     assertBlueprintExistsOnInitialDeployment(options);
-    environment = await deployUtils.createEnvironment(environmentName, organizationId, projectId);
+    environment = await deployUtils.createEnvironment(environmentName, organizationId, projectId, workspaceName);
+  } else {
+    assertNoWorkspaceNameAllowedOnUpdate( workspaceName);
   }
 
   await setConfigurationFromOptions(environmentVariables, environment, blueprintId);

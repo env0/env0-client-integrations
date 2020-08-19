@@ -25,12 +25,13 @@ class DeployUtils {
     await apiClient.callApi('put', `environments/${environment.id}`, { data });
   }
 
-  async createEnvironment(environmentName, organizationId, projectId) {
+  async createEnvironment(environmentName, organizationId, projectId, workspaceName) {
     const environment = await apiClient.callApi('post', 'environments', {
       data: {
         name: environmentName,
-        organizationId: organizationId,
-        projectId: projectId,
+        organizationId,
+        projectId,
+        workspaceName,
         lifespanEndAt: null
       }
     });

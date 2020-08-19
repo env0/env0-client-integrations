@@ -5,6 +5,7 @@ const options = {
   PROJECT_ID: 'projectId',
   BLUEPRINT_ID: 'blueprintId',
   ENVIRONMENT_NAME: 'environmentName',
+  WORKSPACE_NAME: 'workspaceName',
   ENVIRONMENT_VARIABLES: 'environmentVariables',
   SENSITIVE_ENVIRONMENT_VARIABLES: 'sensitiveEnvironmentVariables',
   REVISION: 'revision',

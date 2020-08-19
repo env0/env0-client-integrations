@@ -2,7 +2,7 @@ const DeployUtils = require('../lib/deploy-utils');
 const { options } = require('../config/constants');
 const _ = require('lodash');
 const logger = require('../lib/logger');
-const { convertStringToBoolean } = require('../lib/genetal-utils');
+const { convertStringToBoolean } = require('../lib/general-utils');
 
 const { PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 

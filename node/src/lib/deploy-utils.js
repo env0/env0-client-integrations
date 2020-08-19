@@ -1,7 +1,7 @@
 const Env0ApiClient = require('./api-client');
 const logger = require('./logger');
 const { options } = require('../config/constants');
-const { convertStringToBoolean, removeEmptyValuesFromObj } = require('../lib/genetal-utils');
+const { convertStringToBoolean, removeEmptyValuesFromObj } = require('./general-utils');
 
 const {
   API_KEY,

@@ -1,4 +1,4 @@
-const { convertStringToBoolean, removeEmptyValuesFromObj } = require('../../src/lib/genetal-utils');
+const { convertStringToBoolean, removeEmptyValuesFromObj } = require('../../src/lib/general-utils');
 
 describe('general utils', () => {
   describe('convert str to bool', () => {

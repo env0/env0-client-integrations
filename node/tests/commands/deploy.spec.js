@@ -96,18 +96,11 @@ describe('deploy', () => {
     });
   });
 
-  it.each`
-    missingAttribute  | addedOptions
-    ${'blueprint ID'} | ${{ [REVISION]: 'revision ' }}
-    ${'revision'}     | ${{ [BLUEPRINT_ID]: 'id ' }}
-  `(
-    'should fail when $missingAttribute is missing on initial deployment',
-    async ({ missingAttribute, addedOptions }) => {
-      mockGetEnvironment.mockResolvedValue(undefined);
+  it('should fail when blueprint is missing on initial deployment', async () => {
+    mockGetEnvironment.mockResolvedValue(undefined);
 
-      await expect(deploy({ ...mockOptions, ...addedOptions })).rejects.toThrow(
-        expect.objectContaining({ message: `Missing ${missingAttribute} on initial deployment` })
-      );
-    }
-  );
+    await expect(deploy(mockOptions)).rejects.toThrow(
+      expect.objectContaining({ message: 'Missing blueprint ID on initial deployment' })
+    );
+  });
 });

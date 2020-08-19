@@ -2,11 +2,10 @@ const DeployUtils = require('../lib/deploy-utils');
 const logger = require('../lib/logger');
 const { options } = require('../config/constants');
 
-const { BLUEPRINT_ID, REVISION, ENVIRONMENT_NAME, PROJECT_ID } = options;
+const { BLUEPRINT_ID, ENVIRONMENT_NAME, PROJECT_ID } = options;
 
 const assertBlueprintExistsOnInitialDeployment = options => {
   if (!options[BLUEPRINT_ID]) throw new Error('Missing blueprint ID on initial deployment');
-  if (!options[REVISION]) throw new Error('Missing revision on initial deployment');
 };
 
 const getConfigurationChanges = environmentVariables =>

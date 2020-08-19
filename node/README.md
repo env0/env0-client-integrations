@@ -83,6 +83,11 @@ The order of precedence of the arguments is:
 - Usage: `--environmentName`
 - Alias: `-e`
 
+### Workspace Name
+> (Optional) - A name for Terraform Workspace created for your new environment. This cannot be changed after an environment was created
+- Usage: `--workspaceName`
+- Alias: `-w`
+
 ### Environment Variables
 > The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"
 - Usage: `--environmentVariables`

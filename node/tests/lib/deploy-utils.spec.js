@@ -13,76 +13,10 @@ jest.mock('../../src/lib/api-client', () =>
 const mockEnvironmentId = 'environment0';
 const mockDeploymentId = 'deployment0';
 
-const { BLUEPRINT_ID, REVISION, REQUIRES_APPROVAL, TARGETS } = options;
+const { BLUEPRINT_ID, REVISION, REQUIRES_APPROVAL, TARGETS, ENVIRONMENT_NAME, ORGANIZATION_ID, PROJECT_ID } = options;
 
 describe('deploy utils', () => {
   const deployUtils = new DeployUtils();
-
-  describe('set configuration', () => {
-    beforeEach(() => {
-      mockCallApi.mockResolvedValue([]);
-    });
-
-    it('should query existing configurations for update', async () => {
-      await deployUtils.setConfiguration(
-        { id: 'environment-1', organizationId: 'organization-1' },
-        'blueprint-1',
-        'variable-name',
-        'variable-value',
-        false
-      );
-
-      expect(mockCallApi).toHaveBeenCalledWith('get', 'configuration', {
-        params: {
-          blueprintId: 'blueprint-1',
-          environmentId: 'environment-1',
-          organizationId: 'organization-1'
-        }
-      });
-    });
-
-    it('should post configuration property without id when new', async () => {
-      await deployUtils.setConfiguration(
-        { id: 'environment-1', organizationId: 'organization-1' },
-        'blueprint-1',
-        'variable-name',
-        'variable-value',
-        false
-      );
-
-      expect(mockCallApi).toHaveBeenCalledWith('post', 'configuration', {
-        data: expect.objectContaining({
-          isSensitive: false,
-          name: 'variable-name',
-          organizationId: 'organization-1',
-          projectId: undefined,
-          scope: 'ENVIRONMENT',
-          scopeId: 'environment-1',
-          type: 0,
-          value: 'variable-value'
-        })
-      });
-    });
-
-    it.each`
-      isSensitive
-      ${true}
-      ${false}
-    `('should post configuration property with isSensitive: $isSensitive', async ({ isSensitive }) => {
-      await deployUtils.setConfiguration(
-        { id: 'environment-1', organizationId: 'organization-1' },
-        'blueprint-1',
-        'variable-name',
-        'variable-value',
-        isSensitive
-      );
-
-      expect(mockCallApi).toHaveBeenCalledWith('post', 'configuration', {
-        data: expect.objectContaining({ isSensitive })
-      });
-    });
-  });
-
   describe('wait for environment', () => {
     it.each`
       status
@@ -224,11 +158,40 @@ describe('deploy utils', () => {
     });
   });
 
+  describe('create and deploy environment', () => {
+    it('should call api with proper options', async () => {
+      const mockOptions = {
+        [REVISION]: 'rev0',
+        [BLUEPRINT_ID]: 'blueprint0',
+        [ENVIRONMENT_NAME]: 'foo',
+        [ORGANIZATION_ID]: 'org0',
+        [PROJECT_ID]: 'proj0'
+      };
+
+      const configurationChanges = { config1: 'foo', config2: 'bar' };
+
+      const expectedPayload = {
+        name: mockOptions[ENVIRONMENT_NAME],
+        organizationId: mockOptions[ORGANIZATION_ID],
+        projectId: mockOptions[PROJECT_ID],
+        lifespanEndAt: null,
+        deployRequest: {
+          blueprintId: mockOptions[BLUEPRINT_ID],
+          blueprintRevision: mockOptions[REVISION]
+        },
+        configurationChanges
+      };
+
+      await deployUtils.createAndDeployEnvironment(mockOptions, configurationChanges);
+
+      expect(mockCallApi).toHaveBeenCalledWith('post', `environments`, { data: expectedPayload });
+    });
+  });
+
   describe('deploy environment', () => {
     const mockEnvironment = { id: 'env0', status: 'ACTIVE' };
     const mockOptions = {
       [REVISION]: 'rev0',
-      [BLUEPRINT_ID]: 'blueprint0',
       [TARGETS]: 'target1,target2,target3'
     };
 
@@ -237,22 +200,16 @@ describe('deploy utils', () => {
     });
 
     it('should call api with proper options', async () => {
-      await deployUtils.deployEnvironment(mockEnvironment, mockOptions);
+      const configurationChanges = { config1: 'foo', config2: 'bar' };
+
+      await deployUtils.deployEnvironment(mockEnvironment, mockOptions, configurationChanges);
 
       expect(mockCallApi).toHaveBeenCalledWith('post', `environments/${mockEnvironment.id}/deployments`, {
         data: {
-          blueprintId: mockOptions[BLUEPRINT_ID],
           blueprintRevision: mockOptions[REVISION],
-          targets: mockOptions[TARGETS]
+          targets: mockOptions[TARGETS],
+          configurationChanges
         }
-      });
-    });
-
-    it('should remove undefined values from payload', async () => {
-      await deployUtils.deployEnvironment(mockEnvironment, { [BLUEPRINT_ID]: 'id', [REQUIRES_APPROVAL]: undefined });
-
-      expect(mockCallApi).toHaveBeenCalledWith('post', `environments/${mockEnvironment.id}/deployments`, {
-        data: { [BLUEPRINT_ID]: 'id' }
       });
     });
 

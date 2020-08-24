@@ -3,10 +3,8 @@
  
 The command-line tool for the env0 platform.
 
-<!-- toc -->
-- [Commands](#commands)
-- [Arguments](#arguments)
-<!-- tocstop -->
+- [Commands](#commands-overview)
+- [Arguments](#arguments-overview)
 
 ## Features
 
@@ -24,7 +22,7 @@ $ npm install -g @env0/cli
 ```
 
 ## Commands Overview
-<!-- commands -->
+
 ### `env0 help`
 
 Run `env0 help` to get a helpful list of supported commands and arguments.
@@ -48,9 +46,9 @@ Runs an approval of an existing deployment that is waiting to be approved (AKA w
 ### `env0 cancel <arguments>`
 
 Cancels an existing deployment that is waiting to be approved (AKA waiting in plan stage).
-<!-- commandsstop -->
+
 ## Arguments Overview
-<!-- arguments -->
+
 The arguments are loaded from env0 configuration files, environment variables and CLI parameters.
 The order of precedence of the arguments is:
 1. `env0` CLI explicit parameters
@@ -124,7 +122,7 @@ This file holds your last action's required parameters and will spare you from r
 - `ENV0_PROJECT_ID`
 - `ENV0_BLUEPRINT_ID`
 - `ENV0_ENVIRONMENT_NAME`
-<!-- argumentsstop -->
+
 ## API Reference
 
 https://docs.env0.com/reference

@@ -20,9 +20,13 @@ const mockOptionsWithRequired = {
 const mockGetEnvironment = jest.fn();
 const mockCreateAndDeployEnvironment = jest.fn();
 const mockDeployEnvironment = jest.fn();
+const mockPollDeploymentStatus = jest.fn();
 
 jest.mock('../../src/lib/deploy-utils');
 jest.mock('../../src/lib/logger');
+
+const mockDeployment = { id: 'id0' };
+const mockEnvironment = { id: 'environment0', latestDeploymentLog: mockDeployment };
 
 describe('deploy', () => {
   beforeEach(() => {
@@ -30,14 +34,14 @@ describe('deploy', () => {
       getEnvironment: mockGetEnvironment,
       createAndDeployEnvironment: mockCreateAndDeployEnvironment,
       deployEnvironment: mockDeployEnvironment,
-      pollDeploymentStatus: jest.fn(),
+      pollDeploymentStatus: mockPollDeploymentStatus,
       assertDeploymentStatus: jest.fn()
     }));
   });
 
   beforeEach(() => {
-    mockDeployEnvironment.mockResolvedValue({ id: 'deployment0' });
-    mockCreateAndDeployEnvironment.mockResolvedValue({ latestDeploymentLogId: 'deployment0' });
+    mockDeployEnvironment.mockResolvedValue(mockDeployment);
+    mockCreateAndDeployEnvironment.mockResolvedValue(mockEnvironment);
   });
 
   it('should get environment', async () => {
@@ -83,16 +87,15 @@ describe('deploy', () => {
     });
 
     it('should redeploy with arguments', async () => {
-      const mockEnvironment = { id: 'environment0' };
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
       const redeployOptions = { ...mockOptionsWithRequired, [WORKSPACE_NAME]: undefined };
       await deploy(redeployOptions, environmentVariables);
 
       expect(mockDeployEnvironment).toBeCalledWith(mockEnvironment, redeployOptions, expectedConfigurationChanges);
+      expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
     });
 
     it('should not allow to redeploy with workspace name set', async () => {
-      const mockEnvironment = { id: 'environment0' };
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
 
       await expect(deploy({ [WORKSPACE_NAME]: 'workspace0' }, environmentVariables)).rejects.toThrowError(

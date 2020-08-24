@@ -63,7 +63,7 @@ class DeployUtils {
   }
 
   async deployEnvironment(environment, options, configurationChanges) {
-    await this.waitForEnvironment(environment.id);
+    logger.info('Starting to deploy environment...');
 
     const payload = removeEmptyValuesFromObj({
       blueprintRevision: options[REVISION],
@@ -78,7 +78,7 @@ class DeployUtils {
   }
 
   async destroyEnvironment(environment) {
-    await this.waitForEnvironment(environment.id);
+    logger.info('Starting to destroy environment...');
 
     return await apiClient.callApi('post', `environments/${environment.id}/destroy`);
   }
@@ -127,19 +127,35 @@ class DeployUtils {
     return doneSteps;
   }
 
-  async pollDeploymentStatus(deploymentLogId, shouldProcessDeploymentSteps = true) {
+  async pollDeploymentStatus(deployment, shouldProcessDeploymentSteps = true) {
     const MAX_TIME_IN_SECONDS = 10800; // 3 hours
     const start = Date.now();
     const stepsAlreadyLogged = [];
+    let previousStatus;
+    let shouldStartProcessingDeploymentLogs;
+
+    const pollableStatuses = ['IN_PROGRESS'];
+    if (deployment.status === 'QUEUED') {
+      pollableStatuses.push('QUEUED');
+      logger.info(`Deployment is queued! Waiting for it to start...`);
+      logger.info('Note: You can always stop waiting by using Ctrl+C');
+    }
 
     while (true) {
-      const { status } = await apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
+      const { type, status } = await this.getDeployment(deployment.id);
+      shouldStartProcessingDeploymentLogs = status !== 'QUEUED';
 
-      if (shouldProcessDeploymentSteps) {
-        stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deploymentLogId, stepsAlreadyLogged)));
+      status === 'QUEUED' && logger.info('Waiting for deployment to start....');
+
+      if (status !== 'QUEUED' && previousStatus === 'QUEUED') {
+        logger.info(`Deployment reached its turn! ${type === 'deploy' ? 'Deploying' : 'Destroying'} environment...`);
       }
 
-      if (status !== 'IN_PROGRESS') {
+      if (shouldStartProcessingDeploymentLogs && shouldProcessDeploymentSteps) {
+        stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deployment.id, stepsAlreadyLogged)));
+      }
+
+      if (!pollableStatuses.includes(status)) {
         status === 'WAITING_FOR_USER' &&
           logger.info("Deployment is waiting for an approval. Run 'env0 approve' or 'env0 cancel' to continue.");
         return status;
@@ -148,32 +164,9 @@ class DeployUtils {
       const elapsedTimeInSeconds = (Date.now() - start) / 1000;
       if (elapsedTimeInSeconds > MAX_TIME_IN_SECONDS) throw new Error('Polling deployment timed out');
 
-      await apiClient.sleep(2000);
-    }
-  }
-
-  async waitForEnvironment(environmentId) {
-    const environmentValidStatuses = ['CREATED', 'ACTIVE', 'INACTIVE', 'FAILED', 'TIMEOUT', 'CANCELLED', 'ABORTED'];
-
-    const maxRetryNumber = 180; // waiting for 15 minutes (180 * 5 seconds)
-    let retryCount = 0;
-    let status;
-
-    do {
-      ({ status } = await apiClient.callApi('get', `environments/${environmentId}`));
-
-      if (status === 'WAITING_FOR_USER') {
-        throw new Error("Deployment is waiting for an approval. Run 'env0 approve' or 'env0 cancel' to continue.");
-      }
-
-      if (environmentValidStatuses.includes(status)) return;
-      if (retryCount >= maxRetryNumber) throw new Error('Polling environment timed out');
-
-      logger.info(`Waiting for environment to become deployable. (current status: ${status})`);
-
-      retryCount++;
+      previousStatus = status;
       await apiClient.sleep(5000);
-    } while (!environmentValidStatuses.includes(status));
+    }
   }
 
   assertDeploymentStatus(status) {

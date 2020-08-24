@@ -10,42 +10,13 @@ jest.mock('../../src/lib/api-client', () =>
   }))
 );
 
-const mockEnvironmentId = 'environment0';
-const mockDeploymentId = 'deployment0';
-
 const { BLUEPRINT_ID, REVISION, REQUIRES_APPROVAL, TARGETS, ENVIRONMENT_NAME, ORGANIZATION_ID, PROJECT_ID } = options;
+
+const mockDeploymentId = 'deployment0';
+const mockDeployment = { id: mockDeploymentId };
 
 describe('deploy utils', () => {
   const deployUtils = new DeployUtils();
-  describe('wait for environment', () => {
-    it.each`
-      status
-      ${'CREATED'}
-      ${'INACTIVE'}
-      ${'ACTIVE'}
-      ${'FAILED'}
-      ${'TIMEOUT'}
-      ${'CANCELLED'}
-      ${'ABORTED'}
-    `('should call api client once', async ({ status }) => {
-      mockCallApi.mockResolvedValue({ status });
-
-      await deployUtils.waitForEnvironment(mockEnvironmentId);
-
-      expect(mockCallApi).toBeCalledWith('get', `environments/${mockEnvironmentId}`);
-      expect(mockCallApi).toBeCalledTimes(1);
-    });
-
-    it('should call api client twice', async () => {
-      mockCallApi.mockResolvedValueOnce({ status: 'TEST' });
-      mockCallApi.mockResolvedValueOnce({ status: 'ACTIVE' });
-
-      await deployUtils.waitForEnvironment(mockEnvironmentId);
-
-      expect(mockCallApi).toBeCalledWith('get', `environments/${mockEnvironmentId}`);
-      expect(mockCallApi).toBeCalledTimes(2);
-    });
-  });
 
   describe('poll deployment status', () => {
     beforeEach(() => {
@@ -56,10 +27,21 @@ describe('deploy utils', () => {
       const mockStatus = 'SUCCESS';
       mockCallApi.mockResolvedValueOnce({ status: mockStatus });
 
-      const status = await deployUtils.pollDeploymentStatus(mockDeploymentId);
+      const status = await deployUtils.pollDeploymentStatus(mockDeployment);
 
       expect(mockCallApi).toBeCalledWith('get', `environments/deployments/${mockDeploymentId}`);
       expect(status).toBe(mockStatus);
+    });
+
+    describe('when deployment is queued', () => {
+      it('should call process deployment steps more than once (aka add QUEUED status to polllable statuses)', async () => {
+        mockCallApi.mockResolvedValueOnce({ status: 'QUEUED' });
+
+        await deployUtils.pollDeploymentStatus({ ...mockDeployment, status: 'QUEUED' });
+
+        expect(mockCallApi).toHaveBeenNthCalledWith(2, 'get', `deployments/${mockDeploymentId}/steps`);
+        expect(mockCallApi).toHaveBeenNthCalledWith(4, 'get', `deployments/${mockDeploymentId}/steps`);
+      });
     });
   });
 

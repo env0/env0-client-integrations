@@ -9,7 +9,8 @@ const assertBlueprintExistsOnInitialDeployment = options => {
 };
 
 const assertNoWorkspaceNameChanges = options => {
-  if (options[WORKSPACE_NAME]) throw new Error('You may only set Terraform Workspace on the first deployment of an environment');
+  if (options[WORKSPACE_NAME])
+    throw new Error('You may only set Terraform Workspace on the first deployment of an environment');
 };
 
 const getConfigurationChanges = environmentVariables =>
@@ -22,27 +23,23 @@ const getConfigurationChanges = environmentVariables =>
 
 const deploy = async (options, environmentVariables) => {
   const deployUtils = new DeployUtils();
-
-  logger.info('Waiting for deployment to start...');
-
   const configurationChanges = getConfigurationChanges(environmentVariables);
 
-  let deploymentLogId;
+  let deployment;
   let environment = await deployUtils.getEnvironment(options[ENVIRONMENT_NAME], options[PROJECT_ID]);
 
   if (!environment) {
-    logger.info('Initial deployment detected');
+    logger.info('Initial deployment detected!');
     assertBlueprintExistsOnInitialDeployment(options);
 
     environment = await deployUtils.createAndDeployEnvironment(options, configurationChanges);
-    deploymentLogId = environment.latestDeploymentLogId;
+    deployment = environment.latestDeploymentLog;
   } else {
     assertNoWorkspaceNameChanges(options);
-    const deployment = await deployUtils.deployEnvironment(environment, options, configurationChanges);
-    deploymentLogId = deployment.id;
+    deployment = await deployUtils.deployEnvironment(environment, options, configurationChanges);
   }
 
-  const status = await deployUtils.pollDeploymentStatus(deploymentLogId);
+  const status = await deployUtils.pollDeploymentStatus(deployment);
 
   deployUtils.assertDeploymentStatus(status);
 };

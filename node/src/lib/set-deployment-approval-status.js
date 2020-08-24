@@ -22,7 +22,7 @@ const setDeploymentApprovalStatus = (command, shouldProcessDeploymentSteps) => a
     ? await deployUtils.approveDeployment(latestDeploymentLog.id)
     : await deployUtils.cancelDeployment(latestDeploymentLog.id);
 
-  const status = await deployUtils.pollDeploymentStatus(latestDeploymentLog.id, shouldProcessDeploymentSteps);
+  const status = await deployUtils.pollDeploymentStatus(latestDeploymentLog, shouldProcessDeploymentSteps);
   deployUtils.assertDeploymentStatus(status);
 };
 

@@ -145,7 +145,7 @@ class DeployUtils {
 
       status === 'QUEUED' && logger.info('Waiting for deployment to start....');
 
-      if (status !== 'QUEUED' && previousStatus === 'QUEUED') {
+      if (status === 'IN_PROGRESS' && previousStatus === 'QUEUED') {
         logger.info(`Deployment reached its turn! ${type === 'deploy' ? 'Deploying' : 'Destroying'} environment...`);
       }
 

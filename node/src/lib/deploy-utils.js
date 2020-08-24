@@ -143,7 +143,7 @@ class DeployUtils {
     while (true) {
       const { type, status } = await this.getDeployment(deployment.id);
 
-      status === 'QUEUED' && logger.info('Waiting for deployment to start....');
+      if (status === 'QUEUED') logger.info('Queued deployment is still waiting for earlier deployments to finish...');
 
       if (status === 'IN_PROGRESS' && previousStatus === 'QUEUED') {
         logger.info(`Deployment reached its turn! ${type === 'deploy' ? 'Deploying' : 'Destroying'} environment...`);

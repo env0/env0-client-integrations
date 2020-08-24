@@ -132,7 +132,6 @@ class DeployUtils {
     const start = Date.now();
     const stepsAlreadyLogged = [];
     let previousStatus;
-    let shouldStartProcessingDeploymentLogs;
 
     const pollableStatuses = ['IN_PROGRESS'];
     if (deployment.status === 'QUEUED') {
@@ -143,7 +142,6 @@ class DeployUtils {
 
     while (true) {
       const { type, status } = await this.getDeployment(deployment.id);
-      shouldStartProcessingDeploymentLogs = status !== 'QUEUED';
 
       status === 'QUEUED' && logger.info('Waiting for deployment to start....');
 
@@ -151,7 +149,7 @@ class DeployUtils {
         logger.info(`Deployment reached its turn! ${type === 'deploy' ? 'Deploying' : 'Destroying'} environment...`);
       }
 
-      if (shouldStartProcessingDeploymentLogs && shouldProcessDeploymentSteps) {
+      if (shouldProcessDeploymentSteps) {
         stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deployment.id, stepsAlreadyLogged)));
       }
 

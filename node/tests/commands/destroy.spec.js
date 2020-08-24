@@ -5,9 +5,12 @@ const { options } = require('../../src/config/constants');
 const mockGetEnvironment = jest.fn();
 const mockUpdateEnvironment = jest.fn();
 const mockDestroyEnvironment = jest.fn();
+const mockPollDeploymentStatus = jest.fn();
 
 jest.mock('../../src/lib/logger');
 jest.mock('../../src/lib/deploy-utils');
+
+const mockDeployment = { id: 'id0' };
 
 const { ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 
@@ -18,7 +21,7 @@ describe('destroy', () => {
         getEnvironment: mockGetEnvironment,
         updateEnvironment: mockUpdateEnvironment,
         destroyEnvironment: mockDestroyEnvironment,
-        pollDeploymentStatus: jest.fn(),
+        pollDeploymentStatus: mockPollDeploymentStatus,
         assertDeploymentStatus: jest.fn()
       };
     });
@@ -28,11 +31,12 @@ describe('destroy', () => {
     const mockEnvironment = { id: 'something', name: 'someone' };
 
     mockGetEnvironment.mockResolvedValue(mockEnvironment);
-    mockDestroyEnvironment.mockResolvedValue({ id: 'id0' });
+    mockDestroyEnvironment.mockResolvedValue(mockDeployment);
 
     await destroy({});
 
     expect(mockDestroyEnvironment).toBeCalledWith(mockEnvironment);
+    expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
   });
 
   it('should fail when environment doesnt exist', async () => {

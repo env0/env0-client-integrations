@@ -1,8 +1,9 @@
 const commandLineArgs = require('command-line-args');
 const runCommand = require('./commands/run-command');
+const updateNotifier = require('update-notifier');
+const pkg = require('../package.json');
 const { options } = require('./config/constants');
 const { commands } = require('./config/commands');
-const { version } = require('../package.json');
 const help = require('./commands/help');
 const configure = require('./commands/configure');
 const logger = require('./lib/logger');
@@ -29,7 +30,7 @@ const isInternalCommand = async (command, args) => {
   }
 
   if (['--version'].some(h => args.includes(h)) || command === 'version') {
-    logger.info(version);
+    logger.info(pkg.version);
     isInternalCmd = true;
   }
 
@@ -46,6 +47,8 @@ const run = async () => {
   const argv = mainOptions._unknown || [];
 
   const { command } = mainOptions;
+
+  updateNotifier({ pkg }).notify();
 
   try {
     if (await isInternalCommand(command, argv)) return;

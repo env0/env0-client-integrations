@@ -5,12 +5,14 @@ const { version } = require('../package.json');
 const help = require('../src/commands/help');
 const configure = require('../src/commands/configure');
 const logger = require('../src/lib/logger');
+const updateNotifier = require('update-notifier');
 
 jest.mock('../src/lib/logger');
 jest.mock('../src/commands/run-command');
 jest.mock('../src/commands/help');
 jest.mock('../src/commands/configure');
 jest.mock('command-line-args');
+jest.mock('update-notifier', () => jest.fn().mockReturnValue({ notify: jest.fn() }));
 
 const getMockOptions = command => ({
   [command]: {
@@ -24,14 +26,22 @@ const getMockOptions = command => ({
 });
 
 const mockOptionsAndRun = async ({ command, rawArgs, args }) => {
+  commandLineArgs.mockRestore();
   commandLineArgs.mockReturnValueOnce({ command, _unknown: rawArgs });
   commandLineArgs.mockReturnValueOnce(args);
+
   await run();
 };
 
 describe('main', () => {
   beforeEach(() => {
     jest.spyOn(process, 'exit').mockReturnValue({});
+  });
+
+  it('should run update notifier', async () => {
+    await mockOptionsAndRun({});
+
+    expect(updateNotifier).toBeCalled();
   });
 
   describe("when command doesn't exist", () => {

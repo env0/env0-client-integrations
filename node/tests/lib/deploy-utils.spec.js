@@ -10,7 +10,7 @@ jest.mock('../../src/lib/api-client', () =>
   }))
 );
 
-const { BLUEPRINT_ID, REVISION, REQUIRES_APPROVAL, TARGETS, ENVIRONMENT_NAME, ORGANIZATION_ID, PROJECT_ID } = options;
+const { BLUEPRINT_ID, REVISION, REQUIRES_APPROVAL, TARGETS, ENVIRONMENT_NAME, PROJECT_ID } = options;
 
 const mockDeploymentId = 'deployment0';
 const mockDeployment = { id: mockDeploymentId };
@@ -146,7 +146,6 @@ describe('deploy utils', () => {
         [REVISION]: 'rev0',
         [BLUEPRINT_ID]: 'blueprint0',
         [ENVIRONMENT_NAME]: 'foo',
-        [ORGANIZATION_ID]: 'org0',
         [PROJECT_ID]: 'proj0'
       };
 
@@ -154,9 +153,7 @@ describe('deploy utils', () => {
 
       const expectedPayload = {
         name: mockOptions[ENVIRONMENT_NAME],
-        organizationId: mockOptions[ORGANIZATION_ID],
         projectId: mockOptions[PROJECT_ID],
-        lifespanEndAt: null,
         deployRequest: {
           blueprintId: mockOptions[BLUEPRINT_ID],
           blueprintRevision: mockOptions[REVISION]

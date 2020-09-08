@@ -12,7 +12,6 @@ const {
   TARGETS,
   ENVIRONMENT_NAME,
   WORKSPACE_NAME,
-  ORGANIZATION_ID,
   PROJECT_ID
 } = options;
 
@@ -41,9 +40,7 @@ class DeployUtils {
     const payload = removeEmptyValuesFromObj({
       name: options[ENVIRONMENT_NAME],
       workspaceName: options[WORKSPACE_NAME],
-      organizationId: options[ORGANIZATION_ID],
       projectId: options[PROJECT_ID],
-      lifespanEndAt: null,
       deployRequest: {
         blueprintId: options[BLUEPRINT_ID],
         blueprintRevision: options[REVISION]

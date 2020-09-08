@@ -72,6 +72,7 @@ describe('deploy', () => {
     ];
 
     const expectedConfigurationChanges = environmentVariables.map(variable => ({
+      scope: 'DEPLOYMENT',
       name: variable.name,
       value: variable.value,
       isSensitive: variable.sensitive,

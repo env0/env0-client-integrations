@@ -15,6 +15,7 @@ const assertNoWorkspaceNameChanges = options => {
 
 const getConfigurationChanges = environmentVariables =>
   (environmentVariables || []).map(variable => ({
+    scope: 'DEPLOYMENT',
     isSensitive: variable.sensitive,
     name: variable.name,
     value: variable.value,

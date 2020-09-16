@@ -37,8 +37,6 @@ const runCommand = async (command, options, environmentVariables) => {
   assertRequiredOptions(options);
   assertRequiresApprovalOption(options[REQUIRES_APPROVAL]);
 
-  configManager.write(options);
-
   logger.setSecrets(options);
 
   logger.info(`Running ${command} with the following arguments:`);

@@ -7,7 +7,6 @@ const { commands } = require('./config/commands');
 const help = require('./commands/help');
 const configure = require('./commands/configure');
 const logger = require('./lib/logger');
-const runInternalCommand = require('./commands/run-internal-command');
 
 const mainDefinitions = [{ name: 'command', defaultOption: true }];
 
@@ -26,25 +25,18 @@ const hasHelpArg = args => ['-h', '--help'].some(h => args.includes(h));
 
 const hasVersionArg = args => ['--version'].some(h => args.includes(h));
 
-const isInternalCommand = async (command, args) => {
-  let isInternalCmd = false;
+const showVersion = () => {
+  logger.info(pkg.version);
+};
 
-  if (['-h', '--help'].some(h => args.includes(h)) || command === 'help') {
-    help();
-    isInternalCmd = true;
-  }
+const runInternalCommand = async (command, options) => {
+  const commands = {
+    help: () => help(),
+    version: () => showVersion(),
+    configure: async () => configure(options)
+  };
 
-  if (['--version'].some(h => args.includes(h)) || command === 'version') {
-    logger.info(pkg.version);
-    isInternalCmd = true;
-  }
-
-  if (command === 'configure') {
-    await configure();
-    isInternalCmd = true;
-  }
-
-  return isInternalCmd;
+  await commands[command]();
 };
 
 const run = async () => {

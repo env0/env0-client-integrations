@@ -23,7 +23,7 @@ const argumentsMap = {
     description: 'env0 API Key',
     prompt: 'env0 API Key',
     secret: true,
-    group: ['deploy', 'destroy', 'approve', 'cancel']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
   },
   [API_SECRET]: {
     name: API_SECRET,
@@ -32,7 +32,7 @@ const argumentsMap = {
     description: 'env0 API Secret',
     prompt: 'env0 API Secret',
     secret: true,
-    group: ['deploy', 'destroy', 'approve', 'cancel']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
   },
   [ORGANIZATION_ID]: {
     name: ORGANIZATION_ID,
@@ -40,7 +40,7 @@ const argumentsMap = {
     type: String,
     description: 'env0 Organization ID',
     prompt: 'Organization ID',
-    group: ['deploy', 'destroy', 'approve', 'cancel']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
   },
   [PROJECT_ID]: {
     name: PROJECT_ID,
@@ -48,7 +48,7 @@ const argumentsMap = {
     type: String,
     description: 'env0 Project ID',
     prompt: 'Project ID',
-    group: ['deploy', 'destroy', 'approve', 'cancel']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
   },
   [WORKSPACE_NAME]: {
     name: WORKSPACE_NAME,
@@ -63,7 +63,7 @@ const argumentsMap = {
     type: String,
     description: 'The environment name you want to perform the action on',
     prompt: 'Environment Name',
-    group: ['deploy', 'destroy', 'approve', 'cancel']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
   },
   [BLUEPRINT_ID]: {
     name: BLUEPRINT_ID,
@@ -71,7 +71,7 @@ const argumentsMap = {
     type: String,
     description: 'The Blueprint id you would like to deploy',
     prompt: 'Blueprint ID',
-    group: ['deploy']
+    group: ['deploy', 'configure']
   },
   [REQUIRES_APPROVAL]: {
     name: REQUIRES_APPROVAL,

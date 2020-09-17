@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const configManager = require('../lib/config-manager');
 const { argumentsMap } = require('../config/arguments');
+const logger = require('../lib/logger');
 const _ = require('lodash');
 
 const emptyConfig = configManager.INCLUDED_OPTIONS.reduce((acc, key) => {
@@ -17,16 +18,26 @@ const getQuestions = configuration => {
   }));
 };
 
-const removeEmptyAnswers = answers => _.pickBy(answers, i => i);
+const removeEmptyOptions = options => _.pickBy(options, i => i);
 
-const configure = async () => {
-  const configuration = { ...emptyConfig, ...configManager.read() };
+const isInteractiveConfigure = options => _.isEmpty(options);
 
-  const questions = getQuestions(configuration);
+const configure = async options => {
+  let newConfiguration;
+  if (isInteractiveConfigure(options)) {
+    const configuration = { ...emptyConfig, ...configManager.read() };
 
-  const answers = await inquirer.prompt(questions);
+    const questions = getQuestions(configuration);
 
-  configManager.write(removeEmptyAnswers(answers));
+    newConfiguration = await inquirer.prompt(questions);
+  } else {
+    newConfiguration = { ...emptyConfig, ...configManager.read(options) };
+
+    Object.keys(options).forEach(opt => logger.info(`Setting ${opt}: ${options[opt]}`));
+  }
+
+  configManager.write(removeEmptyOptions(newConfiguration));
+  logger.info('Done configuring CLI options!');
 };
 
 module.exports = configure;

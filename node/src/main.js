@@ -7,6 +7,7 @@ const { commands } = require('./config/commands');
 const help = require('./commands/help');
 const configure = require('./commands/configure');
 const logger = require('./lib/logger');
+const runInternalCommand = require('./commands/run-internal-command');
 
 const mainDefinitions = [{ name: 'command', defaultOption: true }];
 
@@ -20,6 +21,10 @@ const assertCommandExists = command => {
     throw new Error(error);
   }
 };
+
+const hasHelpArg = args => ['-h', '--help'].some(h => args.includes(h));
+
+const hasVersionArg = args => ['--version'].some(h => args.includes(h));
 
 const isInternalCommand = async (command, args) => {
   let isInternalCmd = false;
@@ -44,28 +49,37 @@ const isInternalCommand = async (command, args) => {
 
 const run = async () => {
   const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
-  const argv = mainOptions._unknown || [];
+  let argv = mainOptions._unknown || [];
 
-  const { command } = mainOptions;
+  let { command } = mainOptions;
 
   updateNotifier({ pkg }).notify();
 
   try {
-    if (await isInternalCommand(command, argv)) return;
+    if (hasVersionArg(argv)) command = 'version';
+    if (hasHelpArg(argv)) command = 'help';
 
     assertCommandExists(command);
 
-    const commandDefinitions = commands[command].options;
-    const commandsOptions = commandLineArgs(commandDefinitions, { argv });
+    const { options: commandDefinitions, internal, ignoreFlags } = commands[command];
 
-    const currentCommandOptions = commandsOptions[command];
+    let currentCommandOptions = {};
+    if (!ignoreFlags) {
+      const commandsOptions = commandLineArgs(commandDefinitions, { argv });
 
-    const environmentVariables = getEnvironmentVariablesOptions(
-      currentCommandOptions[ENVIRONMENT_VARIABLES],
-      currentCommandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]
-    );
+      currentCommandOptions = commandsOptions[command];
+    }
 
-    await runCommand(command, currentCommandOptions, environmentVariables);
+    if (internal) {
+      await runInternalCommand(command, currentCommandOptions);
+    } else {
+      const environmentVariables = getEnvironmentVariablesOptions(
+        currentCommandOptions[ENVIRONMENT_VARIABLES],
+        currentCommandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]
+      );
+
+      await runCommand(command, currentCommandOptions, environmentVariables);
+    }
   } catch (error) {
     commands[command] && logger.error(`Command ${command} has failed. Error:`);
     let { message } = error;

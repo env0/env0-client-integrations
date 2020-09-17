@@ -18,7 +18,7 @@ const getQuestions = configuration => {
   }));
 };
 
-const removeEmptyOptions = options => _.pickBy(options, i => i);
+const removeEmptyAnswers = answers => _.pickBy(answers, i => i);
 
 const isInteractiveConfigure = options => _.isEmpty(options);
 
@@ -29,14 +29,16 @@ const configure = async options => {
 
     const questions = getQuestions(configuration);
 
-    newConfiguration = await inquirer.prompt(questions);
+    const answers = await inquirer.prompt(questions);
+
+    newConfiguration = removeEmptyAnswers(answers);
   } else {
-    newConfiguration = { ...emptyConfig, ...configManager.read(options) };
+    newConfiguration = configManager.read(options);
 
     Object.keys(options).forEach(opt => logger.info(`Setting ${opt}: ${options[opt]}`));
   }
 
-  configManager.write(removeEmptyOptions(newConfiguration));
+  configManager.write(newConfiguration);
   logger.info('Done configuring CLI options!');
 };
 

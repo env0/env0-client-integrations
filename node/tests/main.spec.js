@@ -100,12 +100,14 @@ describe('main', () => {
     });
 
     describe('configure', () => {
+      const command = 'configure';
+      const args = getMockOptions(command);
       beforeEach(async () => {
-        await mockOptionsAndRun({ command: 'configure' });
+        await mockOptionsAndRun({ command, args });
       });
 
-      it('should call configure', () => {
-        expect(configure).toBeCalled();
+      it('should call configure with arguments', () => {
+        expect(configure).toHaveBeenCalledWith(args[command]);
       });
 
       it('should not call run deployment', () => {

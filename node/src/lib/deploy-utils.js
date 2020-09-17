@@ -45,7 +45,8 @@ class DeployUtils {
         blueprintId: options[BLUEPRINT_ID],
         blueprintRevision: options[REVISION]
       },
-      configurationChanges
+      configurationChanges,
+      requiresApproval: convertStringToBoolean(options[REQUIRES_APPROVAL])
     });
 
     return await apiClient.callApi('post', 'environments', { data: payload }); // returns the newly created environment with updated deployment log

@@ -146,7 +146,8 @@ describe('deploy utils', () => {
         [REVISION]: 'rev0',
         [BLUEPRINT_ID]: 'blueprint0',
         [ENVIRONMENT_NAME]: 'foo',
-        [PROJECT_ID]: 'proj0'
+        [PROJECT_ID]: 'proj0',
+        [REQUIRES_APPROVAL]: 'true'
       };
 
       const configurationChanges = { config1: 'foo', config2: 'bar' };
@@ -158,7 +159,8 @@ describe('deploy utils', () => {
           blueprintId: mockOptions[BLUEPRINT_ID],
           blueprintRevision: mockOptions[REVISION]
         },
-        configurationChanges
+        configurationChanges,
+        requiresApproval: true
       };
 
       await deployUtils.createAndDeployEnvironment(mockOptions, configurationChanges);

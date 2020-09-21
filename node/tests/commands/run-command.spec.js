@@ -29,12 +29,19 @@ describe('run command', () => {
     jest.spyOn(configManager, 'read').mockReturnValue(mockRequiredOptions);
   });
 
-  it('should read and write persistent options', async () => {
-    await runCommand('deploy', mockRequiredOptions);
+  describe('configuration', () => {
+    beforeEach(async () => {
+      await runCommand('deploy', mockRequiredOptions);
+    })
 
-    expect(configManager.read).toBeCalled();
-    expect(configManager.write).toBeCalled();
-  });
+    it('should read configuration and merge with input options', async () => {
+      expect(configManager.read).toBeCalledWith(mockRequiredOptions);
+    });
+
+    it('should not overwrite configuration', async () => {
+      expect(configManager.write).not.toBeCalled();
+    })
+  })
 
   describe('when there are missing required options', () => {
     it('should fail with proper error message', async () => {

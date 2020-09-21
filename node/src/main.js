@@ -41,7 +41,7 @@ const runInternalCommand = async (command, options) => {
 
 const run = async () => {
   const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
-  let argv = mainOptions._unknown || [];
+  const argv = mainOptions._unknown || [];
 
   let { command } = mainOptions;
 

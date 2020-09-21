@@ -42,7 +42,6 @@ const commands = {
   },
   configure: {
     options: [...baseArguments, argumentsMap[BLUEPRINT_ID]],
-    internal: true,
     help: [
       {
         desc: 'Configures env0 CLI options',
@@ -55,8 +54,6 @@ const commands = {
     ]
   },
   version: {
-    internal: true,
-    ignoreFlags: true,
     help: [
       {
         desc: 'Shows the CLI version',
@@ -65,8 +62,6 @@ const commands = {
     ]
   },
   help: {
-    internal: true,
-    ignoreFlags: true,
     help: [
       {
         desc: 'Shows this help message',

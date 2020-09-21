@@ -21,57 +21,49 @@ const assertCommandExists = command => {
   }
 };
 
-const hasHelpArg = args => ['-h', '--help'].some(h => args.includes(h));
+const isInternalCommand = async (command, args) => {
+  let isInternalCmd = false;
 
-const hasVersionArg = args => ['--version'].some(h => args.includes(h));
+  if (['-h', '--help'].some(h => args.includes(h)) || command === 'help') {
+    help();
+    isInternalCmd = true;
+  }
 
-const showVersion = () => {
-  logger.info(pkg.version);
-};
+  if (['--version'].some(h => args.includes(h)) || command === 'version') {
+    logger.info(pkg.version);
+    isInternalCmd = true;
+  }
 
-const runInternalCommand = async (command, options) => {
-  const commands = {
-    help: () => help(),
-    version: () => showVersion(),
-    configure: async () => configure(options)
-  };
+  if (command === 'configure') {
+    const options = getCommandOptions(command, args);
+    await configure(options);
+    isInternalCmd = true;
+  }
 
-  await commands[command]();
+  return isInternalCmd;
 };
 
 const run = async () => {
   const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
   const argv = mainOptions._unknown || [];
 
-  let { command } = mainOptions;
+  const { command } = mainOptions;
 
   updateNotifier({ pkg }).notify();
 
   try {
-    if (hasVersionArg(argv)) command = 'version';
-    if (hasHelpArg(argv)) command = 'help';
+    if (await isInternalCommand(command, argv)) return;
 
     assertCommandExists(command);
 
-    const { options: commandDefinitions, internal, ignoreFlags } = commands[command];
+    const currentCommandOptions = getCommandOptions(command);
 
-    let currentCommandOptions = {};
-    if (!ignoreFlags) {
-      const commandsOptions = commandLineArgs(commandDefinitions, { argv });
+    const environmentVariables = getEnvironmentVariablesOptions(
+      currentCommandOptions[ENVIRONMENT_VARIABLES],
+      currentCommandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]
+    );
 
-      currentCommandOptions = commandsOptions[command];
-    }
-
-    if (internal) {
-      await runInternalCommand(command, currentCommandOptions);
-    } else {
-      const environmentVariables = getEnvironmentVariablesOptions(
-        currentCommandOptions[ENVIRONMENT_VARIABLES],
-        currentCommandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]
-      );
-
-      await runCommand(command, currentCommandOptions, environmentVariables);
-    }
+    await runCommand(command, currentCommandOptions, environmentVariables);
   } catch (error) {
     commands[command] && logger.error(`Command ${command} has failed. Error:`);
     let { message } = error;
@@ -82,6 +74,13 @@ const run = async () => {
     logger.error(message);
     process.exit(1);
   }
+};
+
+const getCommandOptions = (command, argv) => {
+  const commandDefinitions = commands[command].options;
+  const commandsOptions = commandLineArgs(commandDefinitions, { argv });
+
+  return commandsOptions[command];
 };
 
 const parseEnvironmentVariables = (environmentVariables, sensitive) => {

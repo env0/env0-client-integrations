@@ -43,7 +43,7 @@ const sections = [
   ...options,
   {
     header: 'Examples',
-    content: Object.keys(commands).flatMap(command => commands[command].help)
+    content: flatMap(Object.keys(commands), command => commands[command].help)
   },
   {
     content: `Project home: {underline ${repository.url}}`

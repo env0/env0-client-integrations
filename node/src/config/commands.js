@@ -6,38 +6,68 @@ const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, BLUE
 const commands = {
   deploy: {
     options: allArguments,
-    description: 'Deploys an environment',
-    example: `$ env0 deploy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${BLUEPRINT_ID}> -e <${ENVIRONMENT_NAME}> -r [revision] -v [stage=dev]`
+    help: [
+      {
+        desc: 'Deploys an environment',
+        example: `$ env0 deploy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${BLUEPRINT_ID}> -e <${ENVIRONMENT_NAME}> -r [revision] -v [stage=dev]`
+      }
+    ]
   },
   destroy: {
-    options: [
-      ...baseArguments,
-      argumentsMap[REQUIRES_APPROVAL]
-    ],
-    description: 'Destroys an environment',
-    example: `$ env0 destroy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+    options: [...baseArguments, argumentsMap[REQUIRES_APPROVAL]],
+    help: [
+      {
+        desc: 'Destroys an environment',
+        example: `$ env0 destroy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+      }
+    ]
   },
   approve: {
     options: baseArguments,
-    description: 'Accepts a deployment that is pending approval',
-    example: `$ env0 approve -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+    help: [
+      {
+        desc: 'Accepts a deployment that is pending approval',
+        example: `$ env0 approve -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+      }
+    ]
   },
   cancel: {
     options: baseArguments,
-    description: 'Cancels a deployment that is pending approval',
-    example: `$ env0 cancel -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+    help: [
+      {
+        desc: 'Cancels a deployment that is pending approval',
+        example: `$ env0 cancel -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+      }
+    ]
   },
   configure: {
-    description: 'Configures env0 CLI options',
-    example: `$ env0 configure`,
+    options: [...baseArguments, argumentsMap[BLUEPRINT_ID]],
+    help: [
+      {
+        desc: 'Configures env0 CLI options',
+        example: `$ env0 configure -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}> -b <${BLUEPRINT_ID}>`
+      },
+      {
+        desc: 'Interactively configures env0 CLI options\n',
+        example: `$ env0 configure`
+      }
+    ]
   },
   version: {
-    description: 'Shows the CLI version',
-    example: `$ env0 version`
+    help: [
+      {
+        desc: 'Shows the CLI version',
+        example: `$ env0 version`
+      }
+    ]
   },
   help: {
-    description: 'Shows this help message',
-    example: `$ env0 help`
+    help: [
+      {
+        desc: 'Shows this help message',
+        example: `$ env0 help`
+      }
+    ]
   }
 };
 

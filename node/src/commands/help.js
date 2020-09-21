@@ -3,6 +3,7 @@ const boxen = require('boxen');
 const { allArguments } = require('../config/arguments');
 const { commands } = require('../config/commands');
 const { repository } = require('../../package.json');
+const { flatMap } = require('lodash');
 
 const header = `
                                   .oooo.   
@@ -24,7 +25,7 @@ const options = Object.keys(commands)
     optionList: allArguments.map(option => ({
       ...option
     })),
-    group: [ command ]
+    group: [command]
   }));
 
 const sections = [
@@ -42,10 +43,7 @@ const sections = [
   ...options,
   {
     header: 'Examples',
-    content: Object.keys(commands).map(command => ({
-      desc: commands[command].description,
-      example: commands[command].example,
-    }))
+    content: flatMap(Object.keys(commands), command => commands[command].help)
   },
   {
     content: `Project home: {underline ${repository.url}}`

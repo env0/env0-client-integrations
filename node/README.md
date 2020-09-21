@@ -27,9 +27,10 @@ $ npm install -g @env0/cli
 
 Run `env0 help` to get a helpful list of supported commands and arguments.
 
-### `env0 configure`
+### `env0 configure <arguments>`
 
-Displays a set of prompts that will help you configure the CLI options.
+Sets configurable options for the CLI.
+If no arguments are given, displays a set of prompts that will help you configure the CLI options.
 
 ### `env0 deploy <arguments>`
 

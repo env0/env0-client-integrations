@@ -25,7 +25,7 @@ const getMockOptions = command => ({
   _unknown: ['test']
 });
 
-const mockOptionsAndRun = async ({ command, rawArgs, args }) => {
+const mockOptionsAndRun = async ({ command, rawArgs, args = {} }) => {
   commandLineArgs.mockRestore();
   commandLineArgs.mockReturnValueOnce({ command, _unknown: rawArgs });
   commandLineArgs.mockReturnValueOnce(args);
@@ -64,13 +64,13 @@ describe('main', () => {
   describe('when command exists', () => {
     describe('help', () => {
       describe.each`
-        command
-        ${'-h'}
-        ${'--help'}
-        ${'help'}
-      `('when user asks for help with $command', ({ command }) => {
+        command   | rawArgs
+        ${''}     | ${['-h']}
+        ${''}     | ${['--help']}
+        ${'help'} | ${[]}
+      `('when user asks for help with command=$command, rawArgs=$rawArgs', ({ command, rawArgs }) => {
         beforeEach(async () => {
-          await mockOptionsAndRun({ command, rawArgs: [command] });
+          await mockOptionsAndRun({ command, rawArgs });
         });
 
         it('should present the help message', () => {
@@ -85,12 +85,12 @@ describe('main', () => {
 
     describe('version', () => {
       describe.each`
-        command
-        ${'--version'}
-        ${'version'}
-      `('when user asks to see the version with $command', ({ command }) => {
+        command      | rawArgs
+        ${''}        | ${['--version']}
+        ${'version'} | ${[]}
+      `('when user asks to see the version with command=$command, rawArgs=$rawArgs', ({ command, rawArgs }) => {
         beforeEach(async () => {
-          await mockOptionsAndRun({ command, rawArgs: [command] });
+          await mockOptionsAndRun({ command, rawArgs });
         });
 
         it('should show the proper version', () => {
@@ -100,12 +100,14 @@ describe('main', () => {
     });
 
     describe('configure', () => {
+      const command = 'configure';
+      const args = getMockOptions(command);
       beforeEach(async () => {
-        await mockOptionsAndRun({ command: 'configure' });
+        await mockOptionsAndRun({ command, args });
       });
 
-      it('should present the help message', () => {
-        expect(configure).toBeCalled();
+      it('should call configure with arguments', () => {
+        expect(configure).toHaveBeenCalledWith(args[command]);
       });
 
       it('should not call run deployment', () => {

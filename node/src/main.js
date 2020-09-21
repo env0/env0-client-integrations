@@ -35,7 +35,8 @@ const isInternalCommand = async (command, args) => {
   }
 
   if (command === 'configure') {
-    await configure();
+    const options = getCommandOptions(command, args);
+    await configure(options);
     isInternalCmd = true;
   }
 
@@ -55,10 +56,7 @@ const run = async () => {
 
     assertCommandExists(command);
 
-    const commandDefinitions = commands[command].options;
-    const commandsOptions = commandLineArgs(commandDefinitions, { argv });
-
-    const currentCommandOptions = commandsOptions[command];
+    const currentCommandOptions = getCommandOptions(command);
 
     const environmentVariables = getEnvironmentVariablesOptions(
       currentCommandOptions[ENVIRONMENT_VARIABLES],
@@ -76,6 +74,13 @@ const run = async () => {
     logger.error(message);
     process.exit(1);
   }
+};
+
+const getCommandOptions = (command, argv) => {
+  const commandDefinitions = commands[command].options;
+  const commandsOptions = commandLineArgs(commandDefinitions, { argv });
+
+  return commandsOptions[command];
 };
 
 const parseEnvironmentVariables = (environmentVariables, sensitive) => {

@@ -81,13 +81,6 @@ describe('main', () => {
         it('should not call run deployment', () => {
           expect(runCommand).not.toBeCalled();
         });
-
-        it('should call commandLineArgs once, to get the command', () => {
-          expect(commandLineArgs).toHaveBeenCalledTimes(1);
-          expect(commandLineArgs).toHaveBeenCalledWith([{ name: 'command', defaultOption: true }], {
-            stopAtFirstUnknown: true
-          });
-        });
       });
     });
 

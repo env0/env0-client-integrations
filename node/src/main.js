@@ -56,7 +56,7 @@ const run = async () => {
 
     assertCommandExists(command);
 
-    const currentCommandOptions = getCommandOptions(command);
+    const currentCommandOptions = getCommandOptions(command, argv);
 
     const environmentVariables = getEnvironmentVariablesOptions(
       currentCommandOptions[ENVIRONMENT_VARIABLES],

@@ -32,7 +32,7 @@ describe('run command', () => {
   describe('configuration', () => {
     beforeEach(async () => {
       await runCommand('deploy', mockRequiredOptions);
-    })
+    });
 
     it('should read configuration and merge with input options', async () => {
       expect(configManager.read).toBeCalledWith(mockRequiredOptions);
@@ -40,8 +40,8 @@ describe('run command', () => {
 
     it('should not overwrite configuration', async () => {
       expect(configManager.write).not.toBeCalled();
-    })
-  })
+    });
+  });
 
   describe('when there are missing required options', () => {
     it('should fail with proper error message', async () => {

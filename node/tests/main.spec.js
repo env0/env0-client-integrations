@@ -1,6 +1,7 @@
 const runCommand = require('../src/commands/run-command');
 const run = require('../src/main');
 const commandLineArgs = require('command-line-args');
+const { commands } = require('../src/config/commands');
 const { version } = require('../package.json');
 const help = require('../src/commands/help');
 const configure = require('../src/commands/configure');
@@ -112,6 +113,30 @@ describe('main', () => {
 
       it('should not call run deployment', () => {
         expect(runCommand).not.toBeCalled();
+      });
+    });
+
+    describe('commands with flags', () => {
+      describe.each`
+        command
+        ${'deploy'}
+        ${'destroy'}
+        ${'cancel'}
+        ${'approve'}
+        ${'configure'}
+      `('on $command', ({ command }) => {
+        const args = getMockOptions(command);
+        const rawArgs = ['raw', 'args'];
+
+        beforeEach(async () => {
+          await mockOptionsAndRun({ command, rawArgs, args });
+        });
+
+        const expectedCommandOptions = commands[command].options;
+
+        it('should call commandLineArgs to get arguments from the command options, using the rawArgs', () => {
+          expect(commandLineArgs).toHaveBeenCalledWith(expectedCommandOptions, { argv: rawArgs });
+        });
       });
     });
 

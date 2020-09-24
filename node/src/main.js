@@ -21,6 +21,21 @@ const assertCommandExists = command => {
   }
 };
 
+const logErrors = (command, error) => {
+  commands[command] && logger.error(`Command ${command} has failed.`);
+  let { message } = error;
+
+  if (error.response && error.response.data) {
+    message += ':\n';
+
+    const { data } = error.response;
+    if (data.message) message += `${data.message}\n`;
+    if (Array.isArray(data)) data.forEach(line => (message += `${line}\n`));
+  }
+
+  logger.error(message);
+};
+
 const isInternalCommand = async (command, args) => {
   let isInternalCmd = false;
 
@@ -65,13 +80,7 @@ const run = async () => {
 
     await runCommand(command, currentCommandOptions, environmentVariables);
   } catch (error) {
-    commands[command] && logger.error(`Command ${command} has failed. Error:`);
-    let { message } = error;
-    if (error.response && error.response.data && error.response.data.message) {
-      message += `: ${error.response.data.message}`;
-    }
-
-    logger.error(message);
+    logErrors(command, error);
     process.exit(1);
   }
 };

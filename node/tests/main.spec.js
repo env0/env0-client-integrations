@@ -63,6 +63,23 @@ describe('main', () => {
   });
 
   describe('when command exists', () => {
+    describe.each`
+      responseData               | expected
+      ${{ message: 'test' }}     | ${'test'}
+      ${['one', 'two', 'three']} | ${'one\ntwo\nthree'}
+    `('when command fails with $responseData', ({ responseData, expected }) => {
+      beforeEach(async () => {
+        runCommand.mockRejectedValue({ response: { data: responseData }, message: 'testing errors' });
+
+        const command = 'deploy';
+        await mockOptionsAndRun({ command, rawArgs: [], args: getMockOptions(command) });
+      });
+
+      it('should log errors', () => {
+        expect(logger.error).toBeCalledWith(expect.stringContaining(expected));
+      });
+    });
+
     describe('help', () => {
       describe.each`
         command   | rawArgs

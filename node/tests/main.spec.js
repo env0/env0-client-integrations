@@ -65,8 +65,9 @@ describe('main', () => {
   describe('when command exists', () => {
     describe.each`
       responseData               | expected
-      ${{ message: 'test' }}     | ${'test'}
+      ${{ message: 'test' }}     | ${'test\n'}
       ${['one', 'two', 'three']} | ${'one\ntwo\nthree'}
+      ${'one'}                   | ${'one\n'}
     `('when command fails with $responseData', ({ responseData, expected }) => {
       beforeEach(async () => {
         runCommand.mockRejectedValue({ response: { data: responseData }, message: 'testing errors' });

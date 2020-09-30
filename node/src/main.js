@@ -1,4 +1,5 @@
 const commandLineArgs = require('command-line-args');
+const _ = require('lodash');
 const runCommand = require('./commands/run-command');
 const updateNotifier = require('update-notifier');
 const pkg = require('../package.json');
@@ -29,8 +30,9 @@ const logErrors = (command, error) => {
     message += ':\n';
 
     const { data } = error.response;
-    if (data.message) message += `${data.message}\n`;
-    if (Array.isArray(data)) data.forEach(line => (message += `${line}\n`));
+    if (_.isArray(data)) data.forEach(line => (message += `${line}\n`));
+    else if (_.isString(data)) message += `${data}\n`;
+    else if (data.message) message += `${data.message}\n`;
   }
 
   logger.error(message);

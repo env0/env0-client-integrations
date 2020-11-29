@@ -99,7 +99,7 @@ class DeployUtils {
       events.forEach(event => logger.info(event.message));
 
       if (nextStartTime) startTime = nextStartTime;
-      if (stepInProgress) await apiClient.sleep(1000);
+      if (stepInProgress) await apiClient.sleep(10000);
 
       shouldPoll = hasMoreLogs || stepInProgress;
     } while (shouldPoll);
@@ -161,7 +161,7 @@ class DeployUtils {
       if (elapsedTimeInSeconds > MAX_TIME_IN_SECONDS) throw new Error('Polling deployment timed out');
 
       previousStatus = status;
-      await apiClient.sleep(5000);
+      await apiClient.sleep(30000);
     }
   }
 

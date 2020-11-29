@@ -82,6 +82,7 @@ class DeployUtils {
   }
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {
+    const pollInProgressStepLogInterval = 10000; // 10 seconds
     let shouldPoll = false;
     let startTime = undefined;
 
@@ -99,7 +100,7 @@ class DeployUtils {
       events.forEach(event => logger.info(event.message));
 
       if (nextStartTime) startTime = nextStartTime;
-      if (stepInProgress) await apiClient.sleep(1000);
+      if (stepInProgress) await apiClient.sleep(pollInProgressStepLogInterval);
 
       shouldPoll = hasMoreLogs || stepInProgress;
     } while (shouldPoll);
@@ -126,7 +127,8 @@ class DeployUtils {
   }
 
   async pollDeploymentStatus(deployment, shouldProcessDeploymentSteps = true) {
-    const MAX_TIME_IN_SECONDS = 10800; // 3 hours
+    const maxTimeInSeconds = 10800; // 3 hours
+    const pollStepLogsInterval = 30000; // 30 seconds
     const start = Date.now();
     const stepsAlreadyLogged = [];
     let previousStatus;
@@ -158,10 +160,10 @@ class DeployUtils {
       }
 
       const elapsedTimeInSeconds = (Date.now() - start) / 1000;
-      if (elapsedTimeInSeconds > MAX_TIME_IN_SECONDS) throw new Error('Polling deployment timed out');
+      if (elapsedTimeInSeconds > maxTimeInSeconds) throw new Error('Polling deployment timed out');
 
       previousStatus = status;
-      await apiClient.sleep(5000);
+      await apiClient.sleep(pollStepLogsInterval);
     }
   }
 

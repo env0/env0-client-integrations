@@ -16,7 +16,8 @@
   "main": "src/main.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "publish": "npm login && npm publish --access public" 
   },
   "license": "MIT",
   "files": [

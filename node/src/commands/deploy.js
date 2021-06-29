@@ -8,9 +8,9 @@ const assertBlueprintExistsOnInitialDeployment = options => {
   if (!options[BLUEPRINT_ID]) throw new Error('Missing blueprint ID on initial deployment');
 };
 
-const assertNoWorkspaceNameChanges = options => {
-  if (options[WORKSPACE_NAME])
-    throw new Error('You may only set Terraform Workspace on the first deployment of an environment');
+const assertNoWorkspaceNameChanges = (options, environment) => {
+  if (options[WORKSPACE_NAME] && options[WORKSPACE_NAME] !== environment.workspaceName)
+    throw new Error('You cannot change a workspace name once an environment has been deployed');
 };
 
 const getConfigurationChanges = environmentVariables =>
@@ -36,8 +36,10 @@ const deploy = async (options, environmentVariables) => {
     environment = await deployUtils.createAndDeployEnvironment(options, configurationChanges);
     deployment = environment.latestDeploymentLog;
   } else {
-    assertNoWorkspaceNameChanges(options);
-    deployment = await deployUtils.deployEnvironment(environment, options, configurationChanges);
+    assertNoWorkspaceNameChanges(options, environment);
+    const optionsWithoutWorkspace = { ...options }
+    delete optionsWithoutWorkspace[WORKSPACE_NAME]
+    deployment = await deployUtils.deployEnvironment(environment, optionsWithoutWorkspace, configurationChanges);
   }
 
   const status = await deployUtils.pollDeploymentStatus(deployment);

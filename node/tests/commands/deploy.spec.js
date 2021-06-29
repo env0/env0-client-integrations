@@ -96,12 +96,24 @@ describe('deploy', () => {
       expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
     });
 
-    it('should not allow to redeploy with workspace name set', async () => {
+    it('should not allow to redeploy with a different workspace name set', async () => {
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
 
       await expect(deploy({ [WORKSPACE_NAME]: 'workspace0' }, environmentVariables)).rejects.toThrowError(
-        'You may only set Terraform Workspace on the first deployment of an environment'
+        'You cannot change a workspace name once an environment has been deployed'
       );
+    });
+
+    it('should allow to redeploy with the same workspace name', async () => {
+      let existingEnvironmentWithWorkspace = { ...mockEnvironment, [WORKSPACE_NAME]: 'workspace0' };
+      mockGetEnvironment.mockResolvedValue(existingEnvironmentWithWorkspace);
+
+      await deploy(mockOptionsWithRequired, environmentVariables)
+
+      const expectedOptions = { ...mockOptionsWithRequired }
+      delete expectedOptions[WORKSPACE_NAME]
+
+      expect(mockDeployEnvironment).toBeCalledWith(existingEnvironmentWithWorkspace, expectedOptions, expectedConfigurationChanges);
     });
   });
 

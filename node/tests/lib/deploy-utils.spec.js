@@ -222,4 +222,30 @@ describe('deploy utils', () => {
       expect(mockCallApi).toBeCalledWith('put', `environments/deployments/${mockDeploymentId}/cancel`);
     });
   });
+
+  describe('get environments', () => {
+    const environmentName = 'env0';
+    const projectId = 'projectX';
+    const environments = ['id1', 'id2', 'id3'].map(id => ({ id }));
+    let response;
+
+    describe.each`
+      when     | apiResponse     | expectedReturnValue
+      ${''}    | ${environments} | ${environments[0]}
+      ${'NOT'} | ${[]}           | ${undefined}
+    `('when environment was $when found', ({ apiResponse, expectedReturnValue }) => {
+      beforeEach(async () => {
+        mockCallApi.mockReturnValue(apiResponse);
+        response = await deployUtils.getEnvironment(environmentName, projectId);
+      });
+
+      it('should call api', async () => {
+        expect(mockCallApi).toBeCalledWith('get', `environments?projectId=${projectId}&name=${environmentName}`);
+      });
+
+      it(`should return ${expectedReturnValue}`, () => {
+        expect(response).toEqual(expectedReturnValue);
+      });
+    });
+  });
 });

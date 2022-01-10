@@ -17,7 +17,8 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
-    "publish": "npm login && npm publish --access public"
+    "publish": "npm login && npm publish --access public",
+    "postinstall": "npm shrinkwrap"
   },
   "license": "MIT",
   "files": [

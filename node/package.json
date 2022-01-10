@@ -17,7 +17,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
-    "publish": "npm login && npm publish --access public" 
+    "publish": "npm login && npm publish --access public"
   },
   "license": "MIT",
   "files": [
@@ -40,7 +40,7 @@
     "inquirer": "^7.3.3",
     "lodash": "^4.17.19",
     "update-notifier": "^4.1.1",
-    "winston": "^3.3.3"
+    "winston": "3.3.4"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

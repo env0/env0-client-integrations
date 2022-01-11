@@ -1,6 +1,6 @@
 {
   "name": "@env0/cli",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "env0 CLI",
   "repository": {
     "type": "git",
@@ -17,7 +17,8 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
-    "publish": "npm login && npm publish --access public" 
+    "publish": "npm login && npm publish --access public",
+    "postinstall": "npm shrinkwrap"
   },
   "license": "MIT",
   "files": [
@@ -32,22 +33,22 @@
     "cli"
   ],
   "dependencies": {
-    "axios": "^0.21.1",
-    "boxen": "^4.2.0",
-    "command-line-args": "^5.1.1",
-    "command-line-usage": "^6.1.0",
-    "fs-extra": "^9.0.1",
-    "inquirer": "^7.3.3",
-    "lodash": "^4.17.19",
-    "update-notifier": "^4.1.1",
-    "winston": "^3.3.3"
+    "axios": "0.21.2",
+    "boxen": "4.2.0",
+    "command-line-args": "5.1.1",
+    "command-line-usage": "6.1.0",
+    "fs-extra": "9.0.1",
+    "inquirer": "7.3.3",
+    "lodash": "4.17.19",
+    "update-notifier": "4.1.1",
+    "winston": "3.3.4"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "jest": "^25.5.4",
-    "jest-extended": "^0.11.5",
-    "prettier": "^2.0.5"
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.11.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "jest": "25.5.4",
+    "jest-extended": "0.11.5",
+    "prettier": "2.0.5"
   }
 }

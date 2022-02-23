@@ -9,6 +9,7 @@ const {
   WORKSPACE_NAME,
   ENVIRONMENT_NAME,
   ENVIRONMENT_VARIABLES,
+  TERRAFORM_VARIABLES,
   SENSITIVE_ENVIRONMENT_VARIABLES,
   REVISION,
   REQUIRES_APPROVAL,
@@ -90,6 +91,16 @@ const argumentsMap = {
     group: ['deploy'],
     description:
       'The environment variables to set on the deployed environment - works only on deploy and can be multiple, the format is "environmentVariableName1=value"'
+  },
+  [TERRAFORM_VARIABLES]: {
+    name: TERRAFORM_VARIABLES,
+    alias: 'u',
+    type: String,
+    multiple: true,
+    defaultValue: [],
+    group: ['deploy'],
+    description:
+      'The terraform variables to set on the deployed environment - works only on deploy and can be multiple, the format is "terraformVariableName=value"'
   },
   [SENSITIVE_ENVIRONMENT_VARIABLES]: {
     name: SENSITIVE_ENVIRONMENT_VARIABLES,

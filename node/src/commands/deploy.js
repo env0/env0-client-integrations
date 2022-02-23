@@ -13,17 +13,17 @@ const assertNoWorkspaceNameChanges = (options, environment) => {
     throw new Error('You cannot change a workspace name once an environment has been deployed');
 };
 
-const getConfigurationChanges = environmentVariables =>
-  (environmentVariables || []).map(variable => ({
+const getConfigurationChanges = variables =>
+  (variables || []).map(variable => ({
     isSensitive: variable.sensitive,
     name: variable.name,
     value: variable.value,
-    type: 0 // supporting only environment variable type ATM
+    type: variable.type
   }));
 
-const deploy = async (options, environmentVariables) => {
+const deploy = async (options, variables) => {
   const deployUtils = new DeployUtils();
-  const configurationChanges = getConfigurationChanges(environmentVariables);
+  const configurationChanges = getConfigurationChanges(variables);
 
   let deployment;
   let environment = await deployUtils.getEnvironment(options[ENVIRONMENT_NAME], options[PROJECT_ID]);

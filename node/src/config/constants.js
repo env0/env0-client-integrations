@@ -7,6 +7,7 @@ const options = {
   ENVIRONMENT_NAME: 'environmentName',
   WORKSPACE_NAME: 'workspaceName',
   ENVIRONMENT_VARIABLES: 'environmentVariables',
+  TERRAFORM_VARIABLES: 'terraformVariables',
   SENSITIVE_ENVIRONMENT_VARIABLES: 'sensitiveEnvironmentVariables',
   REVISION: 'revision',
   REQUIRES_APPROVAL: 'requiresApproval',

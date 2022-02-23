@@ -11,7 +11,7 @@ const logger = require('./lib/logger');
 
 const mainDefinitions = [{ name: 'command', defaultOption: true }];
 
-const { ENVIRONMENT_VARIABLES, SENSITIVE_ENVIRONMENT_VARIABLES } = options;
+const { ENVIRONMENT_VARIABLES, SENSITIVE_ENVIRONMENT_VARIABLES, TERRAFORM_VARIABLES } = options;
 
 const assertCommandExists = command => {
   if (!commands[command]) {
@@ -75,12 +75,13 @@ const run = async () => {
 
     const currentCommandOptions = getCommandOptions(command, argv);
 
-    const environmentVariables = getEnvironmentVariablesOptions(
+    const variables = getVariablesOptions(
       currentCommandOptions[ENVIRONMENT_VARIABLES],
-      currentCommandOptions[SENSITIVE_ENVIRONMENT_VARIABLES]
+      currentCommandOptions[SENSITIVE_ENVIRONMENT_VARIABLES],
+      currentCommandOptions[TERRAFORM_VARIABLES]
     );
 
-    await runCommand(command, currentCommandOptions, environmentVariables);
+    await runCommand(command, currentCommandOptions, variables);
   } catch (error) {
     logErrors(command, error);
     process.exit(1);
@@ -94,26 +95,27 @@ const getCommandOptions = (command, argv) => {
   return commandsOptions[command];
 };
 
-const parseEnvironmentVariables = (environmentVariables, sensitive) => {
+const parseVariables = (variables, sensitive, type) => {
   const result = [];
 
-  if (environmentVariables && environmentVariables.length > 0) {
-    logger.info(`Getting ${sensitive ? 'Sensitive ' : ''}Environment Variables from options:`, environmentVariables);
+  if (variables && variables.length > 0) {
+    logger.info(`Getting ${sensitive ? 'Sensitive ' : ''} Variables from options:`, variables);
 
-    environmentVariables.forEach(config => {
+    variables.forEach(config => {
       let [name, ...value] = config.split('=');
       value = value.join('=');
-      result.push({ name, value, sensitive });
+      result.push({ name, value, sensitive, type });
     });
   }
 
   return result;
 };
 
-const getEnvironmentVariablesOptions = (environmentVariables, sensitiveEnvironmentVariables) => {
+const getVariablesOptions = (environmentVariables, sensitiveEnvironmentVariables, terraformVariables) => {
   return [
-    ...parseEnvironmentVariables(environmentVariables, false),
-    ...parseEnvironmentVariables(sensitiveEnvironmentVariables, true)
+    ...parseVariables(environmentVariables, false, 0),
+    ...parseVariables(sensitiveEnvironmentVariables, true, 0),
+    ...parseVariables(terraformVariables, false, 1)
   ];
 };
 

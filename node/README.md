@@ -100,6 +100,11 @@ For sensitive environment variables, use:
 - Usage: `--sensitiveEnvironmentVariables`
 - Alias: `-q`
 
+### Terraform Variables
+> The terraform variables to set on the deployed environment - works only on deploy and can be multiple, the format is "terraformVariableName1=value"
+- Usage: `--terraformVariables`
+- Alias: `-u`
+
 ### Revision
 > Your GIT revision, can be a branch, a tag or a commit hash. (For existing environments - if not specified, will use the previously defined revision)
 - Usage: `--revision`

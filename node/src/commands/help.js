@@ -16,7 +16,6 @@ d88' \`88b \`888P"Y88b \`88.  .8'  888    888
 
 Self-Service Cloud Environments
 https://www.env0.com
-
 `;
 
 const options = Object.keys(commands)

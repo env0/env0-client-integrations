@@ -32,7 +32,7 @@ const assertRequiresApprovalOption = requiresApproval => {
   }
 };
 
-const runCommand = async (command, options, environmentVariables) => {
+const runCommand = async (command, options, variables) => {
   options = configManager.read(options);
   assertRequiredOptions(options);
   assertRequiresApprovalOption(options[REQUIRES_APPROVAL]);
@@ -51,7 +51,7 @@ const runCommand = async (command, options, environmentVariables) => {
 
   await DeployUtils.init(options);
 
-  await commands[command](options, environmentVariables);
+  await commands[command](options, variables);
   logger.info(`Command ${command} has finished successfully.`);
 };
 

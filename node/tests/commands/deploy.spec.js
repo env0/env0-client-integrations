@@ -58,30 +58,38 @@ describe('deploy', () => {
   });
 
   describe('proper set of configuration changes', () => {
-    const environmentVariables = [
+    const variables = [
       {
         name: 'foo',
         value: 'bar',
-        sensitive: false
+        sensitive: false,
+        type: 0
       },
       {
         name: 'baz',
         value: 'waldo',
-        sensitive: true
+        sensitive: true,
+        type: 0
+      },
+      {
+        name: 'cal',
+        value: 'bears',
+        sensitive: false,
+        type: 1
       }
     ];
 
-    const expectedConfigurationChanges = environmentVariables.map(variable => ({
+    const expectedConfigurationChanges = variables.map(variable => ({
       name: variable.name,
       value: variable.value,
       isSensitive: variable.sensitive,
-      type: 0
+      type: variable.type
     }));
 
     it('on initial deploy', async () => {
       mockGetEnvironment.mockResolvedValue(undefined);
 
-      await deploy(mockOptionsWithRequired, environmentVariables);
+      await deploy(mockOptionsWithRequired, variables);
 
       expect(mockCreateAndDeployEnvironment).toBeCalledWith(mockOptionsWithRequired, expectedConfigurationChanges);
     });
@@ -89,7 +97,7 @@ describe('deploy', () => {
     it('should redeploy with arguments', async () => {
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
       const redeployOptions = { ...mockOptionsWithRequired, [WORKSPACE_NAME]: undefined };
-      await deploy(redeployOptions, environmentVariables);
+      await deploy(redeployOptions, variables);
 
       expect(mockDeployEnvironment).toBeCalledWith(mockEnvironment, redeployOptions, expectedConfigurationChanges);
       expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
@@ -98,7 +106,7 @@ describe('deploy', () => {
     it('should not allow to redeploy with a different workspace name set', async () => {
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
 
-      await expect(deploy({ [WORKSPACE_NAME]: 'workspace0' }, environmentVariables)).rejects.toThrowError(
+      await expect(deploy({ [WORKSPACE_NAME]: 'workspace0' }, variables)).rejects.toThrowError(
         'You cannot change a workspace name once an environment has been deployed'
       );
     });
@@ -107,7 +115,7 @@ describe('deploy', () => {
       let existingEnvironmentWithWorkspace = { ...mockEnvironment, [WORKSPACE_NAME]: 'workspace0' };
       mockGetEnvironment.mockResolvedValue(existingEnvironmentWithWorkspace);
 
-      await deploy(mockOptionsWithRequired, environmentVariables)
+      await deploy(mockOptionsWithRequired, variables)
 
       const expectedOptions = { ...mockOptionsWithRequired }
       delete expectedOptions[WORKSPACE_NAME]

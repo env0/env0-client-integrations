@@ -21,7 +21,8 @@ const getMockOptions = command => ({
     blue: 'pill',
     red: 'pill',
     environmentVariables: ['key1=value1', 'key2=value2'],
-    sensitiveEnvironmentVariables: ['sensitiveKey1=sensitiveValue1', 'sensitiveKey2=sensitiveValue2']
+    sensitiveEnvironmentVariables: ['sensitiveKey1=sensitiveValue1', 'sensitiveKey2=sensitiveValue2'],
+    terraformVariables: ['tfkey1=tfvalue1', 'tfkey2=tfvalue2']
   },
   _unknown: ['test']
 });
@@ -158,7 +159,7 @@ describe('main', () => {
       });
     });
 
-    describe('environment variables parsing', () => {
+    describe('variables parsing', () => {
       describe.each`
         command
         ${'deploy'}
@@ -170,15 +171,17 @@ describe('main', () => {
           await mockOptionsAndRun({ command, args });
         });
 
-        const expectedEnvVars = [
-          { name: 'key1', value: 'value1', sensitive: false },
-          { name: 'key2', value: 'value2', sensitive: false },
-          { name: 'sensitiveKey1', value: 'sensitiveValue1', sensitive: true },
-          { name: 'sensitiveKey2', value: 'sensitiveValue2', sensitive: true }
+        const expectedVars = [
+          { name: 'key1', value: 'value1', sensitive: false, type: 0 },
+          { name: 'key2', value: 'value2', sensitive: false, type: 0 },
+          { name: 'sensitiveKey1', value: 'sensitiveValue1', sensitive: true, type: 0 },
+          { name: 'sensitiveKey2', value: 'sensitiveValue2', sensitive: true, type: 0 },
+          { name: 'tfkey1', value: 'tfvalue1', sensitive: false, type: 1 },
+          { name: 'tfkey2', value: 'tfvalue2', sensitive: false, type: 1 }
         ];
 
         it('should run deployment with proper params', () => {
-          expect(runCommand).toBeCalledWith(command, expect.objectContaining(args[command]), expectedEnvVars);
+          expect(runCommand).toBeCalledWith(command, expect.objectContaining(args[command]), expectedVars);
         });
       });
     });

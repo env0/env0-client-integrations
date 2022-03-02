@@ -99,7 +99,7 @@ const parseVariables = (variables, sensitive, type) => {
   const result = [];
 
   if (variables && variables.length > 0) {
-    logger.info(`Getting ${sensitive ? 'Sensitive ' : ''} Variables from options:`, variables);
+    logger.info(`Getting ${sensitive ? 'Sensitive ' : ''}${type ? 'Terraform ' : 'Environment '}variables from options.`);
 
     variables.forEach(config => {
       let [name, ...value] = config.split('=');

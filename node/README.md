@@ -115,6 +115,11 @@ For sensitive environment variables, use:
 - Usage: `--requiresApproval <true/false>`
 - Alias: `-a`
 
+### Requires Approval
+> Disable automatic state refresh on 'plan -destroy' phase.
+- Usage: `--skipStateRefresh <true/false>`
+- Alias: `-sr`
+
 ### Targets (Partial Apply)
 > A list of resources to explicitly include in the deployment, delimited by a comma. Format is "resource1,resource2,resource3"
 - Usage: `--targets`

@@ -118,7 +118,7 @@ For sensitive environment variables, use:
 ### Requires Approval
 > Disable automatic state refresh on 'plan -destroy' phase.
 - Usage: `--skipStateRefresh <true/false>`
-- Alias: `-sr`
+- Alias: `-z`
 
 ### Targets (Partial Apply)
 > A list of resources to explicitly include in the deployment, delimited by a comma. Format is "resource1,resource2,resource3"
@@ -148,6 +148,7 @@ https://docs.env0.com/reference
 You can compile and run the CLI from source by cloning the repo from Github and then running the following:
 ```bash
 # clone the repo from github
+# make sure env0 lib is not installed globally
 yarn install
 yarn link # link your local copy of the CLI to your terminal path
 ```

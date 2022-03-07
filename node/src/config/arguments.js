@@ -12,6 +12,7 @@ const {
   TERRAFORM_VARIABLES,
   SENSITIVE_ENVIRONMENT_VARIABLES,
   REVISION,
+  SKIP_STATE_REFRESH,
   REQUIRES_APPROVAL,
   TARGETS
 } = options;
@@ -118,6 +119,13 @@ const argumentsMap = {
     type: String,
     group: ['deploy'],
     description: 'Your git revision, can be a branch tag or a commit hash. Default value "master" '
+  },
+  [SKIP_STATE_REFRESH]: {
+    name: SKIP_STATE_REFRESH,
+    alias: 'z',
+    type: String,
+    group: ['destroy'],
+    description: 'Disable automatic state refresh on plan destroy phase'
   },
   [TARGETS]: {
     name: TARGETS,

@@ -10,6 +10,7 @@ const {
   REQUIRES_APPROVAL,
   BLUEPRINT_ID,
   REVISION,
+  SKIP_STATE_REFRESH,
   TARGETS,
   ENVIRONMENT_NAME,
   WORKSPACE_NAME,
@@ -76,10 +77,15 @@ class DeployUtils {
     });
   }
 
-  async destroyEnvironment(environment) {
+  async destroyEnvironment(environment, options) {
+    const payload = removeEmptyValuesFromObj({
+      skipStateRefresh: options[SKIP_STATE_REFRESH]
+    });
     logger.info('Starting to destroy environment...');
 
-    return await apiClient.callApi('post', `environments/${environment.id}/destroy`);
+    return await apiClient.callApi('post', `environments/${environment.id}/destroy`,  {
+      params: payload
+    });
   }
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {

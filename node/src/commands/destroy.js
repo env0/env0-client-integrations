@@ -25,7 +25,7 @@ const destroy = async options => {
     await deployUtils.updateEnvironment(environment, { requiresApproval: requiresApproval });
   }
 
-  const deployment = await deployUtils.destroyEnvironment(environment);
+  const deployment = await deployUtils.destroyEnvironment(environment, options);
 
   status = await deployUtils.pollDeploymentStatus(deployment);
 

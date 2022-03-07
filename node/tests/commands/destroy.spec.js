@@ -58,7 +58,6 @@ describe('destroy', () => {
       ${undefined}             | ${undefined}
     `('should call destroyEnvironment with skipStateRefresh Option, skip=$skipStateRefreshOption', async ({ skipStateRefreshOption, existing }) => {
       const mockEnvironment = { id: 'something', name: 'someone' };
-      const options = {};
 
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
 

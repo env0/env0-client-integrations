@@ -77,14 +77,11 @@ class DeployUtils {
     });
   }
 
-  async destroyEnvironment(environment, options) {
-    const payload = removeEmptyValuesFromObj({
-      skipStateRefresh: options[SKIP_STATE_REFRESH]
-    });
+  async destroyEnvironment(environment, params) {
     logger.info('Starting to destroy environment...');
 
     return await apiClient.callApi('post', `environments/${environment.id}/destroy`,  {
-      params: payload
+      params
     });
   }
 

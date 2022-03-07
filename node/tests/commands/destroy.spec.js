@@ -12,7 +12,7 @@ jest.mock('../../src/lib/deploy-utils');
 
 const mockDeployment = { id: 'id0' };
 
-const { ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
+const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH } = options;
 
 describe('destroy', () => {
   beforeEach(() => {
@@ -29,17 +29,18 @@ describe('destroy', () => {
 
   it('should call api with proper data', async () => {
     const mockEnvironment = { id: 'something', name: 'someone' };
+    const options = {};
 
     mockGetEnvironment.mockResolvedValue(mockEnvironment);
     mockDestroyEnvironment.mockResolvedValue(mockDeployment);
 
     await destroy({});
 
-    expect(mockDestroyEnvironment).toBeCalledWith(mockEnvironment);
+    expect(mockDestroyEnvironment).toHaveBeenCalledWith(mockEnvironment, options);
     expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
   });
 
-  it('should fail when environment doesnt exist', async () => {
+  it('should fail when environment does\'nt exist', async () => {
     const mockEnvironmentName = 'environment0';
     mockGetEnvironment.mockResolvedValue(undefined);
 
@@ -47,6 +48,24 @@ describe('destroy', () => {
       Error,
       `Could not find an environment with the name ${mockEnvironmentName}`
     );
+  });
+
+  describe('skipStateRefresh argument', () => {
+    it.each`
+      skipStateRefreshOption  | existing
+      ${'true'}               | ${true}
+      ${'false'}              | ${false}
+      ${undefined}             | ${undefined}
+    `('should call destroyEnvironment with skipStateRefresh Option, skip=$skipStateRefreshOption', async ({ skipStateRefreshOption, existing }) => {
+      const mockEnvironment = { id: 'something', name: 'someone' };
+      const options = {};
+
+      mockGetEnvironment.mockResolvedValue(mockEnvironment);
+
+      await destroy({ [SKIP_STATE_REFRESH]: skipStateRefreshOption });
+
+      expect(mockDestroyEnvironment).toBeCalledWith(expect.anything(), { [SKIP_STATE_REFRESH]: existing });
+    });
   });
 
   describe('requires approval argument', () => {
@@ -74,7 +93,7 @@ describe('destroy', () => {
 
       await destroy({ [REQUIRES_APPROVAL]: option });
 
-      expect(mockUpdateEnvironment).toBeCalledWith(expect.anything(), { requiresApproval: expected });
+      expect(mockUpdateEnvironment).toBeCalledWith(expect.anything(), { [REQUIRES_APPROVAL]: expected });
     });
   });
 });

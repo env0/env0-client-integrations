@@ -26,7 +26,7 @@ const destroy = async options => {
   }
 
   const params = removeEmptyValuesFromObj({
-    [SKIP_STATE_REFRESH]: convertStringToBoolean(options[SKIP_STATE_REFRESH])
+    [SKIP_STATE_REFRESH]: options[SKIP_STATE_REFRESH]
   });
   const deployment = await deployUtils.destroyEnvironment(environment, params);
 

@@ -36,8 +36,8 @@ const deploy = async (options, variables) => {
     deployment = environment.latestDeploymentLog;
   } else {
     assertNoWorkspaceNameChanges(options, environment);
-    const optionsWithoutWorkspace = { ...options }
-    delete optionsWithoutWorkspace[WORKSPACE_NAME]
+    const optionsWithoutWorkspace = { ...options };
+    delete optionsWithoutWorkspace[WORKSPACE_NAME];
     deployment = await deployUtils.deployEnvironment(environment, optionsWithoutWorkspace, configurationChanges);
   }
 

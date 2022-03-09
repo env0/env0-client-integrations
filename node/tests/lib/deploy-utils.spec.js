@@ -10,7 +10,15 @@ jest.mock('../../src/lib/api-client', () =>
   }))
 );
 
-const { BLUEPRINT_ID, REVISION, REQUIRES_APPROVAL, TARGETS, ENVIRONMENT_NAME, PROJECT_ID } = options;
+const {
+  BLUEPRINT_ID,
+  REVISION,
+  SKIP_STATE_REFRESH,
+  REQUIRES_APPROVAL,
+  TARGETS,
+  ENVIRONMENT_NAME,
+  PROJECT_ID
+} = options;
 
 const mockDeploymentId = 'deployment0';
 const mockDeployment = { id: mockDeploymentId };
@@ -41,6 +49,21 @@ describe('deploy utils', () => {
 
         expect(mockCallApi).toHaveBeenNthCalledWith(2, 'get', `deployments/${mockDeploymentId}/steps`);
         expect(mockCallApi).toHaveBeenNthCalledWith(4, 'get', `deployments/${mockDeploymentId}/steps`);
+      });
+    });
+  });
+
+  describe('skip automatic state refresh', () => {
+    it.each`
+      params
+      ${{ [SKIP_STATE_REFRESH]: 'true' }}
+      ${{}}
+    `(`should call the api with the right query params param=$params`, async ({ params }) => {
+      mockCallApi.mockResolvedValue([]);
+
+      await deployUtils.destroyEnvironment({ id: mockDeploymentId }, params);
+      expect(mockCallApi).toBeCalledWith('post', `environments/${mockDeploymentId}/destroy`, {
+        params
       });
     });
   });

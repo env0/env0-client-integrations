@@ -1,7 +1,7 @@
 const { argumentsMap, allArguments, baseArguments } = require('./arguments');
 const { options } = require('./constants');
 
-const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, BLUEPRINT_ID, REQUIRES_APPROVAL } = options;
+const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, BLUEPRINT_ID, SKIP_STATE_REFRESH, REQUIRES_APPROVAL } = options;
 
 const commands = {
   deploy: {
@@ -14,7 +14,7 @@ const commands = {
     ]
   },
   destroy: {
-    options: [...baseArguments, argumentsMap[REQUIRES_APPROVAL]],
+    options: [...baseArguments, argumentsMap[REQUIRES_APPROVAL], argumentsMap[SKIP_STATE_REFRESH]],
     help: [
       {
         desc: 'Destroys an environment',

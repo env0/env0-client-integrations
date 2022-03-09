@@ -10,6 +10,7 @@ const options = {
   TERRAFORM_VARIABLES: 'terraformVariables',
   SENSITIVE_ENVIRONMENT_VARIABLES: 'sensitiveEnvironmentVariables',
   REVISION: 'revision',
+  SKIP_STATE_REFRESH: 'skipStateRefresh',
   REQUIRES_APPROVAL: 'requiresApproval',
   TARGETS: 'targets'
 };

@@ -76,10 +76,12 @@ class DeployUtils {
     });
   }
 
-  async destroyEnvironment(environment) {
+  async destroyEnvironment(environment, params) {
     logger.info('Starting to destroy environment...');
 
-    return await apiClient.callApi('post', `environments/${environment.id}/destroy`);
+    return await apiClient.callApi('post', `environments/${environment.id}/destroy`, {
+      params
+    });
   }
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {

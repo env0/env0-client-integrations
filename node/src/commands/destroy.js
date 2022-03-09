@@ -1,9 +1,9 @@
 const DeployUtils = require('../lib/deploy-utils');
 const { options } = require('../config/constants');
 const _ = require('lodash');
-const { convertStringToBoolean } = require('../lib/general-utils');
+const { convertStringToBoolean, removeEmptyValuesFromObj } = require('../lib/general-utils');
 
-const { PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
+const { PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH } = options;
 
 const assertEnvironmentExists = environment => {
   if (!environment) {
@@ -25,7 +25,10 @@ const destroy = async options => {
     await deployUtils.updateEnvironment(environment, { requiresApproval: requiresApproval });
   }
 
-  const deployment = await deployUtils.destroyEnvironment(environment);
+  const params = removeEmptyValuesFromObj({
+    [SKIP_STATE_REFRESH]: options[SKIP_STATE_REFRESH]
+  });
+  const deployment = await deployUtils.destroyEnvironment(environment, params);
 
   status = await deployUtils.pollDeploymentStatus(deployment);
 

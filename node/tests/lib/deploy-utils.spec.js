@@ -55,14 +55,16 @@ describe('deploy utils', () => {
 
   describe('skip automatic state refresh', () => {
     it.each`
-      params                              | sentParams
-      ${{ [SKIP_STATE_REFRESH]: 'true' }} | ${{ params: { [SKIP_STATE_REFRESH]: 'true' } }}
-      ${{}}                               | ${{ params: {} }}
-    `(`should call the api with the right query params param=$params`, async ({ params, sentParams }) => {
+      params
+      ${{ [SKIP_STATE_REFRESH]: 'true' }}
+      ${{}}
+    `(`should call the api with the right query params param=$params`, async ({ params }) => {
       mockCallApi.mockResolvedValue([]);
 
       await deployUtils.destroyEnvironment({ id: mockDeploymentId }, params);
-      expect(mockCallApi).toBeCalledWith('post', `environments/${mockDeploymentId}/destroy`, sentParams);
+      expect(mockCallApi).toBeCalledWith('post', `environments/${mockDeploymentId}/destroy`, {
+        params
+      });
     });
   });
 

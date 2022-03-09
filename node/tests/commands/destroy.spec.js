@@ -29,14 +29,13 @@ describe('destroy', () => {
 
   it('should call api with proper data', async () => {
     const mockEnvironment = { id: 'something', name: 'someone' };
-    const options = {};
 
     mockGetEnvironment.mockResolvedValue(mockEnvironment);
     mockDestroyEnvironment.mockResolvedValue(mockDeployment);
 
     await destroy({});
 
-    expect(mockDestroyEnvironment).toHaveBeenCalledWith(mockEnvironment, options);
+    expect(mockDestroyEnvironment).toHaveBeenCalledWith(mockEnvironment, expect.anything());
     expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
   });
 
@@ -52,22 +51,17 @@ describe('destroy', () => {
 
   describe('skipStateRefresh argument', () => {
     it.each`
-      skipStateRefreshOption | existing
-      ${'true'}              | ${'true'}
-      ${'false'}             | ${'false'}
-      ${undefined}           | ${undefined}
-    `(
-      'should call destroyEnvironment with skipStateRefresh Option, skip=$skipStateRefreshOption',
-      async ({ skipStateRefreshOption, existing }) => {
-        const mockEnvironment = { id: 'something', name: 'someone' };
+      options
+      ${{ [SKIP_STATE_REFRESH]: 'true' }}
+      ${{ [SKIP_STATE_REFRESH]: 'false' }}
+      ${{}}
+    `('should call destroyEnvironment with skipStateRefresh Option, options=$options', async ({ options }) => {
+      const mockEnvironment = { id: 'something', name: 'someone' };
+      mockGetEnvironment.mockResolvedValue(mockEnvironment);
 
-        mockGetEnvironment.mockResolvedValue(mockEnvironment);
-
-        await destroy({ [SKIP_STATE_REFRESH]: skipStateRefreshOption });
-
-        expect(mockDestroyEnvironment).toBeCalledWith(expect.anything(), { [SKIP_STATE_REFRESH]: existing });
-      }
-    );
+      await destroy(options);
+      expect(mockDestroyEnvironment).toBeCalledWith(expect.anything(), options);
+    });
   });
 
   describe('requires approval argument', () => {

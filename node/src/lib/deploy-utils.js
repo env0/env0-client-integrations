@@ -80,7 +80,7 @@ class DeployUtils {
     logger.info('Starting to destroy environment...');
 
     return await apiClient.callApi('post', `environments/${environment.id}/destroy`, {
-      params: params
+      params
     });
   }
 

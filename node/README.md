@@ -115,7 +115,7 @@ For sensitive environment variables, use:
 - Usage: `--requiresApproval <true/false>`
 - Alias: `-a`
 
-### Requires Approval
+### Skip State Refresh
 > Disable automatic state refresh on 'plan -destroy' phase.
 - Usage: `--skipStateRefresh <true/false>`
 - Alias: `-z`

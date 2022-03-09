@@ -39,7 +39,7 @@ describe('destroy', () => {
     expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
   });
 
-  it("should fail when environment does'nt exist", async () => {
+  it("should fail when environment doesn't exist", async () => {
     const mockEnvironmentName = 'environment0';
     mockGetEnvironment.mockResolvedValue(undefined);
 

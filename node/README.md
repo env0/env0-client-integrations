@@ -152,12 +152,3 @@ You can compile and run the CLI from source by cloning the repo from Github and 
 yarn install
 yarn link # link your local copy of the CLI to your terminal path
 ```
-
-
-## Publishing
-```bash
-# we publish it to the public npm (consider cleaning your global `~/.npmrc` file)
-# make sure your user have permissions under env0's npm organization
-npm login
-npm publish --access public
-```

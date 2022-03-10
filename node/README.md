@@ -143,6 +143,11 @@ This file holds your last action's required parameters and will spare you from r
 
 https://docs.env0.com/reference
 
+## env0 blog:
+
+https://www.env0.com/blog/introducing-the-env0-cli
+
+
 ## Compiling from Source
 
 You can compile and run the CLI from source by cloning the repo from Github and then running the following:
@@ -152,3 +157,8 @@ You can compile and run the CLI from source by cloning the repo from Github and 
 yarn install
 yarn link # link your local copy of the CLI to your terminal path
 ```
+
+### Development flow:
+- Run `export ENV0_API_URL=https://api-server` to change the API URL  
+Default url is set to `https://api.env0.com`  
+- run `env0 configure`

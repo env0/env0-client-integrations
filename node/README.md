@@ -152,8 +152,8 @@ https://www.env0.com/blog/introducing-the-env0-cli
 
 You can compile and run the CLI from source by cloning the repo from Github and then running the following:
 ```bash
-# clone the repo from github
-# make sure env0 lib is not installed globally
+# Clone the repo from github
+# Make sure env0 lib is not installed globally
 yarn install
 yarn link # link your local copy of the CLI to your terminal path
 ```
@@ -161,4 +161,4 @@ yarn link # link your local copy of the CLI to your terminal path
 ### Development flow:
 - Run `export ENV0_API_URL=https://api-server` to change the API URL  
 Default url is set to `https://api.env0.com`  
-- run `env0 configure`
+- Run `env0 configure`

@@ -16,8 +16,7 @@
   "main": "src/main.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint .",
-    "postinstall": "npm shrinkwrap"
+    "lint": "eslint ."
   },
   "license": "MIT",
   "files": [

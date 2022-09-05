@@ -6,7 +6,9 @@ class Env0ApiClient {
     const baseURL = process.env.ENV0_API_URL || 'https://api.env0.com';
 
     const {data: jwt} = await axios.get('auth/jwt?encoded=true', {
-      baseURL, method: 'GET', auth: {
+      baseURL,
+      method: 'GET',
+      auth: {
         username: apiKey,
         password: apiSecret
       }

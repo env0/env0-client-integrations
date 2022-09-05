@@ -3,13 +3,19 @@ const { version } = require('../../package.json');
 
 class Env0ApiClient {
   async init(apiKey, apiSecret) {
-    this.apiClient = axios.create({
-      baseURL: process.env.ENV0_API_URL || 'https://api.env0.com',
-      auth: {
+    const baseURL = process.env.ENV0_API_URL || 'https://api.env0.com';
+
+    const {data: jwt} = await axios.get('auth/jwt?encoded=true', {
+      baseURL, method: 'GET', auth: {
         username: apiKey,
         password: apiSecret
-      },
+      }
+    });
+
+    this.apiClient = axios.create({
+      baseURL: process.env.ENV0_API_URL || 'https://api.env0.com',
       headers: {
+        Authorization: `Bearer ${jwt}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
         'User-Agent': `env0-node-cli-${version}`

@@ -1,12 +1,12 @@
 {
   "name": "@env0/cli",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "lockfileVersion": 2,
   "requires": true,
   "packages": {
     "": {
       "name": "@env0/cli",
-      "version": "1.0.19",
+      "version": "1.0.20",
       "license": "MIT",
       "dependencies": {
         "axios": "0.21.2",

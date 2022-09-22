@@ -6,14 +6,14 @@ const { version } = require('../package.json');
 const help = require('../src/commands/help');
 const configure = require('../src/commands/configure');
 const logger = require('../src/lib/logger');
-const updateNotifier = require('update-notifier');
+const updateNotifier = require('../src/lib/update-notifier-utils');
 
 jest.mock('../src/lib/logger');
 jest.mock('../src/commands/run-command');
 jest.mock('../src/commands/help');
 jest.mock('../src/commands/configure');
 jest.mock('command-line-args');
-jest.mock('update-notifier', () => jest.fn().mockReturnValue({ notify: jest.fn() }));
+jest.mock('../src/lib/update-notifier-utils');
 
 const getMockOptions = command => ({
   [command]: {

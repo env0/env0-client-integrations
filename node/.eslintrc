@@ -12,5 +12,8 @@
   "plugins": ["prettier"],
   "rules": {
     "no-constant-condition": "warn"
-  }
+  },
+  "ignorePatterns": [
+    "src/lib/update-notifier-utils.js"
+  ]
 }

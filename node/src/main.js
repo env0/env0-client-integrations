@@ -1,13 +1,13 @@
 const commandLineArgs = require('command-line-args');
 const _ = require('lodash');
 const runCommand = require('./commands/run-command');
-const updateNotifier = require('update-notifier');
 const pkg = require('../package.json');
 const { options } = require('./config/constants');
 const { commands } = require('./config/commands');
 const help = require('./commands/help');
 const configure = require('./commands/configure');
 const logger = require('./lib/logger');
+const updateNotifier = require('./lib/update-notifier-utils');
 
 const mainDefinitions = [{ name: 'command', defaultOption: true }];
 
@@ -65,8 +65,7 @@ const run = async () => {
   const argv = mainOptions._unknown || [];
 
   const { command } = mainOptions;
-
-  updateNotifier({ pkg }).notify();
+  await updateNotifier();
 
   try {
     if (await isInternalCommand(command, argv)) return;

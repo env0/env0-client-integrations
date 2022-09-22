@@ -8,7 +8,7 @@
     "directory": "node"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "bugs": {
     "url": "https://github.com/env0/env0-client-integrations/issues"

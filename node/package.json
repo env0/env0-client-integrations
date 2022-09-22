@@ -38,7 +38,7 @@
     "fs-extra": "9.0.1",
     "inquirer": "7.3.3",
     "lodash": "4.17.21",
-    "update-notifier": "4.1.1",
+    "update-notifier": "6.0.2",
     "winston": "3.3.4"
   },
   "devDependencies": {

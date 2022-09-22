@@ -28,3 +28,6 @@ jobs:
     - name: lint
       working-directory: ${{ matrix.package }}
       run: yarn lint
+    - name: run the cli
+      working-directory: ${{ matrix.package }}
+      run: node bin/cli.js --help

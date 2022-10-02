@@ -12,5 +12,9 @@
   "plugins": ["prettier"],
   "rules": {
     "no-constant-condition": "warn"
-  }
+  },
+  "ignorePatterns": [
+    // dynamic import (requred for ESM module) isn't supported by eslint version we use
+    "src/lib/update-notifier-utils.js"
+  ]
 }

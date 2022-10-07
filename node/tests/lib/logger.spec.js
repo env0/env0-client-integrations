@@ -26,7 +26,7 @@ describe('logger', () => {
     ${options.ENVIRONMENT_NAME}
     ${options.PROJECT_ID}
     ${options.ORGANIZATION_ID}
-    ${options.BLUEPRINT_ID}
+    ${options.TEMPLATE_ID}
   `('should not hide $option', ({ option }) => {
     logger.setSecrets({ [option]: mockSecret });
 

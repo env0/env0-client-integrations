@@ -8,7 +8,7 @@ const {
   API_KEY,
   API_SECRET,
   REQUIRES_APPROVAL,
-  BLUEPRINT_ID,
+  TEMPLATE_ID,
   REVISION,
   TARGETS,
   ENVIRONMENT_NAME,
@@ -43,7 +43,7 @@ class DeployUtils {
       workspaceName: options[WORKSPACE_NAME],
       projectId: options[PROJECT_ID],
       deployRequest: {
-        blueprintId: options[BLUEPRINT_ID],
+        blueprintId: options[TEMPLATE_ID],
         blueprintRevision: options[REVISION]
       },
       configurationChanges,

@@ -2,10 +2,10 @@ const DeployUtils = require('../lib/deploy-utils');
 const logger = require('../lib/logger');
 const { options } = require('../config/constants');
 
-const { BLUEPRINT_ID, ENVIRONMENT_NAME, PROJECT_ID, WORKSPACE_NAME } = options;
+const { TEMPLATE_ID, ENVIRONMENT_NAME, PROJECT_ID, WORKSPACE_NAME } = options;
 
 const assertBlueprintExistsOnInitialDeployment = options => {
-  if (!options[BLUEPRINT_ID]) throw new Error('Missing blueprint ID on initial deployment');
+  if (!options[TEMPLATE_ID]) throw new Error('Missing template ID on initial deployment');
 };
 
 const assertNoWorkspaceNameChanges = (options, environment) => {

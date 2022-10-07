@@ -2,7 +2,7 @@ const deploy = require('../../src/commands/deploy');
 const DeployUtils = require('../../src/lib/deploy-utils');
 const { options } = require('../../src/config/constants');
 
-const { ENVIRONMENT_NAME, PROJECT_ID, ORGANIZATION_ID, BLUEPRINT_ID, REVISION, WORKSPACE_NAME } = options;
+const { ENVIRONMENT_NAME, PROJECT_ID, ORGANIZATION_ID, TEMPLATE_ID, REVISION, WORKSPACE_NAME } = options;
 
 const mockOptions = {
   [PROJECT_ID]: 'project0',
@@ -13,7 +13,7 @@ const mockOptions = {
 const mockOptionsWithRequired = {
   ...mockOptions,
   [WORKSPACE_NAME]: 'workspace0',
-  [BLUEPRINT_ID]: 'blueprint0',
+  [TEMPLATE_ID]: 'template0',
   [REVISION]: 'revision0'
 };
 
@@ -124,11 +124,11 @@ describe('deploy', () => {
     });
   });
 
-  it('should fail when blueprint is missing on initial deployment', async () => {
+  it('should fail when template is missing on initial deployment', async () => {
     mockGetEnvironment.mockResolvedValue(undefined);
 
     await expect(deploy(mockOptions)).rejects.toThrow(
-      expect.objectContaining({ message: 'Missing blueprint ID on initial deployment' })
+      expect.objectContaining({ message: 'Missing template ID on initial deployment' })
     );
   });
 });

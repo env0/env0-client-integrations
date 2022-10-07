@@ -1,7 +1,7 @@
 const { argumentsMap, allArguments, baseArguments } = require('./arguments');
 const { options } = require('./constants');
 
-const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, BLUEPRINT_ID, SKIP_STATE_REFRESH, REQUIRES_APPROVAL } = options;
+const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, TEMPLATE_ID, SKIP_STATE_REFRESH, REQUIRES_APPROVAL } = options;
 
 const commands = {
   deploy: {
@@ -9,7 +9,7 @@ const commands = {
     help: [
       {
         desc: 'Deploys an environment',
-        example: `$ env0 deploy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${BLUEPRINT_ID}> -e <${ENVIRONMENT_NAME}> -r [revision] -v [stage=dev] -u [tfvar=tfvalue]`
+        example: `$ env0 deploy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${TEMPLATE_ID}> -e <${ENVIRONMENT_NAME}> -r [revision] -v [stage=dev] -u [tfvar=tfvalue]`
       }
     ]
   },
@@ -41,11 +41,11 @@ const commands = {
     ]
   },
   configure: {
-    options: [...baseArguments, argumentsMap[BLUEPRINT_ID]],
+    options: [...baseArguments, argumentsMap[TEMPLATE_ID]],
     help: [
       {
         desc: 'Configures env0 CLI options',
-        example: `$ env0 configure -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}> -b <${BLUEPRINT_ID}>`
+        example: `$ env0 configure -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}> -b <${TEMPLATE_ID}>`
       },
       {
         desc: 'Interactively configures env0 CLI options\n',

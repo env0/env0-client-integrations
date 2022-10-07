@@ -11,7 +11,7 @@ jest.mock('../../src/lib/api-client', () =>
 );
 
 const {
-  BLUEPRINT_ID,
+  TEMPLATE_ID,
   REVISION,
   SKIP_STATE_REFRESH,
   REQUIRES_APPROVAL,
@@ -167,7 +167,7 @@ describe('deploy utils', () => {
     it('should call api with proper options', async () => {
       const mockOptions = {
         [REVISION]: 'rev0',
-        [BLUEPRINT_ID]: 'blueprint0',
+        [TEMPLATE_ID]: 'template0',
         [ENVIRONMENT_NAME]: 'foo',
         [PROJECT_ID]: 'proj0',
         [REQUIRES_APPROVAL]: 'true'
@@ -179,7 +179,7 @@ describe('deploy utils', () => {
         name: mockOptions[ENVIRONMENT_NAME],
         projectId: mockOptions[PROJECT_ID],
         deployRequest: {
-          blueprintId: mockOptions[BLUEPRINT_ID],
+          blueprintId: mockOptions[TEMPLATE_ID],
           blueprintRevision: mockOptions[REVISION]
         },
         configurationChanges,

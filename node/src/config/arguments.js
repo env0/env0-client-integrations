@@ -5,7 +5,7 @@ const {
   API_SECRET,
   ORGANIZATION_ID,
   PROJECT_ID,
-  BLUEPRINT_ID,
+  TEMPLATE_ID,
   WORKSPACE_NAME,
   ENVIRONMENT_NAME,
   ENVIRONMENT_VARIABLES,
@@ -67,12 +67,12 @@ const argumentsMap = {
     prompt: 'Environment Name',
     group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
   },
-  [BLUEPRINT_ID]: {
-    name: BLUEPRINT_ID,
+  [TEMPLATE_ID]: {
+    name: TEMPLATE_ID,
     alias: 'b',
     type: String,
-    description: 'The Blueprint id you would like to deploy',
-    prompt: 'Blueprint ID',
+    description: 'The Template id you would like to deploy',
+    prompt: 'Template ID',
     group: ['deploy', 'configure']
   },
   [REQUIRES_APPROVAL]: {

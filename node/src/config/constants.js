@@ -3,7 +3,7 @@ const options = {
   API_SECRET: 'apiSecret',
   ORGANIZATION_ID: 'organizationId',
   PROJECT_ID: 'projectId',
-  BLUEPRINT_ID: 'blueprintId',
+  TEMPLATE_ID: 'templateId',
   ENVIRONMENT_NAME: 'environmentName',
   WORKSPACE_NAME: 'workspaceName',
   ENVIRONMENT_VARIABLES: 'environmentVariables',

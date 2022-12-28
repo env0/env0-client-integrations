@@ -161,6 +161,42 @@ describe('deploy utils', () => {
         { params: { startTime: mockNextStartTime } }
       );
     });
+
+    describe('when there is a failure', () => {
+      it('should retry when polling on deployment steps fails', async () => {
+        mockCallApi.mockRejectedValueOnce(new Error('fail!'));
+        mockCallApi.mockResolvedValueOnce([mockStep]);
+        mockCallApi.mockResolvedValueOnce({
+          events: [],
+          hasMoreLogs: false
+        });
+
+        await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name);
+
+        expect(mockCallApi).toHaveBeenNthCalledWith(1, 'get', `deployments/${mockDeploymentId}/steps`)
+        expect(mockCallApi).toHaveBeenNthCalledWith(2, 'get', `deployments/${mockDeploymentId}/steps`)
+      });
+
+      it('should retry when polling on deployment step log fails', async () => {
+        mockCallApi.mockResolvedValueOnce([mockStep]);
+        mockCallApi.mockRejectedValueOnce(new Error('fail!'));
+        mockCallApi.mockResolvedValueOnce({
+          events: [],
+          hasMoreLogs: false
+        });
+
+        await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name);
+
+        expect(mockCallApi).toHaveBeenNthCalledWith(2, 'get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
+          params: { startTime: undefined }
+        })
+        expect(mockCallApi).toHaveBeenNthCalledWith(3, 'get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
+          params: { startTime: undefined }
+        })
+      });
+    })
+
+
   });
 
   describe('create and deploy environment', () => {

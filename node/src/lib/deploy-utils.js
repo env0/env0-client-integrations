@@ -163,7 +163,7 @@ class DeployUtils {
       }
 
       if (shouldProcessDeploymentSteps) {
-        stepsAlreadyLogged.push(...(() => this.processDeploymentSteps(deployment.id, stepsAlreadyLogged)));
+        stepsAlreadyLogged.push(...(await this.processDeploymentSteps(deployment.id, stepsAlreadyLogged)));
       }
 
       if (!pollableStatuses.includes(status)) {

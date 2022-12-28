@@ -154,8 +154,8 @@ You can compile and run the CLI from source by cloning the repo from Github and 
 ```bash
 # Clone the repo from github
 # Make sure env0 lib is not installed globally
-yarn install
-yarn link # link your local copy of the CLI to your terminal path
+npm install
+npm link # link your local copy of the CLI to your terminal path
 ```
 
 ### Development flow:

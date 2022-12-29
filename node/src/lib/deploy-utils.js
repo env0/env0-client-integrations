@@ -1,7 +1,7 @@
 const Env0ApiClient = require('./api-client');
 const logger = require('./logger');
 const { options } = require('../config/constants');
-const { convertStringToBoolean, removeEmptyValuesFromObj } = require('./general-utils');
+const { convertStringToBoolean, removeEmptyValuesFromObj, withRetry } = require('./general-utils');
 const { isEmpty } = require('lodash');
 
 const {
@@ -31,6 +31,18 @@ class DeployUtils {
 
   async getDeployment(deploymentLogId) {
     return await apiClient.callApi('get', `environments/deployments/${deploymentLogId}`);
+  }
+
+  async getDeploymentSteps(deploymentLogId) {
+    return await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`)
+  }
+
+  async getDeploymentStepLog(deploymentLogId, stepName, startTime) {
+    return await apiClient.callApi(
+        'get',
+        `deployments/${deploymentLogId}/steps/${stepName}/log`,
+        { params: { startTime } }
+    )
   }
 
   async updateEnvironment(environment, data) {
@@ -90,14 +102,12 @@ class DeployUtils {
     let startTime = undefined;
 
     do {
-      const steps = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
+      const steps = await withRetry(() => this.getDeploymentSteps(deploymentLogId));
       const { status } = steps.find(step => step.name === stepName);
       const stepInProgress = status === 'IN_PROGRESS';
 
-      const { events, nextStartTime, hasMoreLogs } = await apiClient.callApi(
-        'get',
-        `deployments/${deploymentLogId}/steps/${stepName}/log`,
-        { params: { startTime } }
+      const { events, nextStartTime, hasMoreLogs } = await withRetry(
+          () => this.getDeploymentStepLog(deploymentLogId, stepName, startTime)
       );
 
       events.forEach(event => logger.info(event.message));
@@ -112,7 +122,7 @@ class DeployUtils {
   async processDeploymentSteps(deploymentLogId, stepsToSkip) {
     const doneSteps = [];
 
-    const steps = await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
+    const steps = await this.getDeploymentSteps(deploymentLogId);
 
     for (const step of steps) {
       const alreadyLogged = stepsToSkip.includes(step.name);
@@ -144,7 +154,7 @@ class DeployUtils {
     }
 
     while (true) {
-      const { type, status } = await this.getDeployment(deployment.id);
+      const { type, status } = await withRetry(() => this.getDeployment(deployment.id));
 
       if (status === 'QUEUED') logger.info('Queued deployment is still waiting for earlier deployments to finish...');
 

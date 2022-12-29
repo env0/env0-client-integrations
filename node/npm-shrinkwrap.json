@@ -16,6 +16,7 @@
         "fs-extra": "9.0.1",
         "inquirer": "7.3.3",
         "lodash": "4.17.21",
+        "p-retry": "4.6.2",
         "update-notifier": "6.0.2",
         "winston": "3.3.4"
       },
@@ -1339,6 +1340,11 @@
       "resolved": "https://registry.npmjs.org/@types/prettier/-/prettier-2.7.1.tgz",
       "integrity": "sha512-ri0UmynRRvZiiUJdiz38MmIblKK+oH30MztdBVR95dv/Ubw6neWSb8u1XpRb72L4qsZOhz+L+z9JD40SJmfWow==",
       "dev": true
+    },
+    "node_modules/@types/retry": {
+      "version": "0.12.0",
+      "resolved": "https://registry.npmjs.org/@types/retry/-/retry-0.12.0.tgz",
+      "integrity": "sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA=="
     },
     "node_modules/@types/stack-utils": {
       "version": "1.0.1",
@@ -5748,6 +5754,18 @@
         "url": "https://github.com/sponsors/sindresorhus"
       }
     },
+    "node_modules/p-retry": {
+      "version": "4.6.2",
+      "resolved": "https://registry.npmjs.org/p-retry/-/p-retry-4.6.2.tgz",
+      "integrity": "sha512-312Id396EbJdvRONlngUx0NydfrIQ5lsYu0znKVUzVvArzEIt08V1qhtyESbGVd1FGX7UKtiFp5uwKZdM8wIuQ==",
+      "dependencies": {
+        "@types/retry": "0.12.0",
+        "retry": "^0.13.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
     "node_modules/p-try": {
       "version": "2.2.0",
       "resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
@@ -6216,6 +6234,14 @@
       "resolved": "https://registry.npmjs.org/ret/-/ret-0.1.15.tgz",
       "integrity": "sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==",
       "dev": true
+    },
+    "node_modules/retry": {
+      "version": "0.13.1",
+      "resolved": "https://registry.npmjs.org/retry/-/retry-0.13.1.tgz",
+      "integrity": "sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==",
+      "engines": {
+        "node": ">= 4"
+      }
     },
     "node_modules/run-async": {
       "version": "2.4.1",
@@ -8407,6 +8433,11 @@
       "resolved": "https://registry.npmjs.org/@types/prettier/-/prettier-2.7.1.tgz",
       "integrity": "sha512-ri0UmynRRvZiiUJdiz38MmIblKK+oH30MztdBVR95dv/Ubw6neWSb8u1XpRb72L4qsZOhz+L+z9JD40SJmfWow==",
       "dev": true
+    },
+    "@types/retry": {
+      "version": "0.12.0",
+      "resolved": "https://registry.npmjs.org/@types/retry/-/retry-0.12.0.tgz",
+      "integrity": "sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA=="
     },
     "@types/stack-utils": {
       "version": "1.0.1",
@@ -12144,6 +12175,15 @@
         }
       }
     },
+    "p-retry": {
+      "version": "4.6.2",
+      "resolved": "https://registry.npmjs.org/p-retry/-/p-retry-4.6.2.tgz",
+      "integrity": "sha512-312Id396EbJdvRONlngUx0NydfrIQ5lsYu0znKVUzVvArzEIt08V1qhtyESbGVd1FGX7UKtiFp5uwKZdM8wIuQ==",
+      "requires": {
+        "@types/retry": "0.12.0",
+        "retry": "^0.13.1"
+      }
+    },
     "p-try": {
       "version": "2.2.0",
       "resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
@@ -12521,6 +12561,11 @@
       "resolved": "https://registry.npmjs.org/ret/-/ret-0.1.15.tgz",
       "integrity": "sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==",
       "dev": true
+    },
+    "retry": {
+      "version": "0.13.1",
+      "resolved": "https://registry.npmjs.org/retry/-/retry-0.13.1.tgz",
+      "integrity": "sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg=="
     },
     "run-async": {
       "version": "2.4.1",

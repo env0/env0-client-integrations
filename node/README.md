@@ -77,14 +77,19 @@ The order of precedence of the arguments is:
 - Alias: `-p`
 
 ### Blueprint ID
-> The Blueprint ID you would like to deploy with (Required for new environments)
+> The Blueprint ID you wish to deploy with (Required for new environments)
 - Usage: `--blueprintId`
 - Alias: `-b`
 
 ### Environment Name
-> The environment name you would like to create, or deploy to an existing one (Required for existing environments)
+> The environment name you wish to create, or deploy to an existing one (Required for existing environments)
 - Usage: `--environmentName`
 - Alias: `-e`
+
+### Environment ID
+> The environment id you wish to re-deploy. If both the environment name and ID are specified, the environment ID will take precedence
+- Usage: `--environmentId`
+- Alias: N/A
 
 ### Workspace Name
 > (Optional) - A name for Terraform Workspace created for your new environment. This cannot be changed after an environment was created
@@ -138,6 +143,7 @@ This file holds your last action's required parameters and will spare you from r
 - `ENV0_PROJECT_ID`
 - `ENV0_BLUEPRINT_ID`
 - `ENV0_ENVIRONMENT_NAME`
+- `ENV0_ENVIRONMENT_ID`
 
 ## API Reference
 

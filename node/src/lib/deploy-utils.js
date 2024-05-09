@@ -23,10 +23,18 @@ class DeployUtils {
     await apiClient.init(options[API_KEY], options[API_SECRET]);
   }
 
-  async getEnvironment(environmentName, projectId) {
-    const environments = await apiClient.callApi('get', `environments?projectId=${projectId}&name=${environmentName}`);
+  async getEnvironment(options) {
+    const { environmentName, environmentId, projectId } = options;
 
-    return isEmpty(environments) ? undefined : environments[0];
+    if (environmentId) {
+      return await apiClient.callApi('get', `environments/${environmentId}`);
+    } else {
+      const environments = await apiClient.callApi(
+        'get',
+        `environments?projectId=${projectId}&name=${environmentName}`
+      );
+      return isEmpty(environments) ? undefined : environments[0];
+    }
   }
 
   async getDeployment(deploymentLogId) {
@@ -34,15 +42,13 @@ class DeployUtils {
   }
 
   async getDeploymentSteps(deploymentLogId) {
-    return await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`)
+    return await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
   }
 
   async getDeploymentStepLog(deploymentLogId, stepName, startTime) {
-    return await apiClient.callApi(
-        'get',
-        `deployments/${deploymentLogId}/steps/${stepName}/log`,
-        { params: { startTime } }
-    )
+    return await apiClient.callApi('get', `deployments/${deploymentLogId}/steps/${stepName}/log`, {
+      params: { startTime }
+    });
   }
 
   async updateEnvironment(environment, data) {
@@ -106,8 +112,8 @@ class DeployUtils {
       const { status } = steps.find(step => step.name === stepName);
       const stepInProgress = status === 'IN_PROGRESS';
 
-      const { events, nextStartTime, hasMoreLogs } = await withRetry(
-          () => this.getDeploymentStepLog(deploymentLogId, stepName, startTime)
+      const { events, nextStartTime, hasMoreLogs } = await withRetry(() =>
+        this.getDeploymentStepLog(deploymentLogId, stepName, startTime)
       );
 
       events.forEach(event => logger.info(event.message));

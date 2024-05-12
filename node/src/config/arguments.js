@@ -69,7 +69,7 @@ const argumentsMap = {
     group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
   },
   [ENVIRONMENT_ID]: {
-    name: ENVIRONMENT_NAME,
+    name: ENVIRONMENT_ID,
     type: String,
     description: 'The environment id you want to perform the action on',
     prompt: 'Environment ID',

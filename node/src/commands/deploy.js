@@ -2,7 +2,7 @@ const DeployUtils = require('../lib/deploy-utils');
 const logger = require('../lib/logger');
 const { options } = require('../config/constants');
 
-const { BLUEPRINT_ID, ENVIRONMENT_NAME, PROJECT_ID, WORKSPACE_NAME } = options;
+const { BLUEPRINT_ID, WORKSPACE_NAME } = options;
 
 const assertBlueprintExistsOnInitialDeployment = options => {
   if (!options[BLUEPRINT_ID]) throw new Error('Missing blueprint ID on initial deployment');
@@ -26,7 +26,7 @@ const deploy = async (options, variables) => {
   const configurationChanges = getConfigurationChanges(variables);
 
   let deployment;
-  let environment = await deployUtils.getEnvironment(options[ENVIRONMENT_NAME], options[PROJECT_ID]);
+  let environment = await deployUtils.getEnvironment(options);
 
   if (!environment) {
     logger.info('Initial deployment detected!');

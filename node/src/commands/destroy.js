@@ -3,7 +3,7 @@ const { options } = require('../config/constants');
 const _ = require('lodash');
 const { convertStringToBoolean, removeEmptyValuesFromObj } = require('../lib/general-utils');
 
-const { PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH } = options;
+const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH } = options;
 
 const assertEnvironmentExists = environment => {
   if (!environment) {
@@ -14,7 +14,7 @@ const assertEnvironmentExists = environment => {
 const destroy = async options => {
   const deployUtils = new DeployUtils();
 
-  const environment = await deployUtils.getEnvironment(options[ENVIRONMENT_NAME], options[PROJECT_ID]);
+  const environment = await deployUtils.getEnvironment(options);
   let status;
 
   assertEnvironmentExists(environment);

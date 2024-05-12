@@ -4,7 +4,7 @@ const logger = require('../lib/logger');
 const setDeploymentApprovalStatus = (command, shouldProcessDeploymentSteps) => async options => {
   const deployUtils = new DeployUtils();
 
-  const environment = await deployUtils.getEnvironment(options.environmentName, options.projectId);
+  const environment = await deployUtils.getEnvironment(options);
 
   if (!environment) {
     throw new Error(`Could not find an environment with the name ${options.environmentName}`);

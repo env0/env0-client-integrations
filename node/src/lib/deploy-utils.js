@@ -2,7 +2,7 @@ const Env0ApiClient = require('./api-client');
 const logger = require('./logger');
 const { options } = require('../config/constants');
 const { convertStringToBoolean, removeEmptyValuesFromObj, withRetry } = require('./general-utils');
-const { isEmpty } = require('lodash');
+const _ = require('lodash');
 
 const {
   API_KEY,
@@ -25,16 +25,11 @@ class DeployUtils {
 
   async getEnvironment(options) {
     const { environmentName, environmentId, projectId } = options;
+    const response = environmentId
+      ? await apiClient.callApi('get', `environments/${environmentId}`)
+      : await apiClient.callApi('get', `environments?projectId=${projectId}&name=${environmentName}`);
 
-    if (environmentId) {
-      return await apiClient.callApi('get', `environments/${environmentId}`);
-    } else {
-      const environments = await apiClient.callApi(
-        'get',
-        `environments?projectId=${projectId}&name=${environmentName}`
-      );
-      return isEmpty(environments) ? undefined : environments[0];
-    }
+    return _(response).castArray().first();
   }
 
   async getDeployment(deploymentLogId) {

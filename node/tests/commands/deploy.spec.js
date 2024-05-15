@@ -47,7 +47,7 @@ describe('deploy', () => {
   it('should get environment', async () => {
     await deploy(mockOptionsWithRequired);
 
-    expect(mockGetEnvironment).toBeCalledWith(mockOptions[ENVIRONMENT_NAME], mockOptions[PROJECT_ID]);
+    expect(mockGetEnvironment).toBeCalledWith(mockOptionsWithRequired);
   });
 
   it("should create environment when it doesn't exist", async () => {
@@ -115,12 +115,16 @@ describe('deploy', () => {
       let existingEnvironmentWithWorkspace = { ...mockEnvironment, [WORKSPACE_NAME]: 'workspace0' };
       mockGetEnvironment.mockResolvedValue(existingEnvironmentWithWorkspace);
 
-      await deploy(mockOptionsWithRequired, variables)
+      await deploy(mockOptionsWithRequired, variables);
 
-      const expectedOptions = { ...mockOptionsWithRequired }
-      delete expectedOptions[WORKSPACE_NAME]
+      const expectedOptions = { ...mockOptionsWithRequired };
+      delete expectedOptions[WORKSPACE_NAME];
 
-      expect(mockDeployEnvironment).toBeCalledWith(existingEnvironmentWithWorkspace, expectedOptions, expectedConfigurationChanges);
+      expect(mockDeployEnvironment).toBeCalledWith(
+        existingEnvironmentWithWorkspace,
+        expectedOptions,
+        expectedConfigurationChanges
+      );
     });
   });
 

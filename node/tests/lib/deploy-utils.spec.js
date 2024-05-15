@@ -173,8 +173,8 @@ describe('deploy utils', () => {
 
         await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name);
 
-        expect(mockCallApi).toHaveBeenNthCalledWith(1, 'get', `deployments/${mockDeploymentId}/steps`)
-        expect(mockCallApi).toHaveBeenNthCalledWith(2, 'get', `deployments/${mockDeploymentId}/steps`)
+        expect(mockCallApi).toHaveBeenNthCalledWith(1, 'get', `deployments/${mockDeploymentId}/steps`);
+        expect(mockCallApi).toHaveBeenNthCalledWith(2, 'get', `deployments/${mockDeploymentId}/steps`);
       });
 
       it('should retry when polling on deployment step log fails', async () => {
@@ -187,16 +187,24 @@ describe('deploy utils', () => {
 
         await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name);
 
-        expect(mockCallApi).toHaveBeenNthCalledWith(2, 'get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
-          params: { startTime: undefined }
-        })
-        expect(mockCallApi).toHaveBeenNthCalledWith(3, 'get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
-          params: { startTime: undefined }
-        })
+        expect(mockCallApi).toHaveBeenNthCalledWith(
+          2,
+          'get',
+          `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`,
+          {
+            params: { startTime: undefined }
+          }
+        );
+        expect(mockCallApi).toHaveBeenNthCalledWith(
+          3,
+          'get',
+          `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`,
+          {
+            params: { startTime: undefined }
+          }
+        );
       });
-    })
-
-
+    });
   });
 
   describe('create and deploy environment', () => {
@@ -284,26 +292,34 @@ describe('deploy utils', () => {
 
   describe('get environments', () => {
     const environmentName = 'env0';
+    const environmentId = 'environmentId';
     const projectId = 'projectX';
+
     const environments = ['id1', 'id2', 'id3'].map(id => ({ id }));
     let response;
 
     describe.each`
-      when     | apiResponse     | expectedReturnValue
-      ${''}    | ${environments} | ${environments[0]}
-      ${'NOT'} | ${[]}           | ${undefined}
-    `('when environment was $when found', ({ apiResponse, expectedReturnValue }) => {
-      beforeEach(async () => {
-        mockCallApi.mockReturnValue(apiResponse);
-        response = await deployUtils.getEnvironment(environmentName, projectId);
-      });
+      when     | options                                          | expectedApiPath
+      ${''}    | ${{ environmentId, environmentName, projectId }} | ${`environments/${environmentId}`}
+      ${'NOT'} | ${{ environmentName, projectId }}                | ${`environments?projectId=${projectId}&name=${environmentName}`}
+    `('when environment id is $when specified', ({ options, expectedApiPath }) => {
+      describe.each`
+        when     | apiResponse     | expectedReturnValue
+        ${''}    | ${environments} | ${environments[0]}
+        ${'NOT'} | ${[]}           | ${undefined}
+      `('when environment was $when found', ({ apiResponse, expectedReturnValue }) => {
+        beforeEach(async () => {
+          mockCallApi.mockReturnValue(apiResponse);
+          response = await deployUtils.getEnvironment(options);
+        });
 
-      it('should call api', async () => {
-        expect(mockCallApi).toBeCalledWith('get', `environments?projectId=${projectId}&name=${environmentName}`);
-      });
+        it('should call api', async () => {
+          expect(mockCallApi).toBeCalledWith('get', expectedApiPath);
+        });
 
-      it(`should return ${expectedReturnValue}`, () => {
-        expect(response).toEqual(expectedReturnValue);
+        it(`should return ${expectedReturnValue}`, () => {
+          expect(response).toEqual(expectedReturnValue);
+        });
       });
     });
   });

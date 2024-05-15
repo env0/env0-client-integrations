@@ -2,7 +2,7 @@ const Env0ApiClient = require('./api-client');
 const logger = require('./logger');
 const { options } = require('../config/constants');
 const { convertStringToBoolean, removeEmptyValuesFromObj, withRetry } = require('./general-utils');
-const { isEmpty } = require('lodash');
+const _ = require('lodash');
 
 const {
   API_KEY,
@@ -23,10 +23,13 @@ class DeployUtils {
     await apiClient.init(options[API_KEY], options[API_SECRET]);
   }
 
-  async getEnvironment(environmentName, projectId) {
-    const environments = await apiClient.callApi('get', `environments?projectId=${projectId}&name=${environmentName}`);
+  async getEnvironment(options) {
+    const { environmentName, environmentId, projectId } = options;
+    const response = environmentId
+      ? await apiClient.callApi('get', `environments/${environmentId}`)
+      : await apiClient.callApi('get', `environments?projectId=${projectId}&name=${environmentName}`);
 
-    return isEmpty(environments) ? undefined : environments[0];
+    return _(response).castArray().first();
   }
 
   async getDeployment(deploymentLogId) {
@@ -34,15 +37,13 @@ class DeployUtils {
   }
 
   async getDeploymentSteps(deploymentLogId) {
-    return await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`)
+    return await apiClient.callApi('get', `deployments/${deploymentLogId}/steps`);
   }
 
   async getDeploymentStepLog(deploymentLogId, stepName, startTime) {
-    return await apiClient.callApi(
-        'get',
-        `deployments/${deploymentLogId}/steps/${stepName}/log`,
-        { params: { startTime } }
-    )
+    return await apiClient.callApi('get', `deployments/${deploymentLogId}/steps/${stepName}/log`, {
+      params: { startTime }
+    });
   }
 
   async updateEnvironment(environment, data) {
@@ -106,8 +107,8 @@ class DeployUtils {
       const { status } = steps.find(step => step.name === stepName);
       const stepInProgress = status === 'IN_PROGRESS';
 
-      const { events, nextStartTime, hasMoreLogs } = await withRetry(
-          () => this.getDeploymentStepLog(deploymentLogId, stepName, startTime)
+      const { events, nextStartTime, hasMoreLogs } = await withRetry(() =>
+        this.getDeploymentStepLog(deploymentLogId, stepName, startTime)
       );
 
       events.forEach(event => logger.info(event.message));

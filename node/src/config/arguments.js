@@ -8,6 +8,7 @@ const {
   BLUEPRINT_ID,
   WORKSPACE_NAME,
   ENVIRONMENT_NAME,
+  ENVIRONMENT_ID,
   ENVIRONMENT_VARIABLES,
   TERRAFORM_VARIABLES,
   SENSITIVE_ENVIRONMENT_VARIABLES,
@@ -65,6 +66,13 @@ const argumentsMap = {
     type: String,
     description: 'The environment name you want to perform the action on',
     prompt: 'Environment Name',
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
+  },
+  [ENVIRONMENT_ID]: {
+    name: ENVIRONMENT_ID,
+    type: String,
+    description: 'The environment id you want to perform the action on',
+    prompt: 'Environment ID',
     group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
   },
   [BLUEPRINT_ID]: {

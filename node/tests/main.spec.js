@@ -2,6 +2,7 @@ const runCommand = require('../src/commands/run-command');
 const run = require('../src/main');
 const commandLineArgs = require('command-line-args');
 const { commands } = require('../src/config/commands');
+const { options } = require('../src/config/constants');
 const { version } = require('../package.json');
 const help = require('../src/commands/help');
 const configure = require('../src/commands/configure');
@@ -156,6 +157,26 @@ describe('main', () => {
         it('should call commandLineArgs to get arguments from the command options, using the rawArgs', () => {
           expect(commandLineArgs).toHaveBeenCalledWith(expectedCommandOptions, { argv: rawArgs });
         });
+      });
+    });
+
+    describe('auth flags exposure', () => {
+      const { API_KEY, API_SECRET } = options;
+
+      const getOptionNames = command => (commands[command].options || []).map(opt => opt.name);
+
+      it('should not expose apiKey/apiSecret flags for runtime commands', () => {
+        ['deploy', 'destroy', 'cancel', 'approve', 'agents-settings-list-agents'].forEach(command => {
+          const names = getOptionNames(command);
+          expect(names).not.toContain(API_KEY);
+          expect(names).not.toContain(API_SECRET);
+        });
+      });
+
+      it('should still expose apiKey/apiSecret flags for configure', () => {
+        const names = getOptionNames('configure');
+        expect(names).toContain(API_KEY);
+        expect(names).toContain(API_SECRET);
       });
     });
 

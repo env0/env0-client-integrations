@@ -26,7 +26,7 @@ const argumentsMap = {
     description: 'env0 API Key',
     prompt: 'env0 API Key',
     secret: true,
-    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure', 'agents-settings-list-agents']
+    group: ['configure']
   },
   [API_SECRET]: {
     name: API_SECRET,
@@ -35,7 +35,7 @@ const argumentsMap = {
     description: 'env0 API Secret',
     prompt: 'env0 API Secret',
     secret: true,
-    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure', 'agents-settings-list-agents']
+    group: ['configure']
   },
   [ORGANIZATION_ID]: {
     name: ORGANIZATION_ID,
@@ -151,6 +151,11 @@ module.exports = {
   baseArguments: [
     argumentsMap[API_KEY],
     argumentsMap[API_SECRET],
+    argumentsMap[ORGANIZATION_ID],
+    argumentsMap[PROJECT_ID],
+    argumentsMap[ENVIRONMENT_NAME]
+  ],
+  nonCredentialBaseArguments: [
     argumentsMap[ORGANIZATION_ID],
     argumentsMap[PROJECT_ID],
     argumentsMap[ENVIRONMENT_NAME]

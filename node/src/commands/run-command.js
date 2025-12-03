@@ -1,9 +1,6 @@
 const DeployUtils = require('../lib/deploy-utils');
 const configManager = require('../lib/config-manager');
-const deploy = require('./deploy');
-const destroy = require('./destroy');
-const approve = require('./approve');
-const cancel = require('./cancel');
+const { commands } = require('../config/commands');
 const { options } = require('../config/constants');
 const logger = require('../lib/logger');
 const _ = require('lodash');
@@ -11,8 +8,10 @@ const { argumentsMap } = require('../config/arguments');
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 
-const assertRequiredOptions = options => {
-  const requiredOptions = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME];
+const assertRequiredOptions = (command, options) => {
+  const defaultRequiredOptions = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME];
+  const commandConfig = commands[command] || {};
+  const requiredOptions = commandConfig.requiredOptions || defaultRequiredOptions;
 
   let missingOptions = [];
   requiredOptions.forEach(opt => !Object.keys(options).includes(opt) && missingOptions.push(opt));
@@ -34,7 +33,7 @@ const assertRequiresApprovalOption = requiresApproval => {
 
 const runCommand = async (command, options, variables) => {
   options = configManager.read(options);
-  assertRequiredOptions(options);
+  assertRequiredOptions(command, options);
   assertRequiresApprovalOption(options[REQUIRES_APPROVAL]);
 
   logger.setSecrets(options);
@@ -42,16 +41,13 @@ const runCommand = async (command, options, variables) => {
   logger.info(`Running ${command} with the following arguments:`);
   Object.keys(options).forEach(opt => logger.info(`$ ${opt}: ${options[opt]}`));
 
-  const commands = {
-    destroy: destroy,
-    deploy: deploy,
-    approve: approve,
-    cancel: cancel
-  };
+  const commandConfig = commands[command];
 
-  await DeployUtils.init(options);
+  if (commandConfig && commandConfig.useDeployUtils) {
+    await DeployUtils.init(options);
+  }
 
-  await commands[command](options, variables);
+  await commandConfig.handler(options, variables);
   logger.info(`Command ${command} has finished successfully.`);
 };
 

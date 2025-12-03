@@ -26,7 +26,7 @@ const argumentsMap = {
     description: 'env0 API Key',
     prompt: 'env0 API Key',
     secret: true,
-    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure', 'agents-settings-list-agents']
   },
   [API_SECRET]: {
     name: API_SECRET,
@@ -35,7 +35,7 @@ const argumentsMap = {
     description: 'env0 API Secret',
     prompt: 'env0 API Secret',
     secret: true,
-    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure', 'agents-settings-list-agents']
   },
   [ORGANIZATION_ID]: {
     name: ORGANIZATION_ID,
@@ -43,7 +43,7 @@ const argumentsMap = {
     type: String,
     description: 'env0 Organization ID',
     prompt: 'Organization ID',
-    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure', 'agents-settings-list-agents']
   },
   [PROJECT_ID]: {
     name: PROJECT_ID,

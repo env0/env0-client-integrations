@@ -52,7 +52,7 @@ const commands = {
     handler: cancel,
     requiredOptions: BASE_REQUIRED_OPTIONS,
     useDeployUtils: true,
-    options: baseArguments,
+    options: nonCredentialBaseArguments,
     help: [
       {
         desc: 'Cancels a deployment that is pending approval',
@@ -60,11 +60,11 @@ const commands = {
       }
     ]
   },
-  'agents-list': {
+  'agents list': {
     handler: agentsSettingsListAgents,
     requiredOptions: ORG_REQUIRED_OPTIONS,
     useDeployUtils: false,
-    options: nonCredentialBaseArguments,
+    options: [argumentsMap[ORGANIZATION_ID]],
     help: [
       {
         desc: 'Lists organization agents',

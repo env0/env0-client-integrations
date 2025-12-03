@@ -42,7 +42,7 @@ const isInternalCommand = async (command, args) => {
   let isInternalCmd = false;
 
   if (['-h', '--help'].some(h => args.includes(h)) || command === 'help') {
-    help();
+    help(command);
     isInternalCmd = true;
   }
 
@@ -65,16 +65,18 @@ const run = async () => {
   let argv = mainOptions._unknown || [];
 
   let { command } = mainOptions;
-
-  // Map grouped commands like `agents list` to internal command keys
-  if (command === 'agents' && argv[0] === 'list') {
-    command = 'agents-list';
-    argv = argv.slice(1);
-  }
   await updateNotifier();
 
   try {
+    // First handle internal commands (help, version, configure)
+    // so that `env0 agents --help` is treated as agents help, not a subcommand.
     if (await isInternalCommand(command, argv)) return;
+
+    // Map grouped commands like `agents <subcommand>` to internal command keys
+    if (command === 'agents' && argv.length > 0) {
+      command = `agents ${argv[0]}`;
+      argv = argv.slice(1);
+    }
 
     assertCommandExists(command);
 

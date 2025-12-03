@@ -62,9 +62,15 @@ const isInternalCommand = async (command, args) => {
 
 const run = async () => {
   const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
-  const argv = mainOptions._unknown || [];
+  let argv = mainOptions._unknown || [];
 
-  const { command } = mainOptions;
+  let { command } = mainOptions;
+
+  // Map grouped commands like `agents list` to internal command keys
+  if (command === 'agents' && argv[0] === 'list') {
+    command = 'agents-list';
+    argv = argv.slice(1);
+  }
   await updateNotifier();
 
   try {

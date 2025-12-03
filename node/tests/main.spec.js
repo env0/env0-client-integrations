@@ -166,7 +166,7 @@ describe('main', () => {
       const getOptionNames = command => (commands[command].options || []).map(opt => opt.name);
 
       it('should not expose apiKey/apiSecret flags for runtime commands', () => {
-        ['deploy', 'destroy', 'cancel', 'approve', 'agents-settings-list-agents'].forEach(command => {
+        ['deploy', 'destroy', 'cancel', 'approve', 'agents-list'].forEach(command => {
           const names = getOptionNames(command);
           expect(names).not.toContain(API_KEY);
           expect(names).not.toContain(API_SECRET);

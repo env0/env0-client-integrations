@@ -20,7 +20,7 @@ const commands = {
     help: [
       {
         desc: 'Deploys an environment',
-        example: `$ env0 deploy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${BLUEPRINT_ID}> -e <${ENVIRONMENT_NAME}> -r [revision] -v [stage=dev] -u [tfvar=tfvalue]`
+        example: `$ env0 deploy -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -b <${BLUEPRINT_ID}> -e <${ENVIRONMENT_NAME}> -r [revision] -v [stage=dev] -u [tfvar=tfvalue]`
       }
     ]
   },
@@ -32,7 +32,7 @@ const commands = {
     help: [
       {
         desc: 'Destroys an environment',
-        example: `$ env0 destroy -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+        example: `$ env0 destroy -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
       }
     ]
   },
@@ -44,7 +44,7 @@ const commands = {
     help: [
       {
         desc: 'Accepts a deployment that is pending approval',
-        example: `$ env0 approve -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+        example: `$ env0 approve -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
       }
     ]
   },
@@ -56,11 +56,11 @@ const commands = {
     help: [
       {
         desc: 'Cancels a deployment that is pending approval',
-        example: `$ env0 cancel -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
+        example: `$ env0 cancel -o <${ORGANIZATION_ID}> -p <${PROJECT_ID}> -e <${ENVIRONMENT_NAME}>\n`
       }
     ]
   },
-  'agents-settings-list-agents': {
+  'agents-list': {
     handler: agentsSettingsListAgents,
     requiredOptions: ORG_REQUIRED_OPTIONS,
     useDeployUtils: false,
@@ -68,7 +68,7 @@ const commands = {
     help: [
       {
         desc: 'Lists organization agents',
-        example: `$ env0 agents-settings-list-agents -k <${API_KEY}> -s <${API_SECRET}> -o <${ORGANIZATION_ID}>\n`
+        example: `$ env0 agents list -o <${ORGANIZATION_ID}>\n`
       }
     ]
   },

@@ -43,7 +43,7 @@ const argumentsMap = {
     type: String,
     description: 'env0 Organization ID',
     prompt: 'Organization ID',
-    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure', 'agents-settings-list-agents']
+    group: ['deploy', 'destroy', 'approve', 'cancel', 'configure', 'agents-list']
   },
   [PROJECT_ID]: {
     name: PROJECT_ID,

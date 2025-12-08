@@ -33,7 +33,7 @@ const buildTopLevelSections = () => {
     .filter(command => !command.includes(' ') && commands[command].options)
     .map(command => ({
       header: `${command} options`,
-      optionList: commands[command].options
+      optionList: commands[command].options.filter(opt => !opt.secret)
     }));
 
   return [
@@ -63,7 +63,7 @@ const buildAgentsSections = () => {
     .filter(command => commands[command].options)
     .map(command => ({
       header: `${command} options`,
-      optionList: commands[command].options
+      optionList: commands[command].options.filter(opt => !opt.secret)
     }));
 
   return [

@@ -31,7 +31,7 @@ yarn global add @env0/cli
 npm install -g @env0/cli
 ```
 
-Requires **Node 18+**.
+Requires **Node 20+**.
 
 ---
 
@@ -83,7 +83,7 @@ Authentication is normally provided via **configure** or environment variables:
 
 - Or set env vars (see [Environment variables](#environment-variables)).
 
-Runtime commands (like `deploy`, `destroy`, `approve`, `cancel`, `agents list`) no longer accept `apiKey` / `apiSecret` flags; they always resolve credentials from config/env.
+Runtime commands (like `deploy`, `destroy`, `approve`, `cancel`, `agents list`) can still accept `apiKey` / `apiSecret` flags for backwards compatibility, but these flags are **deprecated**. Prefer using `env0 configure` or `ENV0_API_KEY` / `ENV0_API_SECRET`.
 
 ---
 

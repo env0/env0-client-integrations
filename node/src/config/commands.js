@@ -16,7 +16,7 @@ const commands = {
     handler: deploy,
     requiredOptions: BASE_REQUIRED_OPTIONS,
     useDeployUtils: true,
-    options: allArguments.filter(option => ![API_KEY, API_SECRET].includes(option.name)),
+    options: allArguments,
     help: [
       {
         desc: 'Deploys an environment',
@@ -28,7 +28,7 @@ const commands = {
     handler: destroy,
     requiredOptions: BASE_REQUIRED_OPTIONS,
     useDeployUtils: true,
-    options: [...nonCredentialBaseArguments, argumentsMap[REQUIRES_APPROVAL], argumentsMap[SKIP_STATE_REFRESH]],
+    options: [...baseArguments, argumentsMap[REQUIRES_APPROVAL], argumentsMap[SKIP_STATE_REFRESH]],
     help: [
       {
         desc: 'Destroys an environment',
@@ -40,7 +40,7 @@ const commands = {
     handler: approve,
     requiredOptions: BASE_REQUIRED_OPTIONS,
     useDeployUtils: true,
-    options: nonCredentialBaseArguments,
+    options: baseArguments,
     help: [
       {
         desc: 'Accepts a deployment that is pending approval',
@@ -52,7 +52,7 @@ const commands = {
     handler: cancel,
     requiredOptions: BASE_REQUIRED_OPTIONS,
     useDeployUtils: true,
-    options: nonCredentialBaseArguments,
+    options: baseArguments,
     help: [
       {
         desc: 'Cancels a deployment that is pending approval',

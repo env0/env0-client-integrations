@@ -13,6 +13,30 @@ const mainDefinitions = [{ name: 'command', defaultOption: true }];
 
 const { ENVIRONMENT_VARIABLES, SENSITIVE_ENVIRONMENT_VARIABLES, TERRAFORM_VARIABLES } = options;
 
+const DEPRECATED_CREDENTIAL_FLAGS = ['-k', '--apiKey', '-s', '--apiSecret'];
+
+const warnOnDeprecatedCredentialFlags = (command, argv) => {
+  if (command === 'configure') return;
+
+  const hasDeprecatedFlag = argv.some(arg => {
+    if (DEPRECATED_CREDENTIAL_FLAGS.includes(arg)) return true;
+    return (
+      arg.startsWith('--apiKey=') ||
+      arg.startsWith('-k=') ||
+      arg.startsWith('--apiSecret=') ||
+      arg.startsWith('-s=')
+    );
+  });
+
+  if (hasDeprecatedFlag) {
+    const YELLOW = '\u001b[33m';
+    const RESET = '\u001b[0m';
+    logger.info(
+      `${YELLOW}Warning: -k/--apiKey and -s/--apiSecret are deprecated for this command and may be removed in a future version. Prefer using "env0 configure" or ENV0_API_KEY/ENV0_API_SECRET instead.${RESET}`
+    );
+  }
+};
+
 const assertCommandExists = command => {
   if (!commands[command]) {
     const error = `${
@@ -78,6 +102,9 @@ const run = async () => {
       argv = argv.slice(1);
     }
 
+    // Warn (but still allow) deprecated credential flags (-k/-s) on runtime commands
+    warnOnDeprecatedCredentialFlags(command, argv);
+
     assertCommandExists(command);
 
     const currentCommandOptions = getCommandOptions(command, argv);
@@ -99,7 +126,12 @@ const getCommandOptions = (command, argv) => {
   const commandDefinitions = commands[command].options;
   const commandsOptions = commandLineArgs(commandDefinitions, { argv });
 
-  return commandsOptions[command];
+  // For grouped commands like 'agents list', arguments are grouped under the
+  // main prefix (e.g. 'agents'), not the full command key.
+  if (commandsOptions[command]) return commandsOptions[command];
+
+  const [prefix] = command.split(' ');
+  return commandsOptions[prefix] || {};
 };
 
 const parseVariables = (variables, sensitive, type) => {

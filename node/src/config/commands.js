@@ -1,4 +1,4 @@
-const { argumentsMap, allArguments, baseArguments, nonCredentialBaseArguments } = require('./arguments');
+const { argumentsMap, allArguments, baseArguments } = require('./arguments');
 const { options } = require('./constants');
 const deploy = require('../commands/deploy');
 const destroy = require('../commands/destroy');

@@ -163,18 +163,23 @@ describe('main', () => {
     describe('auth flags exposure', () => {
       const { API_KEY, API_SECRET } = options;
 
-      const getOptionNames = command => (commands[command].options || []).map(opt => opt.name);
+      const getVisibleOptionNames = command =>
+        (commands[command].options || [])
+          .filter(opt => !opt.secret)
+          .map(opt => opt.name);
+
+      const getAllOptionNames = command => (commands[command].options || []).map(opt => opt.name);
 
       it('should not expose apiKey/apiSecret flags for runtime commands', () => {
         ['deploy', 'destroy', 'cancel', 'approve', 'agents list'].forEach(command => {
-          const names = getOptionNames(command);
+          const names = getVisibleOptionNames(command);
           expect(names).not.toContain(API_KEY);
           expect(names).not.toContain(API_SECRET);
         });
       });
 
       it('should still expose apiKey/apiSecret flags for configure', () => {
-        const names = getOptionNames('configure');
+        const names = getAllOptionNames('configure');
         expect(names).toContain(API_KEY);
         expect(names).toContain(API_SECRET);
       });

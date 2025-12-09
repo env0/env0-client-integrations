@@ -131,7 +131,7 @@ const getCommandOptions = (command, argv) => {
   if (commandsOptions[command]) return commandsOptions[command];
 
   const [prefix] = command.split(' ');
-  return commandsOptions[prefix] || {};
+  return commandsOptions[prefix] || commandsOptions;
 };
 
 const parseVariables = (variables, sensitive, type) => {

@@ -53,8 +53,8 @@ const read = configFromParams => {
 
   return {
     ...configFromDisk,
-    ...configFromEnv,
-    ...configFromParams
+    ...configFromParams,
+    ...configFromEnv
   };
 };
 

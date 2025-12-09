@@ -36,15 +36,19 @@ describe('config manager', () => {
         const config = configManager.read();
 
         expect(config).toEqual({ ...mockOptions, [options.API_KEY]: anotherApiKey });
+
+        delete process.env.ENV0_API_KEY;
       });
 
-      it('cli parameters should take precedence over env vars + config file', async () => {
-        const expectedKey = 'key2';
-        process.env.ENV0_API_KEY = 'key1';
+      it('env vars should take precedence over cli parameters + config file', () => {
+        const envKey = 'key1';
+        process.env.ENV0_API_KEY = envKey;
 
-        const config = configManager.read({ [options.API_KEY]: expectedKey });
+        const config = configManager.read({ [options.API_KEY]: 'key2' });
 
-        expect(config).toEqual({ ...mockOptions, [options.API_KEY]: expectedKey });
+        expect(config).toEqual({ ...mockOptions, [options.API_KEY]: envKey });
+
+        delete process.env.ENV0_API_KEY;
       });
     });
 
@@ -55,6 +59,17 @@ describe('config manager', () => {
 
       it('should not try to read from disk', () => {
         expect(fs.readFileSync).not.toBeCalled();
+      });
+
+      it('env vars should take precedence over cli parameters', () => {
+        const envKey = 'envKey';
+        process.env.ENV0_API_KEY = envKey;
+
+        const config = configManager.read({ [options.API_KEY]: 'paramKey' });
+
+        expect(config).toEqual({ [options.API_KEY]: envKey });
+
+        delete process.env.ENV0_API_KEY;
       });
     });
   });

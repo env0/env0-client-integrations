@@ -1,5 +1,5 @@
 const runCommand = require('../src/commands/run-command');
-const run = require('../src/main');
+const { run, getCommandOptions } = require('../src/main');
 const commandLineArgs = require('command-line-args');
 const { commands } = require('../src/config/commands');
 const { options } = require('../src/config/constants');
@@ -17,15 +17,12 @@ jest.mock('command-line-args');
 jest.mock('../src/lib/update-notifier-utils');
 
 const getMockOptions = command => ({
-  [command]: {
-    help: false,
-    blue: 'pill',
-    red: 'pill',
-    environmentVariables: ['key1=value1', 'key2=value2'],
-    sensitiveEnvironmentVariables: ['sensitiveKey1=sensitiveValue1', 'sensitiveKey2=sensitiveValue2'],
-    terraformVariables: ['tfkey1=tfvalue1', 'tfkey2=tfvalue2']
-  },
-  _unknown: ['test']
+  help: false,
+  blue: 'pill',
+  red: 'pill',
+  environmentVariables: ['key1=value1', 'key2=value2'],
+  sensitiveEnvironmentVariables: ['sensitiveKey1=sensitiveValue1', 'sensitiveKey2=sensitiveValue2'],
+  terraformVariables: ['tfkey1=tfvalue1', 'tfkey2=tfvalue2']
 });
 
 const mockOptionsAndRun = async ({ command, rawArgs, args = {} }) => {
@@ -128,7 +125,7 @@ describe('main', () => {
       });
 
       it('should call configure with arguments', () => {
-        expect(configure).toHaveBeenCalledWith(args[command]);
+        expect(configure).toHaveBeenCalledWith(args);
       });
 
       it('should not call run deployment', () => {
@@ -207,8 +204,21 @@ describe('main', () => {
         ];
 
         it('should run deployment with proper params', () => {
-          expect(runCommand).toBeCalledWith(command, expect.objectContaining(args[command]), expectedVars);
+          expect(runCommand).toBeCalledWith(command, expect.objectContaining(args), expectedVars);
         });
+      });
+    });
+
+    describe('getCommandOptions', () => {
+      it('should parse arguments correctly for deploy command with -k and -s flags', () => {
+        const argv = ['deploy', '-k', 'testApiKey', '-s', 'testApiSecret', '-o', 'org', '-p', 'proj', '-e', 'env'];
+        const mockParsed = { apiKey: 'testApiKey', apiSecret: 'testApiSecret', organizationId: 'org', projectId: 'proj', environmentName: 'env' };
+        commandLineArgs.mockReturnValue(mockParsed);
+
+        const result = getCommandOptions('deploy', argv);
+
+        expect(result).toEqual(mockParsed);
+        expect(commandLineArgs).toHaveBeenCalledWith(commands.deploy.options, { argv });
       });
     });
   });

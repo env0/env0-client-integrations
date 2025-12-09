@@ -126,12 +126,7 @@ const getCommandOptions = (command, argv) => {
   const commandDefinitions = commands[command].options;
   const commandsOptions = commandLineArgs(commandDefinitions, { argv });
 
-  // For grouped commands like 'agents list', arguments are grouped under the
-  // main prefix (e.g. 'agents'), not the full command key.
-  if (commandsOptions[command]) return commandsOptions[command];
-
-  const [prefix] = command.split(' ');
-  return commandsOptions[prefix] || commandsOptions;
+  return commandsOptions;
 };
 
 const parseVariables = (variables, sensitive, type) => {
@@ -158,4 +153,4 @@ const getVariablesOptions = (environmentVariables, sensitiveEnvironmentVariables
   ];
 };
 
-module.exports = run;
+module.exports = { run, getCommandOptions };

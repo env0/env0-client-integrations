@@ -1,6 +1,6 @@
 {
   "name": "@env0/cli",
-  "version": "1.0.24",
+  "version": "1.0.25-dev.0",
   "description": "env0 CLI",
   "repository": {
     "type": "git",

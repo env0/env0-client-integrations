@@ -32,7 +32,7 @@
     "cli"
   ],
   "dependencies": {
-    "axios": "1.12.0",
+    "axios": "1.13.5",
     "boxen": "4.2.0",
     "command-line-args": "5.1.1",
     "command-line-usage": "6.1.0",

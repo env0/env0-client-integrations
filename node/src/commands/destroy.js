@@ -3,7 +3,7 @@ const { options } = require('../config/constants');
 const _ = require('lodash');
 const { convertStringToBoolean, removeEmptyValuesFromObj } = require('../lib/general-utils');
 
-const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH } = options;
+const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH, CHECKOUT_UPDATED_CODE } = options;
 
 const assertEnvironmentExists = environment => {
   if (!environment) {
@@ -26,7 +26,8 @@ const destroy = async options => {
   }
 
   const params = removeEmptyValuesFromObj({
-    [SKIP_STATE_REFRESH]: options[SKIP_STATE_REFRESH]
+    [SKIP_STATE_REFRESH]: options[SKIP_STATE_REFRESH],
+    [CHECKOUT_UPDATED_CODE]: options[CHECKOUT_UPDATED_CODE]
   });
   const deployment = await deployUtils.destroyEnvironment(environment, params);
 

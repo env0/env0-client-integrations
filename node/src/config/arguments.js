@@ -15,7 +15,8 @@ const {
   REVISION,
   SKIP_STATE_REFRESH,
   REQUIRES_APPROVAL,
-  TARGETS
+  TARGETS,
+  CHECKOUT_UPDATED_CODE
 } = options;
 
 const argumentsMap = {
@@ -134,6 +135,12 @@ const argumentsMap = {
     type: String,
     group: ['destroy'],
     description: 'Disable automatic state refresh on plan destroy phase'
+  },
+  [CHECKOUT_UPDATED_CODE]: {
+    name: CHECKOUT_UPDATED_CODE,
+    type: String,
+    group: ['destroy'],
+    description: 'Checkout updated code before destroying the environment'
   },
   [TARGETS]: {
     name: TARGETS,

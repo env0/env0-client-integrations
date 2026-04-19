@@ -13,7 +13,8 @@ const options = {
   REVISION: 'revision',
   SKIP_STATE_REFRESH: 'skipStateRefresh',
   REQUIRES_APPROVAL: 'requiresApproval',
-  TARGETS: 'targets'
+  TARGETS: 'targets',
+  CHECKOUT_UPDATED_CODE: 'checkoutUpdatedCode'
 };
 
 module.exports = {

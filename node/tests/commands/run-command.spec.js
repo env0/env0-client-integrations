@@ -1,18 +1,17 @@
-require('jest-extended');
-const runCommand = require('../../src/commands/run-command');
-const configManager = require('../../src/lib/config-manager');
-const { options } = require('../../src/config/constants');
-const deploy = require('../../src/commands/deploy');
-const destroy = require('../../src/commands/destroy');
-const approve = require('../../src/commands/approve');
-const cancel = require('../../src/commands/cancel');
+import runCommand from '../../src/commands/run-command.js';
+import * as configManager from '../../src/lib/config-manager.js';
+import { options } from '../../src/config/constants.js';
+import deploy from '../../src/commands/deploy.js';
+import destroy from '../../src/commands/destroy.js';
+import approve from '../../src/commands/approve.js';
+import cancel from '../../src/commands/cancel.js';
 
-jest.mock('../../src/commands/deploy');
-jest.mock('../../src/commands/destroy');
-jest.mock('../../src/commands/approve');
-jest.mock('../../src/commands/cancel');
-jest.mock('../../src/lib/deploy-utils');
-jest.mock('../../src/lib/config-manager');
+vi.mock('../../src/commands/deploy.js');
+vi.mock('../../src/commands/destroy.js');
+vi.mock('../../src/commands/approve.js');
+vi.mock('../../src/commands/cancel.js');
+vi.mock('../../src/lib/deploy-utils.js');
+vi.mock('../../src/lib/config-manager.js');
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 
@@ -26,7 +25,7 @@ const mockRequiredOptions = {
 
 describe('run command', () => {
   beforeEach(() => {
-    jest.spyOn(configManager, 'read').mockReturnValue(mockRequiredOptions);
+    configManager.read.mockReturnValue(mockRequiredOptions);
   });
 
   describe('configuration', () => {
@@ -35,7 +34,7 @@ describe('run command', () => {
     });
 
     it('should read configuration and merge with input options', async () => {
-      expect(configManager.read).toBeCalledWith(mockRequiredOptions);
+      expect(configManager.read).toHaveBeenCalledWith(mockRequiredOptions);
     });
 
     it('should not overwrite configuration', async () => {
@@ -45,7 +44,7 @@ describe('run command', () => {
 
   describe('when there are missing required options', () => {
     it('should fail with proper error message', async () => {
-      jest.spyOn(configManager, 'read').mockReturnValue({});
+      configManager.read.mockReturnValue({});
       await expect(runCommand('deploy', {})).rejects.toThrow(
         expect.objectContaining({ message: expect.stringContaining('Missing required options') })
       );
@@ -62,15 +61,15 @@ describe('run command', () => {
       'should succeed when requires approval argument has a value of $requiresApprovalValue',
       async ({ requiresApprovalValue }) => {
         const options = { ...mockRequiredOptions, [REQUIRES_APPROVAL]: requiresApprovalValue };
-        jest.spyOn(configManager, 'read').mockReturnValue(options);
+        configManager.read.mockReturnValue(options);
 
-        await expect(runCommand('deploy', options)).toResolve();
+        await runCommand('deploy', options);
       }
     );
 
     it('should fail when requires approval argument has an invalid value', async () => {
       const options = { ...mockRequiredOptions, [REQUIRES_APPROVAL]: 'something' };
-      jest.spyOn(configManager, 'read').mockReturnValue(options);
+      configManager.read.mockReturnValue(options);
 
       await expect(runCommand('deploy', options)).rejects.toThrow(
         expect.objectContaining({ message: expect.stringContaining('Bad argument') })
@@ -91,7 +90,7 @@ describe('run command', () => {
       });
 
       it('should call proper callback', () => {
-        expect(mock).toBeCalledWith(mockRequiredOptions, undefined);
+        expect(mock).toHaveBeenCalledWith(mockRequiredOptions, undefined);
       });
     });
   });

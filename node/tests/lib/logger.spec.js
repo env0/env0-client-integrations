@@ -1,12 +1,26 @@
-const logger = require('../../src/lib/logger');
-const { options } = require('../../src/config/constants');
-
-global.console = {
-  log: jest.fn()
-};
+import { Writable } from 'node:stream';
+import winston from 'winston';
+import logger from '../../src/lib/logger.js';
+import { options } from '../../src/config/constants.js';
 
 const mockSecret = 'TopSecret';
 const secureSecret = '**********';
+
+const logged = [];
+const captureTransport = new winston.transports.Stream({
+  stream: new Writable({
+    write(chunk, _encoding, callback) {
+      logged.push(chunk.toString().trimEnd());
+      callback();
+    }
+  })
+});
+
+logger.add(captureTransport);
+
+afterEach(() => {
+  logged.length = 0;
+});
 
 describe('logger', () => {
   it.each`
@@ -18,7 +32,7 @@ describe('logger', () => {
 
     logger.info(`${option}: ${mockSecret} ${option}: ${mockSecret}`);
 
-    expect(console.log).toBeCalledWith(`${option}: ${secureSecret} ${option}: ${secureSecret}`);
+    expect(logged).toContain(`${option}: ${secureSecret} ${option}: ${secureSecret}`);
   });
 
   it.each`
@@ -32,6 +46,6 @@ describe('logger', () => {
 
     logger.info(`${option}: ${mockSecret}`);
 
-    expect(console.log).toBeCalledWith(`${option}: ${mockSecret}`);
+    expect(logged).toContain(`${option}: ${mockSecret}`);
   });
 });

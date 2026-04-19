@@ -1,8 +1,8 @@
-const fs = require('fs-extra');
-const configManager = require('../../src/lib/config-manager');
-const { options } = require('../../src/config/constants');
+import fs from 'fs-extra';
+import * as configManager from '../../src/lib/config-manager.js';
+import { options } from '../../src/config/constants.js';
 
-jest.mock('fs-extra');
+vi.mock('fs-extra');
 
 describe('config manager', () => {
   const mockOptions = {
@@ -13,8 +13,8 @@ describe('config manager', () => {
   describe('read', () => {
     describe('when config file exists', () => {
       beforeEach(() => {
-        jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(mockOptions));
-        jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+        vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(mockOptions));
+        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
       });
 
       it('should try to read from disk', () => {
@@ -25,7 +25,7 @@ describe('config manager', () => {
       });
 
       it('should throw when json is malformed', () => {
-        jest.spyOn(fs, 'readFileSync').mockReturnValue('not-a-json');
+        vi.spyOn(fs, 'readFileSync').mockReturnValue('not-a-json');
         expect(() => configManager.read()).toThrow();
       });
 
@@ -50,7 +50,8 @@ describe('config manager', () => {
 
     describe('when config file does not exist', () => {
       beforeEach(() => {
-        jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+        vi.spyOn(fs, 'existsSync').mockReturnValue(false);
+        vi.spyOn(fs, 'readFileSync');
       });
 
       it('should not try to read from disk', () => {
@@ -63,7 +64,7 @@ describe('config manager', () => {
     it('should write ONLY required options to disk', () => {
       configManager.write({ ...mockOptions, another: 'option', 'and-another': 'option' });
 
-      expect(fs.outputJsonSync).toBeCalledWith(expect.any(String), mockOptions, { spaces: 2 });
+      expect(fs.outputJsonSync).toHaveBeenCalledWith(expect.any(String), mockOptions, { spaces: 2 });
     });
   });
 });

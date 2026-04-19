@@ -1,6 +1,8 @@
-const { createLogger, format, transports } = require('winston');
-const _ = require('lodash');
-const { argumentsMap } = require('../config/arguments');
+import winston from 'winston';
+import _ from 'lodash';
+import { argumentsMap } from '../config/arguments.js';
+
+const { createLogger, format, transports } = winston;
 
 const SECURE_STRING = '**********';
 
@@ -37,4 +39,4 @@ const logger = createLogger({
 
 logger.setSecrets = setSecrets;
 
-module.exports = logger;
+export default logger;

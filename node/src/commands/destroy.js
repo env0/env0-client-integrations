@@ -1,7 +1,7 @@
-const DeployUtils = require('../lib/deploy-utils');
-const { options } = require('../config/constants');
-const _ = require('lodash');
-const { convertStringToBoolean, removeEmptyValuesFromObj } = require('../lib/general-utils');
+import DeployUtils from '../lib/deploy-utils.js';
+import { options } from '../config/constants.js';
+import _ from 'lodash';
+import { convertStringToBoolean, removeEmptyValuesFromObj } from '../lib/general-utils.js';
 
 const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH, CHECKOUT_UPDATED_CODE } = options;
 
@@ -36,4 +36,4 @@ const destroy = async options => {
   deployUtils.assertDeploymentStatus(status);
 };
 
-module.exports = destroy;
+export default destroy;

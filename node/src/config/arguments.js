@@ -1,4 +1,4 @@
-const { options } = require('./constants');
+import { options } from './constants.js';
 
 const {
   API_KEY,
@@ -19,7 +19,7 @@ const {
   CHECKOUT_UPDATED_CODE
 } = options;
 
-const argumentsMap = {
+export const argumentsMap = {
   [API_KEY]: {
     name: API_KEY,
     alias: 'k',
@@ -152,14 +152,12 @@ const argumentsMap = {
   }
 };
 
-module.exports = {
-  argumentsMap,
-  allArguments: Object.values(argumentsMap),
-  baseArguments: [
-    argumentsMap[API_KEY],
-    argumentsMap[API_SECRET],
-    argumentsMap[ORGANIZATION_ID],
-    argumentsMap[PROJECT_ID],
-    argumentsMap[ENVIRONMENT_NAME]
-  ]
-};
+export const allArguments = Object.values(argumentsMap);
+
+export const baseArguments = [
+  argumentsMap[API_KEY],
+  argumentsMap[API_SECRET],
+  argumentsMap[ORGANIZATION_ID],
+  argumentsMap[PROJECT_ID],
+  argumentsMap[ENVIRONMENT_NAME]
+];

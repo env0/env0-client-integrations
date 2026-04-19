@@ -1,13 +1,16 @@
-const commandLineArgs = require('command-line-args');
-const _ = require('lodash');
-const runCommand = require('./commands/run-command');
+import commandLineArgs from 'command-line-args';
+import _ from 'lodash';
+import runCommand from './commands/run-command.js';
+import { options } from './config/constants.js';
+import { commands } from './config/commands.js';
+import help from './commands/help.js';
+import configure from './commands/configure.js';
+import logger from './lib/logger.js';
+import notifyUpdates from './lib/update-notifier-utils.js';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
-const { options } = require('./config/constants');
-const { commands } = require('./config/commands');
-const help = require('./commands/help');
-const configure = require('./commands/configure');
-const logger = require('./lib/logger');
-const updateNotifier = require('./lib/update-notifier-utils');
 
 const mainDefinitions = [{ name: 'command', defaultOption: true }];
 
@@ -65,7 +68,7 @@ const run = async () => {
   const argv = mainOptions._unknown || [];
 
   const { command } = mainOptions;
-  await updateNotifier();
+  await notifyUpdates();
 
   try {
     if (await isInternalCommand(command, argv)) return;
@@ -118,4 +121,4 @@ const getVariablesOptions = (environmentVariables, sensitiveEnvironmentVariables
   ];
 };
 
-module.exports = run;
+export default run;

@@ -1,14 +1,17 @@
-const mockCallApi = jest.fn();
-const { options } = require('../../src/config/constants');
-const DeployUtils = require('../../src/lib/deploy-utils');
+import { options } from '../../src/config/constants.js';
+import DeployUtils from '../../src/lib/deploy-utils.js';
 
-jest.mock('../../src/lib/logger');
-jest.mock('../../src/lib/api-client', () =>
-  jest.fn().mockImplementation(() => ({
-    callApi: mockCallApi,
-    sleep: () => Promise.resolve()
-  }))
-);
+const { mockCallApi } = vi.hoisted(() => ({
+  mockCallApi: vi.fn()
+}));
+
+vi.mock('../../src/lib/logger.js');
+vi.mock('../../src/lib/api-client.js', () => ({
+  default: vi.fn().mockImplementation(function () {
+    this.callApi = mockCallApi;
+    this.sleep = () => Promise.resolve();
+  })
+}));
 
 const {
   BLUEPRINT_ID,
@@ -37,7 +40,7 @@ describe('deploy utils', () => {
 
       const status = await deployUtils.pollDeploymentStatus(mockDeployment);
 
-      expect(mockCallApi).toBeCalledWith('get', `environments/deployments/${mockDeploymentId}`);
+      expect(mockCallApi).toHaveBeenCalledWith('get', `environments/deployments/${mockDeploymentId}`);
       expect(status).toBe(mockStatus);
     });
 
@@ -62,7 +65,7 @@ describe('deploy utils', () => {
       mockCallApi.mockResolvedValue([]);
 
       await deployUtils.destroyEnvironment({ id: mockDeploymentId }, params);
-      expect(mockCallApi).toBeCalledWith('post', `environments/${mockDeploymentId}/destroy`, {
+      expect(mockCallApi).toHaveBeenCalledWith('post', `environments/${mockDeploymentId}/destroy`, {
         params
       });
     });
@@ -74,7 +77,7 @@ describe('deploy utils', () => {
 
       await deployUtils.processDeploymentSteps(mockDeploymentId, []);
 
-      expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps`);
+      expect(mockCallApi).toHaveBeenCalledWith('get', `deployments/${mockDeploymentId}/steps`);
     });
 
     it.each`
@@ -93,8 +96,8 @@ describe('deploy utils', () => {
       const mockStep = { name: 'git:clone', status: 'SUCCESS' };
 
       mockCallApi.mockResolvedValueOnce([mockStep]);
-      mockCallApi.mockResolvedValueOnce([mockStep]); // mock for getting steps in write deployment step log function
-      mockCallApi.mockResolvedValueOnce({ events: [] }); // mock for the write deployment step log function
+      mockCallApi.mockResolvedValueOnce([mockStep]);
+      mockCallApi.mockResolvedValueOnce({ events: [] });
 
       const doneSteps = await deployUtils.processDeploymentSteps(mockDeploymentId, []);
 
@@ -111,10 +114,10 @@ describe('deploy utils', () => {
 
       await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name);
 
-      expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
+      expect(mockCallApi).toHaveBeenCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
         params: { startTime: undefined }
       });
-      expect(mockCallApi).toBeCalledTimes(2);
+      expect(mockCallApi).toHaveBeenCalledTimes(2);
     });
 
     it.each`
@@ -131,10 +134,10 @@ describe('deploy utils', () => {
 
         await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name);
 
-        expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
+        expect(mockCallApi).toHaveBeenCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
           params: { startTime: undefined }
         });
-        expect(mockCallApi).toBeCalledTimes(4);
+        expect(mockCallApi).toHaveBeenCalledTimes(4);
       }
     );
 
@@ -152,7 +155,7 @@ describe('deploy utils', () => {
 
       await deployUtils.writeDeploymentStepLog(mockDeploymentId, mockStep.name);
 
-      expect(mockCallApi).toBeCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
+      expect(mockCallApi).toHaveBeenCalledWith('get', `deployments/${mockDeploymentId}/steps/${mockStep.name}/log`, {
         params: { startTime: undefined }
       });
       expect(mockCallApi).toHaveBeenLastCalledWith(
@@ -278,7 +281,7 @@ describe('deploy utils', () => {
     it('should call api', async () => {
       await deployUtils.approveDeployment(mockDeploymentId);
 
-      expect(mockCallApi).toBeCalledWith('put', `environments/deployments/${mockDeploymentId}`);
+      expect(mockCallApi).toHaveBeenCalledWith('put', `environments/deployments/${mockDeploymentId}`);
     });
   });
 
@@ -286,7 +289,7 @@ describe('deploy utils', () => {
     it('should call api', async () => {
       await deployUtils.cancelDeployment(mockDeploymentId);
 
-      expect(mockCallApi).toBeCalledWith('put', `environments/deployments/${mockDeploymentId}/cancel`);
+      expect(mockCallApi).toHaveBeenCalledWith('put', `environments/deployments/${mockDeploymentId}/cancel`);
     });
   });
 
@@ -314,7 +317,7 @@ describe('deploy utils', () => {
         });
 
         it('should call api', async () => {
-          expect(mockCallApi).toBeCalledWith('get', expectedApiPath);
+          expect(mockCallApi).toHaveBeenCalledWith('get', expectedApiPath);
         });
 
         it(`should return ${expectedReturnValue}`, () => {

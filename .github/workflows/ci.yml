@@ -22,7 +22,7 @@ jobs:
       run: yarn
     - name: run test
       working-directory: ${{ matrix.package }}
-      run: yarn test --colors
+      run: yarn test
       env:
         CI: true
     - name: lint

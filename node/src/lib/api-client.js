@@ -1,4 +1,7 @@
-const axios = require('axios');
+import axios from 'axios';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 const { version } = require('../../package.json');
 
 class Env0ApiClient {
@@ -32,4 +35,4 @@ class Env0ApiClient {
   }
 }
 
-module.exports = Env0ApiClient;
+export default Env0ApiClient;

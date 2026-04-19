@@ -1,3 +1,3 @@
-const setDeploymentStatusApproval = require('../lib/set-deployment-approval-status');
+import setDeploymentApprovalStatus from '../lib/set-deployment-approval-status.js';
 
-module.exports = setDeploymentStatusApproval('approve');
+export default setDeploymentApprovalStatus('approve');

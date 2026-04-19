@@ -1,24 +1,24 @@
 {
   "name": "@env0/cli",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "env0 CLI",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/env0/env0-client-integrations",
     "directory": "node"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=20"
   },
   "bugs": {
     "url": "https://github.com/env0/env0-client-integrations/issues"
   },
   "main": "src/main.js",
   "scripts": {
-    "test": "jest",
+    "test": "vitest run",
     "lint": "eslint ."
   },
-
   "license": "MIT",
   "files": [
     "bin",
@@ -33,22 +33,23 @@
   ],
   "dependencies": {
     "axios": "1.15.0",
-    "boxen": "4.2.0",
-    "command-line-args": "5.1.1",
-    "command-line-usage": "6.1.0",
-    "fs-extra": "9.0.1",
-    "inquirer": "7.3.3",
+    "boxen": "8.0.1",
+    "command-line-args": "6.0.2",
+    "command-line-usage": "7.0.4",
+    "fs-extra": "11.3.4",
+    "@inquirer/prompts": "8.4.1",
     "lodash": "4.18.1",
-    "p-retry": "4.6.2",
-    "update-notifier": "6.0.2",
-    "winston": "3.3.4"
+    "p-retry": "8.0.0",
+    "update-notifier": "7.3.1",
+    "winston": "3.19.0"
   },
   "devDependencies": {
-    "eslint": "6.8.0",
-    "eslint-config-prettier": "6.11.0",
-    "eslint-plugin-prettier": "3.1.4",
-    "jest": "29.3.1",
-    "jest-extended": "0.11.5",
-    "prettier": "2.0.5"
+    "@eslint/js": "10.0.1",
+    "eslint": "10.2.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.5",
+    "globals": "17.5.0",
+    "prettier": "3.8.3",
+    "vitest": "4.1.4"
   }
 }

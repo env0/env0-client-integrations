@@ -1,18 +1,21 @@
-const commandLineUsage = require('command-line-usage');
-const boxen = require('boxen');
-const { allArguments } = require('../config/arguments');
-const { commands } = require('../config/commands');
+import commandLineUsage from 'command-line-usage';
+import boxen from 'boxen';
+import { allArguments } from '../config/arguments.js';
+import { commands } from '../config/commands.js';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 const { repository } = require('../../package.json');
-const { flatMap } = require('lodash');
+import _ from 'lodash';
 
 const header = `
-                                  .oooo.   
-                                 d8P'\`Y8b  
- .ooooo.  ooo. .oo. oooo    ooo 888    888 
-d88' \`88b \`888P"Y88b \`88.  .8'  888    888 
-888ooo888  888   888  \`88..8'   888    888 
-888        888   888   \`888'    \`88b  d88' 
-\`Y8bod8P' o888o o888o   \`8'      \`Y8bd8P'  
+                                  .oooo.
+                                 d8P'\`Y8b
+ .ooooo.  ooo. .oo. oooo    ooo 888    888
+d88' \`88b \`888P"Y88b \`88.  .8'  888    888
+888ooo888  888   888  \`88..8'   888    888
+888        888   888   \`888'    \`88b  d88'
+\`Y8bod8P' o888o o888o   \`8'      \`Y8bd8P'
 
 Self-Service Cloud Environments
 https://www.env0.com
@@ -43,7 +46,7 @@ const sections = [
   ...options,
   {
     header: 'Examples',
-    content: flatMap(Object.keys(commands), command => commands[command].help)
+    content: _.flatMap(Object.keys(commands), command => commands[command].help)
   },
   {
     content: `Project home: {underline ${repository.url}}`
@@ -55,4 +58,4 @@ const help = () => {
   console.log(usage);
 };
 
-module.exports = help;
+export default help;

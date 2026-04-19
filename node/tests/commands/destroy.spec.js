@@ -1,14 +1,14 @@
-const DeployUtils = require('../../src/lib/deploy-utils');
-const destroy = require('../../src/commands/destroy');
-const { options } = require('../../src/config/constants');
+import DeployUtils from '../../src/lib/deploy-utils.js';
+import destroy from '../../src/commands/destroy.js';
+import { options } from '../../src/config/constants.js';
 
-const mockGetEnvironment = jest.fn();
-const mockUpdateEnvironment = jest.fn();
-const mockDestroyEnvironment = jest.fn();
-const mockPollDeploymentStatus = jest.fn();
+const mockGetEnvironment = vi.fn();
+const mockUpdateEnvironment = vi.fn();
+const mockDestroyEnvironment = vi.fn();
+const mockPollDeploymentStatus = vi.fn();
 
-jest.mock('../../src/lib/logger');
-jest.mock('../../src/lib/deploy-utils');
+vi.mock('../../src/lib/logger.js');
+vi.mock('../../src/lib/deploy-utils.js');
 
 const mockDeployment = { id: 'id0' };
 
@@ -16,14 +16,12 @@ const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH, CHECKOUT_UPDATE
 
 describe('destroy', () => {
   beforeEach(() => {
-    DeployUtils.mockImplementation(() => {
-      return {
-        getEnvironment: mockGetEnvironment,
-        updateEnvironment: mockUpdateEnvironment,
-        destroyEnvironment: mockDestroyEnvironment,
-        pollDeploymentStatus: mockPollDeploymentStatus,
-        assertDeploymentStatus: jest.fn()
-      };
+    DeployUtils.mockImplementation(function () {
+      this.getEnvironment = mockGetEnvironment;
+      this.updateEnvironment = mockUpdateEnvironment;
+      this.destroyEnvironment = mockDestroyEnvironment;
+      this.pollDeploymentStatus = mockPollDeploymentStatus;
+      this.assertDeploymentStatus = vi.fn();
     });
   });
 
@@ -36,7 +34,7 @@ describe('destroy', () => {
     await destroy({});
 
     expect(mockDestroyEnvironment).toHaveBeenCalledWith(mockEnvironment, expect.anything());
-    expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
+    expect(mockPollDeploymentStatus).toHaveBeenCalledWith(mockDeployment);
   });
 
   it("should fail when environment doesn't exist", async () => {
@@ -60,7 +58,7 @@ describe('destroy', () => {
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
 
       await destroy(options);
-      expect(mockDestroyEnvironment).toBeCalledWith(expect.anything(), options);
+      expect(mockDestroyEnvironment).toHaveBeenCalledWith(expect.anything(), options);
     });
   });
 
@@ -75,7 +73,7 @@ describe('destroy', () => {
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
 
       await destroy(options);
-      expect(mockDestroyEnvironment).toBeCalledWith(expect.anything(), options);
+      expect(mockDestroyEnvironment).toHaveBeenCalledWith(expect.anything(), options);
     });
   });
 
@@ -104,7 +102,7 @@ describe('destroy', () => {
 
       await destroy({ [REQUIRES_APPROVAL]: option });
 
-      expect(mockUpdateEnvironment).toBeCalledWith(expect.anything(), { [REQUIRES_APPROVAL]: expected });
+      expect(mockUpdateEnvironment).toHaveBeenCalledWith(expect.anything(), { [REQUIRES_APPROVAL]: expected });
     });
   });
 });

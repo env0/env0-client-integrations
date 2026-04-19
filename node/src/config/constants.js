@@ -1,4 +1,4 @@
-const options = {
+export const options = {
   API_KEY: 'apiKey',
   API_SECRET: 'apiSecret',
   ORGANIZATION_ID: 'organizationId',
@@ -15,8 +15,4 @@ const options = {
   REQUIRES_APPROVAL: 'requiresApproval',
   TARGETS: 'targets',
   CHECKOUT_UPDATED_CODE: 'checkoutUpdatedCode'
-};
-
-module.exports = {
-  options
 };

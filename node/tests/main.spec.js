@@ -1,19 +1,22 @@
-const runCommand = require('../src/commands/run-command');
-const run = require('../src/main');
-const commandLineArgs = require('command-line-args');
-const { commands } = require('../src/config/commands');
-const { version } = require('../package.json');
-const help = require('../src/commands/help');
-const configure = require('../src/commands/configure');
-const logger = require('../src/lib/logger');
-const updateNotifier = require('../src/lib/update-notifier-utils');
+import runCommand from '../src/commands/run-command.js';
+import run from '../src/main.js';
+import commandLineArgs from 'command-line-args';
+import { commands } from '../src/config/commands.js';
+import help from '../src/commands/help.js';
+import configure from '../src/commands/configure.js';
+import logger from '../src/lib/logger.js';
+import notifyUpdates from '../src/lib/update-notifier-utils.js';
+import { createRequire } from 'node:module';
 
-jest.mock('../src/lib/logger');
-jest.mock('../src/commands/run-command');
-jest.mock('../src/commands/help');
-jest.mock('../src/commands/configure');
-jest.mock('command-line-args');
-jest.mock('../src/lib/update-notifier-utils');
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json');
+
+vi.mock('../src/lib/logger.js');
+vi.mock('../src/commands/run-command.js');
+vi.mock('../src/commands/help.js');
+vi.mock('../src/commands/configure.js');
+vi.mock('command-line-args');
+vi.mock('../src/lib/update-notifier-utils.js');
 
 const getMockOptions = command => ({
   [command]: {
@@ -28,7 +31,7 @@ const getMockOptions = command => ({
 });
 
 const mockOptionsAndRun = async ({ command, rawArgs, args = {} }) => {
-  commandLineArgs.mockRestore();
+  commandLineArgs.mockReset();
   commandLineArgs.mockReturnValueOnce({ command, _unknown: rawArgs });
   commandLineArgs.mockReturnValueOnce(args);
 
@@ -37,13 +40,13 @@ const mockOptionsAndRun = async ({ command, rawArgs, args = {} }) => {
 
 describe('main', () => {
   beforeEach(() => {
-    jest.spyOn(process, 'exit').mockReturnValue({});
+    vi.spyOn(process, 'exit').mockReturnValue({});
   });
 
   it('should run update notifier', async () => {
     await mockOptionsAndRun({});
 
-    expect(updateNotifier).toBeCalled();
+    expect(notifyUpdates).toBeCalled();
   });
 
   describe("when command doesn't exist", () => {
@@ -59,7 +62,7 @@ describe('main', () => {
       expect(logger.error).toBeCalled();
     });
     it('should exit with 1', () => {
-      expect(process.exit).toBeCalledWith(1);
+      expect(process.exit).toHaveBeenCalledWith(1);
     });
   });
 
@@ -78,7 +81,7 @@ describe('main', () => {
       });
 
       it('should log errors', () => {
-        expect(logger.error).toBeCalledWith(expect.stringContaining(expected));
+        expect(logger.error).toHaveBeenCalledWith(expect.stringContaining(expected));
       });
     });
 
@@ -114,7 +117,7 @@ describe('main', () => {
         });
 
         it('should show the proper version', () => {
-          expect(logger.info).toBeCalledWith(version);
+          expect(logger.info).toHaveBeenCalledWith(version);
         });
       });
     });
@@ -181,7 +184,7 @@ describe('main', () => {
         ];
 
         it('should run deployment with proper params', () => {
-          expect(runCommand).toBeCalledWith(command, expect.objectContaining(args[command]), expectedVars);
+          expect(runCommand).toHaveBeenCalledWith(command, expect.objectContaining(args[command]), expectedVars);
         });
       });
     });

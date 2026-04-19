@@ -1,6 +1,6 @@
-const deploy = require('../../src/commands/deploy');
-const DeployUtils = require('../../src/lib/deploy-utils');
-const { options } = require('../../src/config/constants');
+import deploy from '../../src/commands/deploy.js';
+import DeployUtils from '../../src/lib/deploy-utils.js';
+import { options } from '../../src/config/constants.js';
 
 const { ENVIRONMENT_NAME, PROJECT_ID, ORGANIZATION_ID, BLUEPRINT_ID, REVISION, WORKSPACE_NAME } = options;
 
@@ -17,26 +17,26 @@ const mockOptionsWithRequired = {
   [REVISION]: 'revision0'
 };
 
-const mockGetEnvironment = jest.fn();
-const mockCreateAndDeployEnvironment = jest.fn();
-const mockDeployEnvironment = jest.fn();
-const mockPollDeploymentStatus = jest.fn();
+const mockGetEnvironment = vi.fn();
+const mockCreateAndDeployEnvironment = vi.fn();
+const mockDeployEnvironment = vi.fn();
+const mockPollDeploymentStatus = vi.fn();
 
-jest.mock('../../src/lib/deploy-utils');
-jest.mock('../../src/lib/logger');
+vi.mock('../../src/lib/deploy-utils.js');
+vi.mock('../../src/lib/logger.js');
 
 const mockDeployment = { id: 'id0' };
 const mockEnvironment = { id: 'environment0', latestDeploymentLog: mockDeployment };
 
 describe('deploy', () => {
   beforeEach(() => {
-    DeployUtils.mockImplementation(() => ({
-      getEnvironment: mockGetEnvironment,
-      createAndDeployEnvironment: mockCreateAndDeployEnvironment,
-      deployEnvironment: mockDeployEnvironment,
-      pollDeploymentStatus: mockPollDeploymentStatus,
-      assertDeploymentStatus: jest.fn()
-    }));
+    DeployUtils.mockImplementation(function () {
+      this.getEnvironment = mockGetEnvironment;
+      this.createAndDeployEnvironment = mockCreateAndDeployEnvironment;
+      this.deployEnvironment = mockDeployEnvironment;
+      this.pollDeploymentStatus = mockPollDeploymentStatus;
+      this.assertDeploymentStatus = vi.fn();
+    });
   });
 
   beforeEach(() => {
@@ -47,14 +47,14 @@ describe('deploy', () => {
   it('should get environment', async () => {
     await deploy(mockOptionsWithRequired);
 
-    expect(mockGetEnvironment).toBeCalledWith(mockOptionsWithRequired);
+    expect(mockGetEnvironment).toHaveBeenCalledWith(mockOptionsWithRequired);
   });
 
   it("should create environment when it doesn't exist", async () => {
     mockGetEnvironment.mockResolvedValue(undefined);
 
     await deploy(mockOptionsWithRequired);
-    expect(mockCreateAndDeployEnvironment).toBeCalledWith(mockOptionsWithRequired, []);
+    expect(mockCreateAndDeployEnvironment).toHaveBeenCalledWith(mockOptionsWithRequired, []);
   });
 
   describe('proper set of configuration changes', () => {
@@ -91,7 +91,7 @@ describe('deploy', () => {
 
       await deploy(mockOptionsWithRequired, variables);
 
-      expect(mockCreateAndDeployEnvironment).toBeCalledWith(mockOptionsWithRequired, expectedConfigurationChanges);
+      expect(mockCreateAndDeployEnvironment).toHaveBeenCalledWith(mockOptionsWithRequired, expectedConfigurationChanges);
     });
 
     it('should redeploy with arguments', async () => {
@@ -99,8 +99,8 @@ describe('deploy', () => {
       const redeployOptions = { ...mockOptionsWithRequired, [WORKSPACE_NAME]: undefined };
       await deploy(redeployOptions, variables);
 
-      expect(mockDeployEnvironment).toBeCalledWith(mockEnvironment, redeployOptions, expectedConfigurationChanges);
-      expect(mockPollDeploymentStatus).toBeCalledWith(mockDeployment);
+      expect(mockDeployEnvironment).toHaveBeenCalledWith(mockEnvironment, redeployOptions, expectedConfigurationChanges);
+      expect(mockPollDeploymentStatus).toHaveBeenCalledWith(mockDeployment);
     });
 
     it('should not allow to redeploy with a different workspace name set', async () => {
@@ -120,7 +120,7 @@ describe('deploy', () => {
       const expectedOptions = { ...mockOptionsWithRequired };
       delete expectedOptions[WORKSPACE_NAME];
 
-      expect(mockDeployEnvironment).toBeCalledWith(
+      expect(mockDeployEnvironment).toHaveBeenCalledWith(
         existingEnvironmentWithWorkspace,
         expectedOptions,
         expectedConfigurationChanges

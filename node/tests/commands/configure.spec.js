@@ -1,18 +1,28 @@
-const configure = require('../../src/commands/configure');
-const configManager = require('../../src/lib/config-manager');
-const inquirer = require('inquirer');
-const logger = require('../../src/lib/logger');
+import configure from '../../src/commands/configure.js';
+import * as configManager from '../../src/lib/config-manager.js';
+import { input } from '@inquirer/prompts';
+import logger from '../../src/lib/logger.js';
 
-jest.mock('inquirer');
-jest.mock('../../src/lib/config-manager');
-jest.mock('../../src/lib/logger');
+vi.mock('@inquirer/prompts', () => ({
+  input: vi.fn()
+}));
+vi.mock('../../src/lib/config-manager.js', () => ({
+  INCLUDED_OPTIONS: ['apiKey', 'apiSecret', 'organizationId', 'projectId', 'blueprintId', 'environmentName'],
+  read: vi.fn(),
+  write: vi.fn()
+}));
+vi.mock('../../src/lib/logger.js');
 
 describe('configure', () => {
   describe('interactive configure', () => {
     beforeEach(() => {
-      jest
-        .spyOn(inquirer, 'prompt')
-        .mockResolvedValue({ first: 'first', second: 'second', empty1: '', empty2: null, empty3: undefined });
+      input
+        .mockResolvedValueOnce('first')
+        .mockResolvedValueOnce('second')
+        .mockResolvedValueOnce('')
+        .mockResolvedValueOnce('')
+        .mockResolvedValueOnce('')
+        .mockResolvedValueOnce('');
     });
 
     beforeEach(async () => {
@@ -20,7 +30,7 @@ describe('configure', () => {
     });
 
     it('should remove empty answers', () => {
-      expect(configManager.write).toBeCalledWith({ first: 'first', second: 'second' });
+      expect(configManager.write).toHaveBeenCalledWith({ apiKey: 'first', apiSecret: 'second' });
     });
   });
 
@@ -34,20 +44,20 @@ describe('configure', () => {
     });
 
     it('should read configuration and merge with input options', () => {
-      expect(configManager.read).toBeCalledWith(options);
+      expect(configManager.read).toHaveBeenCalledWith(options);
     });
 
     it('should write the merged configuration', () => {
-      expect(configManager.write).toBeCalledWith(mockedMergedOptions);
+      expect(configManager.write).toHaveBeenCalledWith(mockedMergedOptions);
     });
 
     it('should log each new option written to configuration', () => {
-      expect(logger.info).toBeCalledWith(expect.stringContaining('first: first'));
-      expect(logger.info).toBeCalledWith(expect.stringContaining('second: second'));
+      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('first: first'));
+      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('second: second'));
     });
 
     it('should not log existing configuration', () => {
-      expect(logger.info).not.toBeCalledWith(expect.stringContaining('third'));
+      expect(logger.info).not.toHaveBeenCalledWith(expect.stringContaining('third'));
     });
   });
 });

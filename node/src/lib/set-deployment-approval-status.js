@@ -1,5 +1,5 @@
-const DeployUtils = require('../lib/deploy-utils');
-const logger = require('../lib/logger');
+import DeployUtils from '../lib/deploy-utils.js';
+import logger from '../lib/logger.js';
 
 const setDeploymentApprovalStatus = (command, shouldProcessDeploymentSteps) => async options => {
   const deployUtils = new DeployUtils();
@@ -26,4 +26,4 @@ const setDeploymentApprovalStatus = (command, shouldProcessDeploymentSteps) => a
   deployUtils.assertDeploymentStatus(status);
 };
 
-module.exports = setDeploymentApprovalStatus;
+export default setDeploymentApprovalStatus;

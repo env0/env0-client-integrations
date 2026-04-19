@@ -1,6 +1,6 @@
-const DeployUtils = require('../lib/deploy-utils');
-const logger = require('../lib/logger');
-const { options } = require('../config/constants');
+import DeployUtils from '../lib/deploy-utils.js';
+import logger from '../lib/logger.js';
+import { options } from '../config/constants.js';
 
 const { BLUEPRINT_ID, WORKSPACE_NAME } = options;
 
@@ -46,4 +46,4 @@ const deploy = async (options, variables) => {
   deployUtils.assertDeploymentStatus(status);
 };
 
-module.exports = deploy;
+export default deploy;

@@ -1,8 +1,8 @@
-const inquirer = require('inquirer');
-const configManager = require('../lib/config-manager');
-const { argumentsMap } = require('../config/arguments');
-const logger = require('../lib/logger');
-const _ = require('lodash');
+import { input } from '@inquirer/prompts';
+import * as configManager from '../lib/config-manager.js';
+import { argumentsMap } from '../config/arguments.js';
+import logger from '../lib/logger.js';
+import _ from 'lodash';
 
 const emptyConfig = configManager.INCLUDED_OPTIONS.reduce((acc, key) => {
   acc[key] = '';
@@ -13,8 +13,7 @@ const getQuestions = configuration => {
   return Object.entries(configuration).map(([key, value]) => ({
     name: key,
     message: argumentsMap[key].prompt,
-    default: value,
-    prefix: ''
+    default: value
   }));
 };
 
@@ -26,10 +25,16 @@ const configure = async options => {
   let newConfiguration;
   if (isInteractiveConfigure(options)) {
     const configuration = { ...emptyConfig, ...configManager.read() };
-
     const questions = getQuestions(configuration);
 
-    const answers = await inquirer.prompt(questions);
+    const answers = {};
+    for (const question of questions) {
+      answers[question.name] = await input({
+        message: question.message,
+        default: question.default,
+        theme: { prefix: '' }
+      });
+    }
 
     newConfiguration = removeEmptyAnswers(answers);
   } else {
@@ -42,4 +47,4 @@ const configure = async options => {
   logger.info('Done configuring CLI options!');
 };
 
-module.exports = configure;
+export default configure;

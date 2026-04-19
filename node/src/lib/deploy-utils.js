@@ -1,8 +1,8 @@
-const Env0ApiClient = require('./api-client');
-const logger = require('./logger');
-const { options } = require('../config/constants');
-const { convertStringToBoolean, removeEmptyValuesFromObj, withRetry } = require('./general-utils');
-const _ = require('lodash');
+import Env0ApiClient from './api-client.js';
+import logger from './logger.js';
+import { options } from '../config/constants.js';
+import { convertStringToBoolean, removeEmptyValuesFromObj, withRetry } from './general-utils.js';
+import _ from 'lodash';
 
 const {
   API_KEY,
@@ -63,7 +63,7 @@ class DeployUtils {
       requiresApproval: convertStringToBoolean(options[REQUIRES_APPROVAL])
     });
 
-    return await apiClient.callApi('post', 'environments', { data: payload }); // returns the newly created environment with updated deployment log
+    return await apiClient.callApi('post', 'environments', { data: payload });
   }
 
   async approveDeployment(deploymentLogId) {
@@ -99,7 +99,7 @@ class DeployUtils {
 
   async writeDeploymentStepLog(deploymentLogId, stepName) {
     const pollInProgressStepLogInterval = 10000; // 10 seconds
-    let shouldPoll = false;
+    let shouldPoll;
     let startTime = undefined;
 
     do {
@@ -187,4 +187,5 @@ class DeployUtils {
     }
   }
 }
-module.exports = DeployUtils;
+
+export default DeployUtils;

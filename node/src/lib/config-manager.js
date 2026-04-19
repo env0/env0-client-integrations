@@ -1,15 +1,15 @@
-const os = require('os');
-const fs = require('fs-extra');
-const path = require('path');
-const { options } = require('../config/constants');
-const { pick } = require('lodash');
-const logger = require('./logger');
+import os from 'node:os';
+import fs from 'fs-extra';
+import path from 'node:path';
+import { options } from '../config/constants.js';
+import _ from 'lodash';
+import logger from './logger.js';
 
 const CONFIG_FILE = path.join(os.homedir(), '.env0', 'config.json');
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME, ENVIRONMENT_ID } = options;
 
-const INCLUDED_OPTIONS = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME];
+export const INCLUDED_OPTIONS = [API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, BLUEPRINT_ID, ENVIRONMENT_NAME];
 
 const envVarToOptionMapper = {
   ENV0_API_KEY: API_KEY,
@@ -36,7 +36,7 @@ const getEnvVars = () => {
   return config;
 };
 
-const read = configFromParams => {
+export const read = configFromParams => {
   let configFromDisk = {};
   const configFromEnv = getEnvVars();
 
@@ -47,7 +47,7 @@ const read = configFromParams => {
     try {
       configFromDisk = JSON.parse(raw);
     } catch (err) {
-      throw new Error(`Malformed config file found at: ${CONFIG_FILE}`);
+      throw new Error(`Malformed config file found at: ${CONFIG_FILE}`, { cause: err });
     }
   }
 
@@ -58,13 +58,7 @@ const read = configFromParams => {
   };
 };
 
-const write = options => {
-  const reduced = pick(options, INCLUDED_OPTIONS);
+export const write = options => {
+  const reduced = _.pick(options, INCLUDED_OPTIONS);
   fs.outputJsonSync(CONFIG_FILE, reduced, { spaces: 2 });
-};
-
-module.exports = {
-  INCLUDED_OPTIONS,
-  read,
-  write
 };

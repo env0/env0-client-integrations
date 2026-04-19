@@ -1,8 +1,9 @@
+import updateNotifier from 'update-notifier';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 const pkg = require('../../package.json');
 
-async function updateNotifier() {
-  const updateNotifier = (await import('update-notifier')).default;
+export default function notifyUpdates() {
   updateNotifier({ pkg }).notify();
 }
-
-module.exports = updateNotifier;

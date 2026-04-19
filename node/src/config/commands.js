@@ -1,9 +1,9 @@
-const { argumentsMap, allArguments, baseArguments } = require('./arguments');
-const { options } = require('./constants');
+import { argumentsMap, allArguments, baseArguments } from './arguments.js';
+import { options } from './constants.js';
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, BLUEPRINT_ID, SKIP_STATE_REFRESH, REQUIRES_APPROVAL, CHECKOUT_UPDATED_CODE } = options;
 
-const commands = {
+export const commands = {
   deploy: {
     options: allArguments,
     help: [
@@ -70,5 +70,3 @@ const commands = {
     ]
   }
 };
-
-module.exports = { commands };

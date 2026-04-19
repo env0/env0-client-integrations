@@ -1,13 +1,13 @@
-const DeployUtils = require('../lib/deploy-utils');
-const configManager = require('../lib/config-manager');
-const deploy = require('./deploy');
-const destroy = require('./destroy');
-const approve = require('./approve');
-const cancel = require('./cancel');
-const { options } = require('../config/constants');
-const logger = require('../lib/logger');
-const _ = require('lodash');
-const { argumentsMap } = require('../config/arguments');
+import DeployUtils from '../lib/deploy-utils.js';
+import * as configManager from '../lib/config-manager.js';
+import deploy from './deploy.js';
+import destroy from './destroy.js';
+import approve from './approve.js';
+import cancel from './cancel.js';
+import { options } from '../config/constants.js';
+import logger from '../lib/logger.js';
+import _ from 'lodash';
+import { argumentsMap } from '../config/arguments.js';
 
 const { API_KEY, API_SECRET, ORGANIZATION_ID, PROJECT_ID, ENVIRONMENT_NAME, REQUIRES_APPROVAL } = options;
 
@@ -55,4 +55,4 @@ const runCommand = async (command, options, variables) => {
   logger.info(`Command ${command} has finished successfully.`);
 };
 
-module.exports = runCommand;
+export default runCommand;

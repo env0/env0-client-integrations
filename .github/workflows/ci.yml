@@ -5,12 +5,6 @@ on: [push]
 jobs:
   ci:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        package:
-          - node
-
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js
@@ -18,16 +12,16 @@ jobs:
       with:
         node-version: 24.x
     - name: install dependencies
-      working-directory: ${{ matrix.package }}
-      run: yarn
+      working-directory: node
+      run: npm ci
     - name: run test
-      working-directory: ${{ matrix.package }}
-      run: yarn test
+      working-directory: node
+      run: npm test
       env:
         CI: true
     - name: lint
-      working-directory: ${{ matrix.package }}
-      run: yarn lint
+      working-directory: node
+      run: npm run lint
     - name: run the cli
-      working-directory: ${{ matrix.package }}
+      working-directory: node
       run: node bin/cli.js --help

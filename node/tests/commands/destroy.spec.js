@@ -12,7 +12,7 @@ jest.mock('../../src/lib/deploy-utils');
 
 const mockDeployment = { id: 'id0' };
 
-const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH } = options;
+const { ENVIRONMENT_NAME, REQUIRES_APPROVAL, SKIP_STATE_REFRESH, CHECKOUT_UPDATED_CODE } = options;
 
 describe('destroy', () => {
   beforeEach(() => {
@@ -56,6 +56,21 @@ describe('destroy', () => {
       ${{ [SKIP_STATE_REFRESH]: 'false' }}
       ${{}}
     `('should call destroyEnvironment with skipStateRefresh Option, options=$options', async ({ options }) => {
+      const mockEnvironment = { id: 'something', name: 'someone' };
+      mockGetEnvironment.mockResolvedValue(mockEnvironment);
+
+      await destroy(options);
+      expect(mockDestroyEnvironment).toBeCalledWith(expect.anything(), options);
+    });
+  });
+
+  describe('checkoutUpdatedCode argument', () => {
+    it.each`
+      options
+      ${{ [CHECKOUT_UPDATED_CODE]: 'true' }}
+      ${{ [CHECKOUT_UPDATED_CODE]: 'false' }}
+      ${{}}
+    `('should call destroyEnvironment with checkoutUpdatedCode Option, options=$options', async ({ options }) => {
       const mockEnvironment = { id: 'something', name: 'someone' };
       mockGetEnvironment.mockResolvedValue(mockEnvironment);
 

@@ -5,11 +5,11 @@ on:
 
 defaults:
   run:
-    working-directory: ./node  
+    working-directory: ./node
 
 jobs:
   build_and_publish:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       # Setup .npmrc file to publish to npm

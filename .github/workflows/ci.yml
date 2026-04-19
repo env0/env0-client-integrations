@@ -19,15 +19,15 @@ jobs:
         node-version: 24.x
     - name: install dependencies
       working-directory: ${{ matrix.package }}
-      run: yarn
+      run: npm ci
     - name: run test
       working-directory: ${{ matrix.package }}
-      run: yarn test
+      run: npm test
       env:
         CI: true
     - name: lint
       working-directory: ${{ matrix.package }}
-      run: yarn lint
+      run: npm run lint
     - name: run the cli
       working-directory: ${{ matrix.package }}
       run: node bin/cli.js --help
